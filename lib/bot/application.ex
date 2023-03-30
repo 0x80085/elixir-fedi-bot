@@ -15,15 +15,19 @@ defmodule Bot.Application do
       # Start Finch
       {Finch, name: Bot.Finch},
       # Start the Endpoint (http/https)
-      BotWeb.Endpoint
+      BotWeb.Endpoint,
       # Start a worker by calling: Bot.Worker.start_link(arg)
       # {Bot.Worker, arg}
+
+      # Agents aka data stores
+      Bot.Mastodon.Credentials
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Bot.Supervisor]
     Supervisor.start_link(children, opts)
+
   end
 
   # Tell Phoenix to update the endpoint configuration

@@ -48,7 +48,9 @@ defmodule Bot.MixProject do
       {:plug_cowboy, "~> 2.5"},
       {:httpoison, "~> 2.0"},
       {:feeder, "~> 2.3"},
-      {:feeder_ex, "~> 1.1"}
+      {:feeder_ex, "~> 1.1"},
+      {:hackney, "~> 1.18"},
+      {:oauth2, "~> 2.0"},
     ]
   end
 

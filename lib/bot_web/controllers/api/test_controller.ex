@@ -19,11 +19,11 @@ defmodule BotWeb.TestController do
             end
 
           {:error, reason} ->
-            json(conn, reason)
+            json(conn, %{error: reason})
         end
 
       {:error, reason} ->
-        json(conn, reason)
+        json(conn, %{error: reason})
     end
   end
 
