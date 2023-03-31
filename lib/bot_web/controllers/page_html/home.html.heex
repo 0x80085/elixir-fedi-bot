@@ -42,7 +42,7 @@
     </p>
     <div class="flex">
       <div class="w-full sm:w-auto">
-        <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-3">
+        <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-3" id="setup_cta">
           <span class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 sm:py-6"
             onclick="setupBot()">
             <span
@@ -86,21 +86,36 @@
           class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900"
           id="paste_code_here" hidden />
       </div>
+      <div class="mt-10 " id="success" hidden>
+        <span class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 ">
+          Successfully connected to your fedi account
+        </span>
+        <br>
+        <span class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 ">
+          Post your first bot message:
+        </span>
+        <br>
+        <input placeholder="Message here... " onkeydown="postMessage(event)"
+          class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900" id="message_here" />
+      </div>
     </div>
 
   </div>
 </div>
 
 <script>
+  var setup_cta = document.getElementById("setup_cta")
   var loading = document.getElementById("loading")
   var connect_link = document.getElementById("url_here")
   var code_input = document.getElementById('paste_code_here')
   var instructions = document.getElementById('instructions')
   var more_instructions = document.getElementById('more_instructions')
+  var success = document.getElementById('success')
   code_input.value = ""
 
   function setupBot() {
     loading.hidden = false
+    setup_cta.style.display = "none"
 
     fetch("/api/setup")
       .then(response => response.json())
@@ -124,6 +139,23 @@
     if (pressedEnter) {
       const code = code_input.value
       fetch(`api/connect_user?user_code=${code}`)
+        .then(res => res.json())
+        .then(console.log)
+        .then(() => success.hidden = false)
+        .then(_ => {
+          connect_link.hidden = true
+          code_input.hidden = true
+          instructions.hidden = true
+          more_instructions.hidden = true
+        })
+    }
+  }
+
+  function postMessage(event) {
+    var pressedEnter = event.keyCode == 13
+    // TODO make it post the text
+    if (pressedEnter) {
+      fetch(`api/post`)
         .then(res => res.json())
         .then(console.log)
         .then(() => alert("success!"))
