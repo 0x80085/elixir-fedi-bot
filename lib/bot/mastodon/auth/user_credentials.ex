@@ -1,4 +1,4 @@
-defmodule Bot.Mastodon.UserCredentials do
+defmodule Bot.Mastodon.Auth.UserCredentials do
   use Agent
 
   @default_state %{
@@ -56,18 +56,25 @@ defmodule Bot.Mastodon.UserCredentials do
             user_token = "Bearer #{Map.get(body, "access_token")}"
             IO.puts("Got user token !! #{user_token}")
 
-            Bot.Mastodon.VerifyCredentials.verify_token(
-              user_token,
-              "https://mas.to/api/v1/accounts/verify_credentials"
-            )
-
-            set_token(user_token)
-
-            {:ok, token: user_token}
+            send_token_if_valid(user_token)
 
           {:error, reason} ->
             {:error, reason}
         end
+
+      {:error, reason} ->
+        {:error, reason}
+    end
+  end
+
+  def send_token_if_valid(user_token) do
+    case Bot.Mastodon.Auth.VerifyCredentials.verify_token(
+           user_token,
+           "https://mas.to/api/v1/accounts/verify_credentials"
+         ) do
+      {:ok, _result} ->
+        set_token(user_token)
+        {:ok, user_token}
 
       {:error, reason} ->
         {:error, reason}

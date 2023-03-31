@@ -28,6 +28,8 @@ defmodule BotWeb.Router do
     get "/setup", TestController, :connect_application
     # Connect masto user to bot application
     get "/connect_user", TestController, :connect_user
+    # Post status/toot/poast/shitpost
+    get "/post", TestController, :post_status
 
     # Test RSS fetcher
     get "/test", TestController, :test_rss_route

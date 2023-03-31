@@ -1,4 +1,4 @@
-defmodule Bot.Mastodon.ApplicationCredentials do
+defmodule Bot.Mastodon.Auth.ApplicationCredentials do
   use Agent
 
   @default_state %{
@@ -170,7 +170,7 @@ defmodule Bot.Mastodon.ApplicationCredentials do
         IO.puts(token)
         IO.puts("^^^^^^ Got oauth TOKEN!")
 
-        Bot.Mastodon.VerifyCredentials.verify_token(
+        Bot.Mastodon.Auth.VerifyCredentials.verify_token(
           token,
           "https://mas.to/api/v1/apps/verify_credentials"
         )

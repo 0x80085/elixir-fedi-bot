@@ -1,4 +1,4 @@
-defmodule Bot.Mastodon.VerifyCredentials do
+defmodule Bot.Mastodon.Auth.VerifyCredentials do
   def verify_token(token, url) do
     IO.puts("Verifying token: #{token}")
     IO.puts("at URL: #{url}")
@@ -16,20 +16,21 @@ defmodule Bot.Mastodon.VerifyCredentials do
           200 ->
             IO.puts("SUCCESS Token verified !")
 
-          _ ->
-            IO.puts("FAILED Token NOT verified... status: #{result.status_code}")
-
             case Jason.decode(result.body) do
               {:ok, body} ->
                 IO.puts(Map.get(body, "error"))
+                {:ok, result}
 
               {:error, reason} ->
                 IO.puts("error body not decoded")
                 IO.puts(reason)
+                {:error, reason}
             end
-        end
 
-        {:ok, result}
+          _ ->
+            IO.puts("FAILED Token NOT verified... status: #{result.status_code}")
+            {:error, result.status_code}
+        end
 
       {:error, reason} ->
         IO.puts("FAILED Token NOT verified...")

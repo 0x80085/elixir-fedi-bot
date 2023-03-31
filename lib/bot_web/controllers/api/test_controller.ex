@@ -29,7 +29,7 @@ defmodule BotWeb.TestController do
 
   @spec connect_application(Plug.Conn.t(), any) :: Plug.Conn.t()
   def connect_application(conn, _params) do
-    creds = Bot.Mastodon.ApplicationCredentials.setup_credentials()
+    creds = Bot.Mastodon.Auth.ApplicationCredentials.setup_credentials()
 
     case creds do
       {:ok, credentials} ->
@@ -46,25 +46,42 @@ defmodule BotWeb.TestController do
     IO.puts(user_code)
 
     response =
-      Bot.Mastodon.UserCredentials.authorize_bot_to_user(
-        Bot.Mastodon.ApplicationCredentials.get_client_id(),
-        Bot.Mastodon.ApplicationCredentials.get_client_secret(),
-        Bot.Mastodon.ApplicationCredentials.get_token(),
+      Bot.Mastodon.Auth.UserCredentials.authorize_bot_to_user(
+        Bot.Mastodon.Auth.ApplicationCredentials.get_client_id(),
+        Bot.Mastodon.Auth.ApplicationCredentials.get_client_secret(),
+        Bot.Mastodon.Auth.ApplicationCredentials.get_token(),
         user_code
       )
 
     case response do
       {:ok, result} ->
-        json(conn, result[:token])
+        json(conn, result)
 
       {:error, reason} ->
         json(conn, "Could not fetch token: #{reason}")
     end
   end
 
+  @spec connect_user(Plug.Conn.t(), map) :: Plug.Conn.t()
+  def post_status(conn, _params) do
+    action =
+      Bot.Mastodon.Actions.PostStatus.post(
+        "init bot",
+        Bot.Mastodon.Auth.UserCredentials.get_token()
+      )
+
+    case action do
+      {:ok, _} ->
+        json(conn, "status posted ")
+
+      {:error, reason} ->
+        json(conn, "Could not post status: #{reason}")
+    end
+  end
+
   @spec get_token(Plug.Conn.t(), any) :: Plug.Conn.t()
   def get_token(conn, _params) do
-    token = Bot.Mastodon.ApplicationCredentials.get_token()
+    token = Bot.Mastodon.Auth.ApplicationCredentials.get_token()
     json(conn, token)
   end
 
