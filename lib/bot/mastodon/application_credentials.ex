@@ -162,64 +162,27 @@ defmodule Bot.Mastodon.ApplicationCredentials do
         site: "https://mas.to"
       )
 
-    # Request a token from with the newly created client
-    # Token will be stored inside the `%OAuth2.Client{}` struct (client.token)
     client = OAuth2.Client.get_token!(client)
 
-    # client.token contains the `%OAuth2.AccessToken{}` struct
     case Jason.decode(client.token.access_token) do
       {:ok, result} ->
-        token = Map.get(result, "access_token")
+        token = "Bearer #{Map.get(result, "access_token")}"
         IO.puts(token)
         IO.puts("^^^^^^ Got oauth TOKEN!")
-        verify_credentials("Bearer #{token}")
+
+        Bot.Mastodon.VerifyCredentials.verify_token(
+          token,
+          "https://mas.to/api/v1/apps/verify_credentials"
+        )
 
         %{
-          token: "Bearer #{token}",
+          token: token,
           client_id: connect_info.client_id,
           client_secret: connect_info.client_secret
         }
 
       {:error, result} ->
         IO.puts("error fetching token: #{result}")
-    end
-  end
-
-  def verify_credentials(token) do
-    IO.puts("Verifying token: #{token}")
-
-    headers = [
-      {"Accept", "application/json"},
-      {"Authorization", token}
-    ]
-
-    response = HTTPoison.get("https://mas.to/api/v1/apps/verify_credentials", headers)
-
-    case response do
-      {:ok, result} ->
-        case result.status_code do
-          200 ->
-            IO.puts("SUCCESS Token verified !")
-
-          _ ->
-            IO.puts("FAILED Token NOT verified... status: #{result.status_code}")
-
-            case Jason.decode(result.body) do
-              {:ok, body} ->
-                IO.puts(Map.get(body, "error"))
-
-              {:error, reason} ->
-                IO.puts("error body not decoded")
-                IO.puts(reason)
-            end
-        end
-
-        {:ok, result}
-
-      {:error, reason} ->
-        IO.puts("FAILED Token NOT verified...")
-        IO.puts("#{reason}")
-        {:error, reason}
     end
   end
 end
