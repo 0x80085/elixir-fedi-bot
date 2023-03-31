@@ -126,7 +126,6 @@
 
     fetch("/api/setup")
       .then(response => response.json())
-      // .then(  open dialog to instruct user to go to url and authorize  )
       .then(({ auth_url }) => {
         connect_link.hidden = false
         code_input.hidden = false
@@ -135,9 +134,6 @@
 
         connect_link.href = auth_url
       }).finally(() => loading.hidden = true);
-    // .then(  open dialog to paste code               )
-    // .then(  use code to post to /api/connect_user   )
-    // .then(  report back if err else goto idk        )
   }
 
   function connectAccount(event) {
@@ -161,7 +157,6 @@
 
   function postMessage(event) {
     var pressedEnter = event.keyCode == 13
-    // TODO make it post the text
     if (pressedEnter && msg_input) {
       fetch(`api/post?text=${msg_input.value}`)
         .then(res => res.json())
