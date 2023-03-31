@@ -1,8 +1,8 @@
 defmodule BotWeb.TestController do
   use BotWeb, :controller
 
-  @spec testRssRoute(Plug.Conn.t(), any) :: Plug.Conn.t()
-  def testRssRoute(conn, params) do
+  @spec test_rss_route(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def test_rss_route(conn, params) do
     case get_rss_url(params) do
       {:ok, url} ->
         case Bot.RSS.RssFetcher.get_entries(url) do
@@ -25,6 +25,12 @@ defmodule BotWeb.TestController do
       {:error, reason} ->
         json(conn, %{error: reason})
     end
+  end
+
+  @spec get_token(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def get_token(conn, _params) do
+    token = Bot.Mastodon.Credentials.get_token()
+    json(conn, token)
   end
 
   def get_rss_url(params) do

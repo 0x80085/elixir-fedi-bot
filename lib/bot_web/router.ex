@@ -24,7 +24,8 @@ defmodule BotWeb.Router do
   scope "/api", BotWeb do
     pipe_through :api
 
-    get "/test", TestController, :testRssRoute
+    get "/test", TestController, :test_rss_route
+    get "/token", TestController, :get_token
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

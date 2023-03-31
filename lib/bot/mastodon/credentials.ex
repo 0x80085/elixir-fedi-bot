@@ -1,27 +1,32 @@
 defmodule Bot.Mastodon.Credentials do
   use Agent
 
-  @default_state %{
-    client: nil,
-    token: nil
-  }
-
   def start_link(_opts) do
-    Agent.start_link(fn ->
-      case get_client_connect_info() do
-        {:ok, info} ->
-          create_client(info)
+    Agent.start_link(
+      fn ->
+        case get_client_connect_info() do
+          {:ok, info} ->
+            create_client(info)
 
-        {:error, reason} ->
-          IO.puts("encountered error #{reason}")
-      end
-    end)
+          {:error, reason} ->
+            IO.puts("encountered error #{reason}")
+        end
+      end,
+      name: __MODULE__
+    )
   end
 
   @spec get_client() :: OAuth2.Client
   def get_client() do
     Agent.get(__MODULE__, fn state ->
       state.client
+    end)
+  end
+
+  @spec get_token :: String
+  def get_token() do
+    Agent.get(__MODULE__, fn state ->
+      state.token
     end)
   end
 
@@ -70,8 +75,8 @@ defmodule Bot.Mastodon.Credentials do
 
   def create_client(connect_info) do
     IO.puts("Create client and get token")
-    IO.puts( connect_info.client_id)
-    IO.puts( connect_info.client_secret)
+    IO.puts(connect_info.client_id)
+    IO.puts(connect_info.client_secret)
     IO.puts("---")
 
     client =
