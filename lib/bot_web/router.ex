@@ -24,6 +24,9 @@ defmodule BotWeb.Router do
   scope "/api", BotWeb do
     pipe_through :api
 
+    # Setup the bot / connect to a mastodon instance
+    get "/setup", TestController, :connect_account
+
     get "/test", TestController, :test_rss_route
     get "/token", TestController, :get_token
   end

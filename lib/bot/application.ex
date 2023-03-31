@@ -20,7 +20,7 @@ defmodule Bot.Application do
       # {Bot.Worker, arg}
 
       # Agents aka data stores
-      Bot.Mastodon.Credentials
+      Bot.Mastodon.ApplicationCredentials,
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

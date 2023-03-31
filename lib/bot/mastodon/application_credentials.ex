@@ -1,16 +1,15 @@
-defmodule Bot.Mastodon.Credentials do
+defmodule Bot.Mastodon.ApplicationCredentials do
   use Agent
 
   def start_link(_opts) do
     Agent.start_link(
       fn ->
-        case get_client_connect_info() do
-          {:ok, info} ->
-            create_client(info)
-
-          {:error, reason} ->
-            IO.puts("encountered error #{reason}")
-        end
+        %{
+          client_id: nil,
+          client_secret: nil,
+          token: nil,
+          client: nil
+        }
       end,
       name: __MODULE__
     )
@@ -28,6 +27,44 @@ defmodule Bot.Mastodon.Credentials do
     Agent.get(__MODULE__, fn state ->
       state.token
     end)
+  end
+
+  @spec get_client_id :: String
+  def get_client_id() do
+    Agent.get(__MODULE__, fn state ->
+      state.client_id
+    end)
+  end
+
+  @spec get_client_secret :: String
+  def get_client_secret() do
+    Agent.get(__MODULE__, fn state ->
+      state.client_secret
+    end)
+  end
+
+  @spec setup_credentials ::
+          {:error, any}
+          | {:ok, %{auth_url: <<_::64, _::_*8>>, client_id: any, client_secret: any, token: any}}
+  def setup_credentials() do
+    case get_client_connect_info() do
+      {:ok, info} ->
+        client_info = create_client(info)
+
+        {:ok,
+         %{
+           client_id: client_info.client_id,
+           client_secret: info.client_secret,
+           token: client_info.token,
+           auth_url:
+             "https://mas.to/oauth/authorize?client_id=#{client_info.client_id}&scope=read+write+push&redirect_uri=urn:ietf:wg:oauth:2.0:oob&response_type=code"
+         }}
+
+      {:error, reason} ->
+        IO.puts("encountered error during setup credentials: #{reason}")
+
+        {:error, reason}
+    end
   end
 
   def get_client_connect_info() do
@@ -99,7 +136,7 @@ defmodule Bot.Mastodon.Credentials do
         IO.puts(token)
         IO.puts("^^^^^^ Got oauth TOKEN!")
         verify_credentials("Bearer #{token}")
-        %{client: client, token: "Bearer #{token}"}
+        %{token: "Bearer #{token}", client_id: connect_info.client_id, client_secret: connect_info.client_secret}
 
       {:error, result} ->
         IO.puts("error fetching token: #{result}")
@@ -124,6 +161,7 @@ defmodule Bot.Mastodon.Credentials do
 
           _ ->
             IO.puts("FAILED Token NOT verified... status: #{result.status_code}")
+
             case Jason.decode(result.body) do
               {:ok, body} ->
                 IO.puts(Map.get(body, "error"))

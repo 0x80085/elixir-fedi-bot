@@ -27,9 +27,21 @@ defmodule BotWeb.TestController do
     end
   end
 
+  def connect_account(conn, _params) do
+    creds = Bot.Mastodon.ApplicationCredentials.setup_credentials()
+
+    case creds do
+      {:ok, credentials} ->
+        json(conn, credentials)
+
+      {:error, reason} ->
+        json(conn, %{error: reason})
+    end
+  end
+
   @spec get_token(Plug.Conn.t(), any) :: Plug.Conn.t()
   def get_token(conn, _params) do
-    token = Bot.Mastodon.Credentials.get_token()
+    token = Bot.Mastodon.ApplicationCredentials.get_token()
     json(conn, token)
   end
 
