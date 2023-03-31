@@ -63,10 +63,10 @@ defmodule BotWeb.TestController do
   end
 
   @spec connect_user(Plug.Conn.t(), map) :: Plug.Conn.t()
-  def post_status(conn, _params) do
+  def post_status(conn, params) do
     action =
       Bot.Mastodon.Actions.PostStatus.post(
-        "init bot",
+        Map.get(params, "text"),
         Bot.Mastodon.Auth.UserCredentials.get_token()
       )
 

@@ -86,17 +86,23 @@
           class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900"
           id="paste_code_here" hidden />
       </div>
-      <div class="mt-10 " id="success" hidden>
-        <span class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 ">
-          Successfully connected to your fedi account
-        </span>
-        <br>
-        <span class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 ">
-          Post your first bot message:
-        </span>
-        <br>
-        <input placeholder="Message here... " onkeydown="postMessage(event)"
-          class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900" id="message_here" />
+      <div class="mt-10 " style="text-align: center;" id="success_and_post" hidden>
+        <p>
+          🤖
+        </p>
+        <h1 class="text-brand flex text-sm font-semibold leading-6">
+          Successfully connected to your fedi account!
+        </h1>
+        <div class="mt-10 ">
+          <span class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 mt-10">
+            Post your first bot message:
+          </span>
+        </div>
+        <div class="mt-10 ">
+          <input placeholder="Message here... " onkeydown="postMessage(event)"
+            class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900"
+            id="message_here" />
+        </div>
       </div>
     </div>
 
@@ -108,9 +114,10 @@
   var loading = document.getElementById("loading")
   var connect_link = document.getElementById("url_here")
   var code_input = document.getElementById('paste_code_here')
+  var msg_input = document.getElementById('message_here')
   var instructions = document.getElementById('instructions')
   var more_instructions = document.getElementById('more_instructions')
-  var success = document.getElementById('success')
+  var success_and_post = document.getElementById('success_and_post')
   code_input.value = ""
 
   function setupBot() {
@@ -136,12 +143,13 @@
   function connectAccount(event) {
     var pressedEnter = event.keyCode == 13
 
-    if (pressedEnter) {
+    if (pressedEnter && code_input.value) {
       const code = code_input.value
       fetch(`api/connect_user?user_code=${code}`)
         .then(res => res.json())
         .then(console.log)
-        .then(() => success.hidden = false)
+        .then(() => success_and_post.hidden = false)
+        .then(() => msg_input.value = "")
         .then(_ => {
           connect_link.hidden = true
           code_input.hidden = true
@@ -154,11 +162,12 @@
   function postMessage(event) {
     var pressedEnter = event.keyCode == 13
     // TODO make it post the text
-    if (pressedEnter) {
-      fetch(`api/post`)
+    if (pressedEnter && msg_input) {
+      fetch(`api/post?text=${msg_input.value}`)
         .then(res => res.json())
         .then(console.log)
         .then(() => alert("success!"))
+        .then(() => msg_input.value = "")
     }
   }
 </script>
