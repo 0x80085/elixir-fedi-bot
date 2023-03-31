@@ -40,20 +40,26 @@ defmodule BotWeb.TestController do
     end
   end
 
-
   def connect_user(conn, params) do
-    user_code = Map.get(params,"user_code" )
+    user_code = Map.get(params, "user_code")
     IO.puts("user_code")
     IO.puts(user_code)
 
-    result = Bot.Mastodon.UserCredentials.authorize_bot_to_user(
-      Bot.Mastodon.ApplicationCredentials.get_client_id(),
-      Bot.Mastodon.ApplicationCredentials.get_client_secret(),
-      Bot.Mastodon.ApplicationCredentials.get_token(),
-      user_code
-    )
+    response =
+      Bot.Mastodon.UserCredentials.authorize_bot_to_user(
+        Bot.Mastodon.ApplicationCredentials.get_client_id(),
+        Bot.Mastodon.ApplicationCredentials.get_client_secret(),
+        Bot.Mastodon.ApplicationCredentials.get_token(),
+        user_code
+      )
 
-    json(conn, result)
+    case response do
+      {:ok, result} ->
+        json(conn, result[:token])
+
+      {:error, reason} ->
+        json(conn, "Could not fetch token: #{reason}")
+    end
   end
 
   @spec get_token(Plug.Conn.t(), any) :: Plug.Conn.t()
