@@ -27,7 +27,8 @@ defmodule BotWeb.TestController do
     end
   end
 
-  def connect_account(conn, _params) do
+  @spec connect_application(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def connect_application(conn, _params) do
     creds = Bot.Mastodon.ApplicationCredentials.setup_credentials()
 
     case creds do
@@ -37,6 +38,22 @@ defmodule BotWeb.TestController do
       {:error, reason} ->
         json(conn, %{error: reason})
     end
+  end
+
+
+  def connect_user(conn, params) do
+    user_code = Map.get(params,"user_code" )
+    IO.puts("user_code")
+    IO.puts(user_code)
+
+    result = Bot.Mastodon.UserCredentials.authorize_bot_to_user(
+      Bot.Mastodon.ApplicationCredentials.get_client_id(),
+      Bot.Mastodon.ApplicationCredentials.get_client_secret(),
+      Bot.Mastodon.ApplicationCredentials.get_token(),
+      user_code
+    )
+
+    json(conn, result)
   end
 
   @spec get_token(Plug.Conn.t(), any) :: Plug.Conn.t()

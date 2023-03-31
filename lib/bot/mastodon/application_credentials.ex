@@ -1,16 +1,16 @@
 defmodule Bot.Mastodon.ApplicationCredentials do
   use Agent
 
+  @default_state %{
+    client_id: nil,
+    client_secret: nil,
+    token: nil,
+    client: nil
+  }
+
   def start_link(_opts) do
     Agent.start_link(
-      fn ->
-        %{
-          client_id: nil,
-          client_secret: nil,
-          token: nil,
-          client: nil
-        }
-      end,
+      fn -> @default_state end,
       name: __MODULE__
     )
   end
@@ -43,6 +43,39 @@ defmodule Bot.Mastodon.ApplicationCredentials do
     end)
   end
 
+  def set_token(token) do
+    Agent.update(__MODULE__, fn state ->
+      %{
+        token: token,
+        client_id: state.client_id,
+        client_secret: state.client_secret,
+        client: state.client
+      }
+    end)
+  end
+
+  def set_client_id(client_id) do
+    Agent.update(__MODULE__, fn state ->
+      %{
+        client_id: client_id,
+        token: state.token,
+        client_secret: state.client_secret,
+        client: state.client
+      }
+    end)
+  end
+
+  def set_client_secret(client_secret) do
+    Agent.update(__MODULE__, fn state ->
+      %{
+        client_secret: client_secret,
+        client_id: state.client_id,
+        token: state.token,
+        client: state.client
+      }
+    end)
+  end
+
   @spec setup_credentials ::
           {:error, any}
           | {:ok, %{auth_url: <<_::64, _::_*8>>, client_id: any, client_secret: any, token: any}}
@@ -50,6 +83,10 @@ defmodule Bot.Mastodon.ApplicationCredentials do
     case get_client_connect_info() do
       {:ok, info} ->
         client_info = create_client(info)
+
+        set_client_id(client_info.client_id)
+        set_client_secret(info.client_secret)
+        set_token(client_info.token)
 
         {:ok,
          %{
@@ -136,7 +173,12 @@ defmodule Bot.Mastodon.ApplicationCredentials do
         IO.puts(token)
         IO.puts("^^^^^^ Got oauth TOKEN!")
         verify_credentials("Bearer #{token}")
-        %{token: "Bearer #{token}", client_id: connect_info.client_id, client_secret: connect_info.client_secret}
+
+        %{
+          token: "Bearer #{token}",
+          client_id: connect_info.client_id,
+          client_secret: connect_info.client_secret
+        }
 
       {:error, result} ->
         IO.puts("error fetching token: #{result}")
