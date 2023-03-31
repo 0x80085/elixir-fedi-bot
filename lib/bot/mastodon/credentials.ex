@@ -98,10 +98,48 @@ defmodule Bot.Mastodon.Credentials do
         token = Map.get(result, "access_token")
         IO.puts(token)
         IO.puts("^^^^^^ Got oauth TOKEN!")
+        verify_credentials("Bearer #{token}")
         %{client: client, token: "Bearer #{token}"}
 
       {:error, result} ->
         IO.puts("error fetching token: #{result}")
+    end
+  end
+
+  def verify_credentials(token) do
+    IO.puts("Verifying token: #{token}")
+
+    headers = [
+      {"Accept", "application/json"},
+      {"Authorization", token}
+    ]
+
+    response = HTTPoison.get("https://mas.to/api/v1/apps/verify_credentials", headers)
+
+    case response do
+      {:ok, result} ->
+        case result.status_code do
+          200 ->
+            IO.puts("SUCCESS Token verified !")
+
+          _ ->
+            IO.puts("FAILED Token NOT verified... status: #{result.status_code}")
+            case Jason.decode(result.body) do
+              {:ok, body} ->
+                IO.puts(Map.get(body, "error"))
+
+              {:error, reason} ->
+                IO.puts("error body not decoded")
+                IO.puts(reason)
+            end
+        end
+
+        {:ok, result}
+
+      {:error, reason} ->
+        IO.puts("FAILED Token NOT verified...")
+        IO.puts("#{reason}")
+        {:error, reason}
     end
   end
 end
