@@ -133,7 +133,7 @@
         more_instructions.hidden = false
 
         connect_link.href = auth_url
-      }).finally(() => loading.hidden = true);
+      }).finally(_ => loading.hidden = true);
   }
 
   function connectAccount(event) {
@@ -144,8 +144,8 @@
       fetch(`api/connect_user?user_code=${code}`)
         .then(res => res.json())
         .then(console.log)
-        .then(() => success_and_post.hidden = false)
-        .then(() => msg_input.value = "")
+        .then(_ => success_and_post.hidden = false)
+        .then(_ => msg_input.value = "")
         .then(_ => {
           connect_link.hidden = true
           code_input.hidden = true
@@ -161,8 +161,8 @@
       fetch(`api/post?text=${msg_input.value}`)
         .then(res => res.json())
         .then(console.log)
-        .then(() => alert("success!"))
-        .then(() => msg_input.value = "")
+        .then(_ => alert("success!"))
+        .then(_ => msg_input.value = "")
     }
   }
 </script>
