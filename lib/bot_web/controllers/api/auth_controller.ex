@@ -1,4 +1,4 @@
-defmodule BotWeb.AuthController do
+defmodule BotWeb.Api.AuthController do
   use BotWeb, :controller
 
   @spec connect_application(Plug.Conn.t(), any) :: Plug.Conn.t()
@@ -36,27 +36,9 @@ defmodule BotWeb.AuthController do
     end
   end
 
-  @spec post_status(Plug.Conn.t(), map) :: Plug.Conn.t()
-  def post_status(conn, params) do
-    action =
-      Bot.Mastodon.Actions.PostStatus.post(
-        Map.get(params, "text"),
-        Bot.Mastodon.Auth.UserCredentials.get_token()
-      )
-
-    case action do
-      {:ok, _} ->
-        json(conn, "status posted ")
-
-      {:error, reason} ->
-        json(conn, "Could not post status: #{reason}")
-    end
-  end
-
   @spec get_token(Plug.Conn.t(), any) :: Plug.Conn.t()
   def get_token(conn, _params) do
     token = Bot.Mastodon.Auth.ApplicationCredentials.get_token()
     json(conn, token)
   end
-
 end

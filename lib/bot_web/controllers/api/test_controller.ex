@@ -1,4 +1,4 @@
-defmodule BotWeb.TestController do
+defmodule BotWeb.Api.TestController do
   use BotWeb, :controller
 
   @spec test_rss_route(Plug.Conn.t(), any) :: Plug.Conn.t()

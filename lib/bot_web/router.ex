@@ -25,18 +25,19 @@ defmodule BotWeb.Router do
     pipe_through :api
 
     # Setup the bot / connect to a mastodon instance
-    get "/setup", AuthController, :connect_application
+    get "/setup", Api.AuthController, :connect_application
     # Connect masto user to bot application
-    get "/connect_user", AuthController, :connect_user
+    get "/connect_user", Api.AuthController, :connect_user
+
     # Post status/toot/poast/shitpost
-    get "/post", AuthController, :post_status
+    get "/post", Api.ActionsController, :post_status
 
 
     ## Util
     # Test RSS fetcher
-    get "/test", TestController, :test_rss_route
+    get "/test", Api.TestController, :test_rss_route
     # Get application token
-    get "/token", AuthController, :get_token
+    get "/token", Api.AuthController, :get_token
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
