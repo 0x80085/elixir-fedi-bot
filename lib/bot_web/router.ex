@@ -31,6 +31,8 @@ defmodule BotWeb.Router do
     # Post status/toot/poast/shitpost
     get "/post", TestController, :post_status
 
+
+    ## Util
     # Test RSS fetcher
     get "/test", TestController, :test_rss_route
     # Get application token
