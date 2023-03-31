@@ -58,37 +58,71 @@
         </div>
       </div>
     </div>
-    <div class="mt-10">
-      <span class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900">
-        <a href="#" target="_blank" id="url_here">no url yet</a>
-      </span>
-    </div>
-    <div class="mt-10">
-      <input placeholder="paste the code here and press enter" onkeydown="connectAccount(event)"
-        class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900"
-        id="paste_code_here" />
+    <div class="flex" style=" flex-direction: column; align-items: center;">
+      <div class="mt-10" id="loading" hidden>
+        <span class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 ">
+          Processing ...
+        </span>
+      </div>
+      <div class="mt-10" id="instructions" hidden>
+        <span class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 ">
+          Connect to your fedi account
+        </span>
+      </div>
+      <div class="mt-10 ">
+        <a href="#" target="_blank" id="url_here" hidden>
+          <button type="button" style="border:1px solid orange; border-radius: 10px; padding: 1rem; color: #fd4f00;">
+            Connect bot to your fedi account
+          </button>
+        </a>
+      </div>
+      <div class="mt-10 " id="more_instructions" hidden>
+        <span class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 ">
+          Then enter the received code and press <code>Enter</code>
+        </span>
+      </div>
+      <div class="mt-10 ">
+        <input placeholder="Code here... " onkeydown="connectAccount(event)"
+          class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900"
+          id="paste_code_here" hidden />
+      </div>
     </div>
 
   </div>
 </div>
 
 <script>
+  var loading = document.getElementById("loading")
+  var connect_link = document.getElementById("url_here")
+  var code_input = document.getElementById('paste_code_here')
+  var instructions = document.getElementById('instructions')
+  var more_instructions = document.getElementById('more_instructions')
+  code_input.value = ""
+
   function setupBot() {
+    loading.hidden = false
+
     fetch("/api/setup")
       .then(response => response.json())
       // .then(  open dialog to instruct user to go to url and authorize  )
       .then(({ auth_url }) => {
-        document.getElementById("url_here").href = auth_url
-        document.getElementById("url_here").innerText = auth_url
-      });
+        connect_link.hidden = false
+        code_input.hidden = false
+        instructions.hidden = false
+        more_instructions.hidden = false
+
+        connect_link.href = auth_url
+      }).finally(() => loading.hidden = true);
     // .then(  open dialog to paste code               )
     // .then(  use code to post to /api/connect_user   )
     // .then(  report back if err else goto idk        )
   }
 
   function connectAccount(event) {
-    if (event.keyCode == 13) {
-      const code = document.getElementById('paste_code_here').value
+    var pressedEnter = event.keyCode == 13
+
+    if (pressedEnter) {
+      const code = code_input.value
       fetch(`api/connect_user?user_code=${code}`)
         .then(res => res.json())
         .then(console.log)
