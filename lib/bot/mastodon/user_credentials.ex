@@ -1,4 +1,32 @@
 defmodule Bot.Mastodon.UserCredentials do
+  use Agent
+
+  @default_state %{
+    token: nil
+  }
+
+  def start_link(_opts) do
+    Agent.start_link(
+      fn -> @default_state end,
+      name: __MODULE__
+    )
+  end
+
+  @spec get_token :: String
+  def get_token() do
+    Agent.get(__MODULE__, fn state ->
+      state.token
+    end)
+  end
+
+  def set_token(token) do
+    Agent.update(__MODULE__, fn _state ->
+      %{
+        token: token
+      }
+    end)
+  end
+
   def authorize_bot_to_user(client_id, client_secret, token, user_code) do
     url = "https://mas.to/oauth/token"
 
@@ -32,6 +60,8 @@ defmodule Bot.Mastodon.UserCredentials do
               user_token,
               "https://mas.to/api/v1/accounts/verify_credentials"
             )
+
+            set_token(user_token)
 
             {:ok, token: user_token}
 
