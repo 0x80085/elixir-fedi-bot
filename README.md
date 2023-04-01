@@ -12,12 +12,12 @@ To connect the bot to your fedi account, follow the instructions on http://local
 
 # Todo 
 
-- [] Persist tokens gotten from fedi
-- [] Refresh token if expired
-- [] Add CRON job to read and re-post RSS feeds
-- [] Login protect dev/dashboard 
-- [] Login protect connect fedi account page
-- [] Track/save posts to DB
+- [ ] Persist tokens gotten from fedi
+- [ ] Refresh token if expired
+- [ ] Add CRON job to read and re-post RSS feeds
+- [ ] Login protect dev/dashboard 
+- [ ] Login protect connect fedi account page
+- [ ] Track/save posts to DB
 
 Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
 ## Learn more
