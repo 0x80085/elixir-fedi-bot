@@ -99,7 +99,7 @@
           </span>
         </div>
         <div class="mt-10 ">
-          <input placeholder="Message here... " onkeydown="postMessage(event)"
+          <input placeholder="Enter message here... " onkeydown="postMessage(event)"
             class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900"
             id="message_here" />
         </div>
@@ -140,18 +140,20 @@
     var pressedEnter = event.keyCode == 13
 
     if (pressedEnter && code_input.value) {
+      loading.hidden = false
+
+      connect_link.hidden = true
+      code_input.hidden = true
+      instructions.hidden = true
+      more_instructions.hidden = true
+
       const code = code_input.value
       fetch(`api/connect_user?user_code=${code}`)
         .then(res => res.json())
         .then(console.log)
         .then(_ => success_and_post.hidden = false)
         .then(_ => msg_input.value = "")
-        .then(_ => {
-          connect_link.hidden = true
-          code_input.hidden = true
-          instructions.hidden = true
-          more_instructions.hidden = true
-        })
+        .finally(_ => loading.hidden = true);
     }
   }
 
