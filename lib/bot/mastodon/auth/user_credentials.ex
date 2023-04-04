@@ -56,7 +56,16 @@ defmodule Bot.Mastodon.Auth.UserCredentials do
             user_token = "Bearer #{Map.get(body, "access_token")}"
             IO.puts("Got user token !! #{user_token}")
 
-            send_token_if_valid(user_token)
+            is_token_valid(user_token)
+
+            Bot.Mastodon.Auth.PersistCredentials.persist_credentials(%{
+              client_id: client_id,
+              client_secret: client_secret,
+              app_token: token,
+              user_token: user_token
+            })
+
+            {:ok, user_token}
 
           {:error, reason} ->
             {:error, reason}
@@ -67,7 +76,7 @@ defmodule Bot.Mastodon.Auth.UserCredentials do
     end
   end
 
-  def send_token_if_valid(user_token) do
+  def is_token_valid(user_token) do
     case Bot.Mastodon.Auth.VerifyCredentials.verify_token(
            user_token,
            "https://mas.to/api/v1/accounts/verify_credentials"

@@ -1,6 +1,17 @@
 defmodule BotWeb.Api.AuthController do
   use BotWeb, :controller
 
+  def has_credentials(conn, _params) do
+    try do
+
+      json(conn,  %{has_credentials: Bot.Mastodon.Auth.PersistCredentials.has_stored_credentials()})
+    catch
+      _ ->
+        IO.puts("failed to get creds file")
+        json(conn,  %{has_credentials: false})
+    end
+  end
+
   @spec connect_application(Plug.Conn.t(), any) :: Plug.Conn.t()
   def connect_application(conn, _params) do
     creds = Bot.Mastodon.Auth.ApplicationCredentials.setup_credentials()

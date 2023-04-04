@@ -28,6 +28,8 @@ defmodule BotWeb.Router do
     get "/setup", Api.AuthController, :connect_application
     # Connect masto user to bot application
     get "/connect_user", Api.AuthController, :connect_user
+    # check if creds saved
+    get "/has_credentials", Api.AuthController, :has_credentials
 
     # Post status/toot/poast/shitpost
     get "/post", Api.ActionsController, :post_status

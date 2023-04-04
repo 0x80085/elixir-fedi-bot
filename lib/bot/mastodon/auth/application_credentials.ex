@@ -10,7 +10,20 @@ defmodule Bot.Mastodon.Auth.ApplicationCredentials do
 
   def start_link(_opts) do
     Agent.start_link(
-      fn -> @default_state end,
+      fn ->
+        creds = Bot.Mastodon.Auth.PersistCredentials.get_from_file()
+
+        case creds do
+          nil ->
+            IO.puts("Creds not found")
+            @default_state
+
+          creds ->
+            IO.puts("Creds found, using from files")
+            IO.puts("app token: #{Map.get(creds, "app_token")}")
+            creds
+        end
+      end,
       name: __MODULE__
     )
   end
@@ -45,6 +58,7 @@ defmodule Bot.Mastodon.Auth.ApplicationCredentials do
 
   def set_token(token) do
     Agent.update(__MODULE__, fn state ->
+      # Bot.Mastodon.Auth.PersistCredentials
       %{
         token: token,
         client_id: state.client_id,

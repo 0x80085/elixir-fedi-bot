@@ -110,7 +110,12 @@
 </div>
 
 <script>
+  var is_bot_connected_to_fedi = false;
+
+
   var setup_cta = document.getElementById("setup_cta")
+  setup_cta.style.display = "none"
+
   var loading = document.getElementById("loading")
   var connect_link = document.getElementById("url_here")
   var code_input = document.getElementById('paste_code_here')
@@ -119,6 +124,26 @@
   var more_instructions = document.getElementById('more_instructions')
   var success_and_post = document.getElementById('success_and_post')
   code_input.value = ""
+
+  function get_has_credentials() {
+    loading.hidden = false
+    fetch("/api/has_credentials")
+      .then(response => response.json())
+      .then(({ has_credentials }) => is_bot_connected_to_fedi = has_credentials)
+      .then(_ => {
+        if (is_bot_connected_to_fedi) {
+          connect_link.hidden = true
+          code_input.hidden = true
+          instructions.hidden = true
+          more_instructions.hidden = true
+
+          success_and_post.hidden = false
+        } else {
+          setup_cta.style.display = "grid"
+        }
+      })
+      .finally(_ => loading.hidden = true)
+  }
 
   function setupBot() {
     loading.hidden = false
@@ -167,4 +192,9 @@
         .then(_ => msg_input.value = "")
     }
   }
+
+  loading.hidden = false
+  get_has_credentials()
+
+
 </script>
