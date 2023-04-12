@@ -19,6 +19,9 @@ defmodule Bot.Application do
       # Start a worker by calling: Bot.Worker.start_link(arg)
       # {Bot.Worker, arg}
 
+      # RSS post and fetch CRON GenServer
+      Bot.RSS.Cron,
+
       # Agents aka data stores
       Bot.Mastodon.Auth.ApplicationCredentials,
       Bot.Mastodon.Auth.UserCredentials,

@@ -1,13 +1,16 @@
 defmodule Bot.RSS.RssFetcher do
-
+  @spec get_entries(binary) :: {:error, any} | {:ok, list}
   def get_entries(rss_url) do
+    IO.puts("get_entries for #{rss_url}")
     response = HTTPoison.get(rss_url, [{"Accept-Encoding:", "utf-8"}])
 
     case response do
       {:ok, %HTTPoison.Response{body: body}} ->
+        IO.puts("OK #{rss_url} parsing results")
         parse_response(body)
 
       {:error, %HTTPoison.Error{reason: reason}} ->
+        IO.puts("FAIL for #{rss_url}")
         {:error, reason}
     end
   end
@@ -22,7 +25,7 @@ defmodule Bot.RSS.RssFetcher do
             %{id: it.id, link: it.link, title: it.title, updated: it.updated}
           end)
 
-        {:entries, parsedEntries}
+        {:ok, parsedEntries}
 
       {:error, reason} ->
         {:error, reason}
@@ -38,8 +41,8 @@ defmodule Bot.RSS.RssFetcher do
         _ in BadMapError -> {:error, "Can't parse RSS (possible non-RSS data)"}
       end
 
-    case result do
-      {:ok, feed, _} -> {:ok, feed}
+    case result do #  no case clause matching: {:fatal_error, :function_clause}
+      {:ok, feed, _} -> {:ok, feed} # why the ", _}" ?
       {:error, reason} -> {:error, reason}
     end
   end

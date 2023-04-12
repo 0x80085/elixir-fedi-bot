@@ -12,12 +12,24 @@ To connect the bot to your fedi account, follow the instructions on http://local
 
 # Todo 
 
-- [ ] Persist tokens gotten from fedi
+- [x] Persist tokens gotten from fedi
 - [ ] Refresh token if expired
 - [ ] Add CRON job to read and re-post RSS feeds
 - [ ] Login protect dev/dashboard 
 - [ ] Login protect connect fedi account page
-- [ ] Track/save posts to DB
+- [ ] Track/save posts to DB to prevents dupes and just for archiving
+- [ ] Grab video link from nitter/twitter and add to twoot 
+
+# ideas to repost
+
+- livechart anime releases
+- anti china news 
+- new tommy G YT vids
+- (new rev says desu YT vids)
+- new trap geek YT vids
+- new IRLMoments or irlm2 YT vids
+- twitter censoredgaming_
+- krebs on sec
 
 Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
 ## Learn more
