@@ -64,7 +64,12 @@ defmodule Bot.RSS.Cron do
   defp fetch_and_post_rss(state) do
     IO.puts("fetch_and_post_rss")
 
+    IO.puts("Index = #{state.url_index}")
+    IO.puts("Size = #{length(RssUrlsStore.get_urls())}")
+
     current_rss_url = Enum.at(RssUrlsStore.get_urls(), state.url_index)
+
+    IO.puts("current_rss_url = #{current_rss_url}")
 
     case RssFetcher.get_entries(current_rss_url) do
       {:ok, results} ->
