@@ -7,7 +7,7 @@ defmodule BotWeb.Endpoint do
   @session_options [
     store: :cookie,
     key: "_bot_key",
-    signing_salt: "BE8hRHcV",
+    signing_salt: "JZ3oMImj",
     same_site: "Lax"
   ]
 
@@ -29,6 +29,7 @@ defmodule BotWeb.Endpoint do
     socket "/phoenix/live_reload/socket", Phoenix.LiveReloader.Socket
     plug Phoenix.LiveReloader
     plug Phoenix.CodeReloader
+    plug Phoenix.Ecto.CheckRepoStatus, otp_app: :bot
   end
 
   plug Phoenix.LiveDashboard.RequestLogger,

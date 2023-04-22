@@ -10,6 +10,8 @@ defmodule Bot.Application do
     children = [
       # Start the Telemetry supervisor
       BotWeb.Telemetry,
+      # Start the Ecto repository
+      Bot.Repo,
       # Start the PubSub system
       {Phoenix.PubSub, name: Bot.PubSub},
       # Start Finch

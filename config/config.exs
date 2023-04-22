@@ -7,6 +7,9 @@
 # General application configuration
 import Config
 
+config :bot,
+  ecto_repos: [Bot.Repo]
+
 # Configures the endpoint
 config :bot, BotWeb.Endpoint,
   url: [host: "localhost"],
@@ -15,7 +18,7 @@ config :bot, BotWeb.Endpoint,
     layout: false
   ],
   pubsub_server: Bot.PubSub,
-  live_view: [signing_salt: "dHFiB69T"]
+  live_view: [signing_salt: "vFZbDEnW"]
 
 # Configures the mailer
 #
@@ -34,6 +37,18 @@ config :esbuild,
       ~w(js/app.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
     cd: Path.expand("../assets", __DIR__),
     env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
+  ]
+
+# Configure tailwind (the version is required)
+config :tailwind,
+  version: "3.2.7",
+  default: [
+    args: ~w(
+      --config=tailwind.config.js
+      --input=css/app.css
+      --output=../priv/static/assets/app.css
+    ),
+    cd: Path.expand("../assets", __DIR__)
   ]
 
 # Configures Elixir's Logger

@@ -142,6 +142,7 @@
           setup_cta.style.display = "grid"
         }
       })
+      .catch(_ => {loading.hidden = true;  setup_cta.style.display = "grid";})
       .finally(_ => loading.hidden = true)
   }
 
