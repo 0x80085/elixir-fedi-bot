@@ -23,7 +23,20 @@ defmodule Bot.RSS.Cron do
 
   def handle_info(:work, state) do
     # Do the work you desire here
-    fetch_and_post_rss(state)
+    has_credentials = Bot.Mastodon.Auth.PersistCredentials.has_stored_credentials()
+
+    if has_credentials do
+    end
+
+    case has_credentials do
+      true ->
+        IO.puts("Scraping RSS...")
+        fetch_and_post_rss(state)
+
+      _ ->
+        IO.puts("No credentials found, scraping will not be started")
+    end
+
     # Reschedule once more
     schedule_work()
 
@@ -33,7 +46,7 @@ defmodule Bot.RSS.Cron do
   end
 
   defp update_state(state) do
-    max_index = length(RssUrlsStore.get_urls())
+    max_index = length(RssUrlsStore.get_urls()) - 1
 
     incremented_url_index =
       case state.url_index == max_index do
