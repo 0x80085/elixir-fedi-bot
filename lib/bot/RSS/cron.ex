@@ -25,12 +25,9 @@ defmodule Bot.RSS.Cron do
     # Do the work you desire here
     has_credentials = Bot.Mastodon.Auth.PersistCredentials.has_stored_credentials()
 
-    if has_credentials do
-    end
-
     case has_credentials do
       true ->
-        IO.puts("Scraping RSS...")
+        IO.puts("Credentials found, starting RSS scraping ...")
         fetch_and_post_rss(state)
 
       _ ->
@@ -68,10 +65,10 @@ defmodule Bot.RSS.Cron do
     # Process.send_after(self(), :work, two_hours)
 
     # (debug) Every minute
-    IO.puts("Scheduling work")
     # one_minute = 60000
-    twenty_secs = 1000 * 20
-    Process.send_after(self(), :work, twenty_secs)
+    twenty_secs_in_ms = 1000 * 20
+    IO.puts("Queued job to run after #{twenty_secs_in_ms}ms ...")
+    Process.send_after(self(), :work, twenty_secs_in_ms)
   end
 
   defp fetch_and_post_rss(state) do

@@ -28,11 +28,11 @@ defmodule Bot.Mastodon.Auth.PersistCredentials do
     File.rm(@file_path)
   end
 
-  def persist_credentials(credentials) do
+  def encode_and_persist(credentials) do
     encoded = Jason.encode!(credentials)
+    prettified = Jason.Formatter.pretty_print(encoded)
 
     file = File.open!(@file_path, [:write])
-
-    IO.write(file, encoded)
+    IO.write(file, prettified)
   end
 end

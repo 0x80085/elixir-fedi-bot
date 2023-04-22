@@ -58,7 +58,7 @@ defmodule Bot.Mastodon.Auth.UserCredentials do
 
             is_token_valid(user_token)
 
-            Bot.Mastodon.Auth.PersistCredentials.persist_credentials(%{
+            Bot.Mastodon.Auth.PersistCredentials.encode_and_persist(%{
               client_id: client_id,
               client_secret: client_secret,
               app_token: token,
