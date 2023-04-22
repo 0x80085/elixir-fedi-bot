@@ -56,8 +56,9 @@ defmodule Bot.RSS.Cron do
 
     # (debug) Every minute
     IO.puts("Scheduling work")
-    one_minute = 60000
-    Process.send_after(self(), :work, one_minute)
+    # one_minute = 60000
+    twenty_secs = 1000 * 20
+    Process.send_after(self(), :work, twenty_secs)
   end
 
   defp fetch_and_post_rss(state) do
@@ -106,6 +107,7 @@ defmodule Bot.RSS.Cron do
       IO.puts(it.title)
       IO.puts(it.link)
       IO.puts(it.updated)
+      IO.puts(it.media)
       IO.puts("####")
       IO.puts("")
     end)

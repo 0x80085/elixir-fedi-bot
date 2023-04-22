@@ -6,7 +6,7 @@ defmodule BotWeb.Api.TestController do
     case get_rss_url(params) do
       {:ok, url} ->
         case Bot.RSS.RssFetcher.get_entries(url) do
-          {:entries, entries} ->
+          {:ok, entries} ->
             IO.puts("parsed, try send to client")
 
             try do

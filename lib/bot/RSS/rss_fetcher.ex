@@ -22,7 +22,15 @@ defmodule Bot.RSS.RssFetcher do
       {:ok, feed} ->
         parsedEntries =
           Enum.map(feed.entries, fn it ->
-            %{id: it.id, link: it.link, title: it.title, updated: it.updated}
+            %{
+              id: it.id,
+              link: it.link,
+              title: it.title,
+              # summary: it.summary,
+              # image: it.image,
+              updated: it.updated,
+              media: get_media(it)
+            }
           end)
 
         {:ok, parsedEntries}
@@ -38,12 +46,55 @@ defmodule Bot.RSS.RssFetcher do
       try do
         FeederEx.parse(data)
       rescue
-        _ in BadMapError -> {:error, "Can't parse RSS (possible non-RSS data)"}
+        _ -> {:error, "Can't parse RSS (possible non-RSS data)"}
       end
 
-    case result do #  no case clause matching: {:fatal_error, :function_clause}
-      {:ok, feed, _} -> {:ok, feed} # why the ", _}" ?
+    case result do
+      # why the ", _}" vv ?
+      {:ok, feed, _} -> {:ok, feed}
       {:error, reason} -> {:error, reason}
+      {:fatal_error, _} -> {:error, "fatal error"}
+    end
+  end
+
+  defp get_media(it) do
+    enclosure = get_enclosure(it)
+    img_src_list = get_img_src_from_summary(it)
+
+    IO.puts(enclosure || img_src_list)
+
+    enclosure || img_src_list
+  end
+
+  defp get_enclosure(it) do
+    case it.enclosure do
+      nil ->
+        nil
+
+      _ ->
+        it.enclosure.url
+    end
+  end
+
+  defp get_img_src_from_summary(it) do
+    case it.summary do
+      nil ->
+        nil
+
+      _ ->
+        img_src_regex = ~r/src\s*=\s*"(.+?)"/
+
+        img_tags = Regex.scan(img_src_regex, it.summary)
+
+        IO.puts("Found img sources = #{img_tags}")
+
+        case length(img_tags) == 0 do
+          true ->
+            nil
+
+          _ ->
+            img_tags
+        end
     end
   end
 end

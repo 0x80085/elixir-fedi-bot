@@ -2,6 +2,13 @@ defmodule Bot.RSS.RssUrlsStore do
   # use Agent # ?  not sure if needed
 
   @rss_urls [
+    # test bad fetch
+    # "https://nitter.snopyta.org/_ENTER_NAME_/rss",
+
+    # test twatter
+    # "https://nitter.snopyta.org/censoredgaming_/rss",
+
+
     # youtube channels feeds
     # CensoredGaming
     "https://www.youtube.com/feeds/videos.xml?channel_id=UCFItIX8SIs4zqhJCHpbeV1A",
@@ -17,8 +24,6 @@ defmodule Bot.RSS.RssUrlsStore do
     # Twitter rss
     # censoredgaming
     "https://nitter.snopyta.org/censoredgaming_/rss",
-    # TODO
-    "https://nitter.snopyta.org/_ENTER_NAME_/rss"
   ]
 
   def get_urls do
