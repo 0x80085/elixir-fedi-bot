@@ -1,5 +1,5 @@
 defmodule Bot.Mastodon.Actions.PostStatus do
-  def post(text, token) do
+  def post(text, token, is_dry_run) do
     headers = [
       {"Content-Type", "application/x-www-form-urlencoded; charset=utf-8"},
       {"Accept", "application/json"},
@@ -7,28 +7,45 @@ defmodule Bot.Mastodon.Actions.PostStatus do
     ]
 
     request_body =
-      URI.encode_query(%{
-        "status" => text
-        # "media_ids" => [] # How to array queryparams in elixir?
-      })
+      Plug.Conn.Query.encode(
+        %{
+          "status" => text,
+          "media_ids" => []
+        }
+      )
 
-    reponse = HTTPoison.post("https://mas.to/api/v1/statuses", request_body, headers)
+    if is_dry_run do
 
-    case reponse do
-      {:ok, result} ->
-        decoded = Jason.decode(result.body)
+      IO.inspect("DRY RUN: Was going to post:")
+      IO.inspect(request_body)
+      IO.inspect(headers)
+      IO.puts("###")
 
-        case decoded do
-          {:ok, _body} ->
-            # todo verify 200 ok
-            {:ok, "status posted"}
+      {:ok, "status printed"}
+    else
+      IO.inspect("Posting to fedi...")
+      IO.inspect("Status: #{text}")
+      IO.inspect(request_body)
+      reponse = HTTPoison.post("https://mas.to/api/v1/statuses", request_body, headers)
 
-          {:error, reason} ->
-            {:error, reason}
-        end
+      case reponse do
+        {:ok, result} ->
+          decoded = Jason.decode(result.body)
 
-      {:error, reason} ->
-        {:error, reason}
+          case decoded do
+            {:ok, body} ->
+              # todo verify 200 ok
+              IO.inspect("Status posted!")
+              IO.inspect(body)
+              {:ok, "status posted"}
+
+            {:error, reason} ->
+              {:error, reason}
+          end
+
+        {:error, reason} ->
+          {:error, reason}
+      end
     end
   end
 end

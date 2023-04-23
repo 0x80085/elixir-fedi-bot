@@ -1,8 +1,8 @@
 defmodule Bot.RSS.RssFetcher do
+  use Timex
+
   @spec get_entries(binary) :: {:error, any} | {:ok, list}
   def get_entries(rss_url) do
-    use Timex
-
     IO.puts("get_entries for #{rss_url}")
     response = HTTPoison.get(rss_url, [{"Accept-Encoding:", "utf-8"}])
 
@@ -36,7 +36,6 @@ defmodule Bot.RSS.RssFetcher do
           end)
 
         filtered = filter_by_newest(parsedEntries)
-        IO.inspect(filtered)
         {:ok, filtered}
 
       {:error, reason} ->
@@ -106,7 +105,7 @@ defmodule Bot.RSS.RssFetcher do
 
   defp filter_by_newest(entries) do
     now = DateTime.utc_now()
-    one_hour_in_s = 604_800
+    one_hour_in_s = 3600
 
     Enum.filter(entries, fn it ->
       parsed_time = parse_time_string(it.updated)

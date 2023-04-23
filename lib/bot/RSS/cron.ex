@@ -91,19 +91,7 @@ defmodule Bot.RSS.Cron do
     end
   end
 
-  defp post_to_fedi(results, is_dry_run) do
-    case is_dry_run do
-      true ->
-        IO.puts("DRY RUN Found:")
-        print_entries(results)
-
-      _ ->
-        IO.puts("Will Post!")
-        post_entries(results)
-    end
-  end
-
-  defp post_entries(entries) do
+  defp post_to_fedi(entries, is_dry_run) do
     Enum.each(entries, fn it ->
       # TODO
       random_time_in_ms = Enum.random(1000..5000)
@@ -111,19 +99,7 @@ defmodule Bot.RSS.Cron do
       :timer.sleep(random_time_in_ms)
 
       token = Mastodon.Auth.UserCredentials.get_token()
-      # todo filter out text
-      Mastodon.Actions.PostStatus.post(it, token)
-    end)
-  end
-
-  defp print_entries(entries) do
-    Enum.each(entries, fn it ->
-      IO.puts(it.title)
-      IO.puts(it.link)
-      IO.puts(it.updated)
-      IO.puts(it.media)
-      IO.puts("####")
-      IO.puts("")
+      Mastodon.Actions.PostStatus.post(it.title, token, is_dry_run)
     end)
   end
 end

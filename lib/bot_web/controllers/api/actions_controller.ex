@@ -6,7 +6,8 @@ defmodule BotWeb.Api.ActionsController do
     action =
       Bot.Mastodon.Actions.PostStatus.post(
         Map.get(params, "text"),
-        Bot.Mastodon.Auth.UserCredentials.get_token()
+        Bot.Mastodon.Auth.UserCredentials.get_token(),
+        false
       )
 
     case action do
