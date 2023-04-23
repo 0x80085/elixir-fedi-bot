@@ -57,6 +57,7 @@ defmodule Bot.MixProject do
       {:hackney, "~> 1.18"},
       {:oauth2, "~> 2.0"},
       {:timex, "~> 3.0"},
+      {:mime, "~> 2.0"},
     ]
   end
 

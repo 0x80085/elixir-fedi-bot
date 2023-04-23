@@ -1,4 +1,8 @@
 defmodule Bot.Mastodon.Actions.PostStatus do
+  alias Bot.Mastodon.Auth.ApplicationCredentials
+  alias Bot.Mastodon.Auth.UserCredentials
+  alias Bot.Mastodon.Actions.UploadImage
+
   def post(data, token, is_dry_run) do
     headers = [
       {"Content-Type", "application/x-www-form-urlencoded; charset=utf-8"},
@@ -6,11 +10,13 @@ defmodule Bot.Mastodon.Actions.PostStatus do
       {"Authorization", token}
     ]
 
-    request_body =
-      Plug.Conn.Query.encode(%{
-        "status" => data.text,
-        "media_ids" => data.media || []
-      })
+    formData = %{
+      "status" => data.text
+    }
+
+    maybe_upload_image(formData, data, is_dry_run)
+
+    request_body = Plug.Conn.Query.encode(formData)
 
     if is_dry_run do
       IO.inspect("DRY RUN: Was going to post:")
@@ -29,8 +35,8 @@ defmodule Bot.Mastodon.Actions.PostStatus do
         IO.inspect("Posting to fedi...")
         IO.inspect("id: #{data.id}")
         IO.inspect(request_body)
-
-        reponse = HTTPoison.post("https://mas.to/api/v1/statuses", request_body, headers)
+        fedi_url = ApplicationCredentials.get_fedi_url()
+        reponse = HTTPoison.post("#{fedi_url}/api/v1/statuses", request_body, headers)
 
         case reponse do
           {:ok, result} ->
@@ -64,6 +70,23 @@ defmodule Bot.Mastodon.Actions.PostStatus do
           {:error, reason} ->
             {:error, reason}
         end
+      end
+    end
+  end
+
+  defp maybe_upload_image(form_data, data, is_dry_run) do
+    if length(data.media) > 0 do
+      IO.inspect("Uploading media to fedi... is dry run? #{is_dry_run}")
+
+      if !is_dry_run do
+        token = UserCredentials.get_token()
+        fedi_url = ApplicationCredentials.get_fedi_url()
+        upload_url = "#{fedi_url}/api/v2/media"
+
+        media_id = UploadImage.upload_image(Enum.at(data.media, 0), upload_url, token)
+        IO.inspect("Uploaded media to fedi...")
+
+        Map.put_new(form_data, "media_ids", [media_id])
       end
     end
   end
