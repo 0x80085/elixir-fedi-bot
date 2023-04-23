@@ -98,7 +98,12 @@ defmodule Bot.RSS.Cron do
       :timer.sleep(random_time_in_ms)
 
       token = Mastodon.Auth.UserCredentials.get_token()
-      Mastodon.Actions.PostStatus.post(it.title, token, is_dry_run)
+
+      Mastodon.Actions.PostStatus.post(
+        %{text: it.title, media: it.media, id: it.id},
+        token,
+        is_dry_run
+      )
     end)
   end
 end

@@ -5,7 +5,11 @@ defmodule BotWeb.Api.ActionsController do
   def post_status(conn, params) do
     action =
       Bot.Mastodon.Actions.PostStatus.post(
-        Map.get(params, "text"),
+        %{
+          text: Map.get(params, "text"),
+          media: [],
+          id: Map.get(params, "text")
+          },
         Bot.Mastodon.Auth.UserCredentials.get_token(),
         false
       )

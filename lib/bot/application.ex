@@ -27,6 +27,7 @@ defmodule Bot.Application do
       # Agents aka data stores
       Bot.Mastodon.Auth.ApplicationCredentials,
       Bot.Mastodon.Auth.UserCredentials,
+      Bot.RSS.FoundUrlArchive,
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
