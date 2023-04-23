@@ -65,9 +65,9 @@ defmodule Bot.RSS.Cron do
 
     # (debug) Every minute
     # one_minute = 60000
-    # twenty_secs_in_ms = 1000 * 20
-    IO.puts("Queued job to run after #{two_hours}ms ...")
-    Process.send_after(self(), :work, two_hours)
+    twenty_secs_in_ms = 1000 * 20
+    IO.puts("Queued job to run after #{twenty_secs_in_ms}ms ...")
+    Process.send_after(self(), :work, twenty_secs_in_ms)
   end
 
   defp fetch_and_post_rss(state) do

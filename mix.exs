@@ -56,6 +56,7 @@ defmodule Bot.MixProject do
       {:feeder_ex, "~> 1.1"},
       {:hackney, "~> 1.18"},
       {:oauth2, "~> 2.0"},
+      {:timex, "~> 3.0"},
     ]
   end
 
