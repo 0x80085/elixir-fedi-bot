@@ -21,18 +21,16 @@ defmodule Bot.Mastodon.Auth.ApplicationCredentials do
           creds ->
             IO.puts("Creds found, using from files")
             IO.puts("app token: #{Map.get(creds, "app_token")}")
-            creds
+            %{
+              client_id:  Map.get(creds, "client_id"),
+              client_secret: Map.get(creds, "client_secret"),
+              token: Map.get(creds, "app_token"),
+              client: nil
+            }
         end
       end,
       name: __MODULE__
     )
-  end
-
-  @spec get_client() :: OAuth2.Client
-  def get_client() do
-    Agent.get(__MODULE__, fn state ->
-      state.client
-    end)
   end
 
   @spec get_token :: String
@@ -58,7 +56,6 @@ defmodule Bot.Mastodon.Auth.ApplicationCredentials do
 
   def set_token(token) do
     Agent.update(__MODULE__, fn state ->
-      # Bot.Mastodon.Auth.PersistCredentials
       %{
         token: token,
         client_id: state.client_id,

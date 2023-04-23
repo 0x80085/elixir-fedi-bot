@@ -7,7 +7,22 @@ defmodule Bot.Mastodon.Auth.UserCredentials do
 
   def start_link(_opts) do
     Agent.start_link(
-      fn -> @default_state end,
+      fn ->
+        creds = Bot.Mastodon.Auth.PersistCredentials.get_from_file()
+
+        case creds do
+          nil ->
+            IO.puts("No user token found")
+            @default_state
+
+          creds ->
+            IO.puts("User token found, using from files")
+            IO.puts("user_token: #{Map.get(creds, "user_token")}")
+            %{
+              token: Map.get(creds, "user_token"),
+            }
+        end
+      end,
       name: __MODULE__
     )
   end
