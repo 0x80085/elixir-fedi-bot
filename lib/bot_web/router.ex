@@ -15,6 +15,9 @@ defmodule BotWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug :fetch_session
+    plug :fetch_live_flash
+    plug :fetch_current_user
   end
 
   scope "/", BotWeb do
@@ -26,7 +29,7 @@ defmodule BotWeb.Router do
 
   # Other scopes may use custom stacks.
   scope "/api", BotWeb do
-    pipe_through :api
+    pipe_through [:api, :require_authenticated_user]
 
     # Setup the bot / connect to a mastodon instance
     get "/setup", Api.AuthController, :connect_application

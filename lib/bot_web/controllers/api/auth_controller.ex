@@ -3,7 +3,6 @@ defmodule BotWeb.Api.AuthController do
 
   def has_credentials(conn, _params) do
     try do
-
       json(conn,  %{has_credentials: Bot.Mastodon.Auth.PersistCredentials.has_stored_credentials()})
     catch
       _ ->
