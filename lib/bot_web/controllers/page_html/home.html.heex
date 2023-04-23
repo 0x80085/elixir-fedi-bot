@@ -162,16 +162,17 @@
     try {
       loading.hidden = false
       setup_cta.style.display = "none"
+      
+      new URL(fediUrlInput.value);
 
       if (!/^https:\/\/(?:[\w_-]+\.)+[\w]+(?:[\w\/_.-]*)?$/.test(fediUrlInput.value)) {
         throw new Error("Not a HTTPS URL");
       }
 
-      var url = new URL(fediUrlInput.value);
+      var url = new URL("/api/setup", window.location.origin);
+      url.searchParams.append('fedi_url', fediUrlInput.value);
 
-      var params = encodeURIComponent(fediUrlInput.value);
-
-      fetch(`/api/setup?fedi_url=${params}`)
+      fetch(url)
         .then(response => response.json())
         .then(({ auth_url }) => {
           connect_link.hidden = false
