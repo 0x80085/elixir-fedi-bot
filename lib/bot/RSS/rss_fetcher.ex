@@ -28,19 +28,31 @@ defmodule Bot.RSS.RssFetcher do
               id: it.id,
               link: it.link,
               title: it.title,
-              # summary: it.summary,
+              summary: it.summary,
               # image: it.image,
               updated: it.updated,
               media: get_media(it)
             }
           end)
 
-        filtered = filter_by_newest(parsedEntries)
-        {:ok, filtered}
+        {:ok, parsedEntries}
 
       {:error, reason} ->
         {:error, reason}
     end
+  end
+
+  def filter_by_newest(entries) do
+    now = DateTime.utc_now()
+    one_hour_in_s = 3600
+
+    Enum.filter(entries, fn it ->
+      parsed_time = parse_time_string(it.updated)
+
+      if parsed_time,
+        do: DateTime.diff(now, parsed_time, :second) < one_hour_in_s,
+        else: false
+    end)
   end
 
   @spec try_parse_rss(binary) :: {:ok, FeederEx.Feed} | {:error, String.t()}
@@ -101,19 +113,6 @@ defmodule Bot.RSS.RssFetcher do
             img_tags
         end
     end
-  end
-
-  defp filter_by_newest(entries) do
-    now = DateTime.utc_now()
-    one_hour_in_s = 3600
-
-    Enum.filter(entries, fn it ->
-      parsed_time = parse_time_string(it.updated)
-
-      if parsed_time,
-        do: DateTime.diff(now, parsed_time, :second) < one_hour_in_s,
-        else: false
-    end)
   end
 
   defp parse_time_string(value) do

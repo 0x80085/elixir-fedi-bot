@@ -80,9 +80,10 @@ defmodule Bot.RSS.Cron do
 
     case RssFetcher.get_entries(current_rss_url) do
       {:ok, results} ->
-        IO.puts("Got #{length(results)} results")
-        IO.inspect(results)
-        post_to_fedi(results, state.is_dry_run)
+        newest_entries = RssFetcher.filter_by_newest(results)
+        IO.puts("Got #{length(newest_entries)} results")
+        IO.inspect(newest_entries)
+        post_to_fedi(newest_entries, state.is_dry_run)
 
       {:error, reason} ->
         IO.puts("CRON RSS failed")
