@@ -31,7 +31,7 @@ defmodule Bot.RSS.FoundUrlArchive do
   def add_entry_id(entry_id) do
     Agent.update(__MODULE__, fn state ->
       %{
-        entries: Enum.concat(state.entries, [entry_id])
+        entries: Enum.concat([state.entries, [%{id: entry_id}]])
       }
     end)
   end

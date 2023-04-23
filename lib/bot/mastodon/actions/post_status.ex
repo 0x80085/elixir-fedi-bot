@@ -24,6 +24,7 @@ defmodule Bot.Mastodon.Actions.PostStatus do
 
       if was_already_posted do
         IO.inspect("Already posted, ignoring: #{data.id}")
+        {:ok, "status was already posted"}
       else
         IO.inspect("Posting to fedi...")
         IO.inspect("id: #{data.id}")
