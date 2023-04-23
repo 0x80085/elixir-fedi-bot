@@ -19,8 +19,8 @@ To connect the bot to your fedi account, follow the instructions on http://local
 - [x] Login protect connect fedi account page
 - [x] Enter fedi url to connect to 
 - [ ] Ability to update/reset bot connection config (delete the credentials.json file)
-- [ ] Track/save posts to DB to prevents dupes and just for archiving
-- [ ] Grab video link from nitter/twitter and add to twoot 
+- [ ] Track/save posts to DB to prevent dupes
+- [/] Grab video link from nitter/twitter and add to twoot 
 
 # ideas to repost
 

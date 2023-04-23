@@ -106,29 +106,37 @@ defmodule Bot.RSS.RssFetcher do
 
   defp filter_by_newest(entries) do
     now = DateTime.utc_now()
-    one_hour_in_s = 604800
+    one_hour_in_s = 604_800
 
     Enum.filter(entries, fn it ->
-      case Timex.parse(it.updated, "{ISO:Extended:Z}") do
-        {:ok, updatedTime} ->
-          DateTime.diff(now, updatedTime, :second) < one_hour_in_s
+      parsed_time = parse_time_string(it.updated)
 
-        {:error, error} ->
-          # IO.inspect(error)
-          # IO.puts("Could not parse as ISO Extended #{it.updated}")
-
-          case Timex.parse(it.updated, "{RFC1123}") do
-            {:ok, parsedTime} ->
-              # IO.puts("ok parsed as {RFC1123}")
-              # IO.inspect(parsedTime)
-              DateTime.diff(now, parsedTime, :second) < one_hour_in_s
-
-            {:error, error} ->
-              IO.inspect(error)
-              IO.puts("Could not parse #{it.updated} at all")
-              false
-          end
-      end
+      if parsed_time,
+        do: DateTime.diff(now, parsed_time, :second) < one_hour_in_s,
+        else: false
     end)
+  end
+
+  defp parse_time_string(value) do
+    case Timex.parse(value, "{ISO:Extended:Z}") do
+      {:ok, updatedTime} ->
+        updatedTime
+
+      {:error, _} ->
+        # IO.inspect(error)
+        # IO.puts("Could not parse as ISO Extended #{value}")
+
+        case Timex.parse(value, "{RFC1123}") do
+          {:ok, parsedTime} ->
+            # IO.puts("ok parsed as {RFC1123}")
+            # IO.inspect(parsedTime)
+            parsedTime
+
+          {:error, error} ->
+            IO.inspect(error)
+            IO.puts("Could not parse #{value} at all")
+            nil
+        end
+    end
   end
 end
