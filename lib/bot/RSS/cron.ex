@@ -71,8 +71,6 @@ defmodule Bot.RSS.Cron do
   end
 
   defp fetch_and_post_rss(state) do
-    IO.puts("fetch_and_post_rss")
-
     IO.puts("Index = #{state.url_index}")
     IO.puts("Size = #{length(RssUrlsStore.get_urls())}")
 
@@ -83,6 +81,7 @@ defmodule Bot.RSS.Cron do
     case RssFetcher.get_entries(current_rss_url) do
       {:ok, results} ->
         IO.puts("Got #{length(results)} results")
+        IO.inspect(results)
         post_to_fedi(results, state.is_dry_run)
 
       {:error, reason} ->
