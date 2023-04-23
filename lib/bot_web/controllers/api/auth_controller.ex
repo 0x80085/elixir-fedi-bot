@@ -12,8 +12,9 @@ defmodule BotWeb.Api.AuthController do
   end
 
   @spec connect_application(Plug.Conn.t(), any) :: Plug.Conn.t()
-  def connect_application(conn, _params) do
-    creds = Bot.Mastodon.Auth.ApplicationCredentials.setup_credentials()
+  def connect_application(conn, params) do
+
+    creds = Bot.Mastodon.Auth.ApplicationCredentials.setup_credentials(Map.get(params, "fedi_url"))
 
     case creds do
       {:ok, credentials} ->

@@ -5,6 +5,7 @@ defmodule Bot.Mastodon.Auth.ApplicationCredentials do
     client_id: nil,
     client_secret: nil,
     token: nil,
+    fedi_url: nil,
     client: nil
   }
 
@@ -20,11 +21,14 @@ defmodule Bot.Mastodon.Auth.ApplicationCredentials do
 
           creds ->
             IO.puts("Creds found, using from files")
+            IO.puts("fedi instance url: #{Map.get(creds, "fedi_url")}")
             IO.puts("app token: #{Map.get(creds, "app_token")}")
+
             %{
-              client_id:  Map.get(creds, "client_id"),
+              client_id: Map.get(creds, "client_id"),
               client_secret: Map.get(creds, "client_secret"),
               token: Map.get(creds, "app_token"),
+              fedi_url: Map.get(creds, "fedi_url"),
               client: nil
             }
         end
@@ -54,12 +58,20 @@ defmodule Bot.Mastodon.Auth.ApplicationCredentials do
     end)
   end
 
+  @spec get_fedi_url :: String
+  def get_fedi_url() do
+    Agent.get(__MODULE__, fn state ->
+      state.fedi_url
+    end)
+  end
+
   def set_token(token) do
     Agent.update(__MODULE__, fn state ->
       %{
         token: token,
         client_id: state.client_id,
         client_secret: state.client_secret,
+        fedi_url: state.fedi_url,
         client: state.client
       }
     end)
@@ -71,6 +83,7 @@ defmodule Bot.Mastodon.Auth.ApplicationCredentials do
         client_id: client_id,
         token: state.token,
         client_secret: state.client_secret,
+        fedi_url: state.fedi_url,
         client: state.client
       }
     end)
@@ -82,22 +95,33 @@ defmodule Bot.Mastodon.Auth.ApplicationCredentials do
         client_secret: client_secret,
         client_id: state.client_id,
         token: state.token,
+        fedi_url: state.fedi_url,
         client: state.client
       }
     end)
   end
 
-  @spec setup_credentials ::
-          {:error, any}
-          | {:ok, %{auth_url: <<_::64, _::_*8>>, client_id: any, client_secret: any, token: any}}
-  def setup_credentials() do
-    case get_client_connect_info() do
+  def set_fedi_url(fedi_url) do
+    Agent.update(__MODULE__, fn state ->
+      %{
+        client_secret: state.client_secret,
+        client_id: state.client_id,
+        token: state.token,
+        fedi_url: fedi_url,
+        client: state.client
+      }
+    end)
+  end
+
+  def setup_credentials(fedi_url) do
+    case get_client_connect_info(fedi_url) do
       {:ok, info} ->
-        client_info = create_client(info)
+        client_info = create_client(info, fedi_url)
 
         set_client_id(client_info.client_id)
         set_client_secret(info.client_secret)
         set_token(client_info.token)
+        set_fedi_url(fedi_url)
 
         {:ok,
          %{
@@ -105,17 +129,16 @@ defmodule Bot.Mastodon.Auth.ApplicationCredentials do
            client_secret: info.client_secret,
            token: client_info.token,
            auth_url:
-             "https://mas.to/oauth/authorize?client_id=#{client_info.client_id}&scope=read+write+push&redirect_uri=urn:ietf:wg:oauth:2.0:oob&response_type=code"
+             "#{fedi_url}/oauth/authorize?client_id=#{client_info.client_id}&scope=read+write+push&redirect_uri=urn:ietf:wg:oauth:2.0:oob&response_type=code"
          }}
 
       {:error, reason} ->
         IO.puts("encountered error during setup credentials: #{reason}")
-
         {:error, reason}
     end
   end
 
-  def get_client_connect_info() do
+  def get_client_connect_info(fedi_url) do
     IO.puts("getting connect info")
 
     payload = %{
@@ -132,7 +155,7 @@ defmodule Bot.Mastodon.Auth.ApplicationCredentials do
       {"Content-Type", "application/x-www-form-urlencoded; charset=utf-8"}
     ]
 
-    response = HTTPoison.post("https://mas.to/api/v1/apps", request_body, headers)
+    response = HTTPoison.post("#{fedi_url}/api/v1/apps", request_body, headers)
 
     case response do
       {:ok, result} ->
@@ -158,7 +181,7 @@ defmodule Bot.Mastodon.Auth.ApplicationCredentials do
     end
   end
 
-  def create_client(connect_info) do
+  def create_client(connect_info, fedi_url) do
     IO.puts("Create client and get token")
     IO.puts(connect_info.client_id)
     IO.puts(connect_info.client_secret)
@@ -169,8 +192,7 @@ defmodule Bot.Mastodon.Auth.ApplicationCredentials do
         strategy: OAuth2.Strategy.ClientCredentials,
         client_id: connect_info.client_id,
         client_secret: connect_info.client_secret,
-        # todo get from env
-        site: "https://mas.to"
+        site: "#{fedi_url}"
       )
 
     client = OAuth2.Client.get_token!(client)
@@ -183,7 +205,7 @@ defmodule Bot.Mastodon.Auth.ApplicationCredentials do
 
         Bot.Mastodon.Auth.VerifyCredentials.verify_token(
           token,
-          "https://mas.to/api/v1/apps/verify_credentials"
+          "#{fedi_url}/api/v1/apps/verify_credentials"
         )
 
         %{

@@ -55,6 +55,11 @@
               Click here to setup your bot!
             </span>
           </span>
+          <div class="mt-10 ">
+            <input placeholder="Fedi URL... "
+              class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900"
+              id="fedi_url_here" />
+          </div>
         </div>
       </div>
     </div>
@@ -112,6 +117,7 @@
 <script>
   var is_bot_connected_to_fedi = false;
 
+  var fediUrlInput = document.getElementById("fedi_url_here");
 
   var setup_cta = document.getElementById("setup_cta")
   setup_cta.style.display = "none"
@@ -142,24 +148,57 @@
           setup_cta.style.display = "grid"
         }
       })
-      .catch(_ => {loading.hidden = true;  setup_cta.style.display = "grid";})
+      .catch(_ => { loading.hidden = true; setup_cta.style.display = "grid"; })
       .finally(_ => loading.hidden = true)
   }
 
   function setupBot() {
-    loading.hidden = false
-    setup_cta.style.display = "none"
 
-    fetch("/api/setup")
-      .then(response => response.json())
-      .then(({ auth_url }) => {
-        connect_link.hidden = false
-        code_input.hidden = false
-        instructions.hidden = false
-        more_instructions.hidden = false
+    if (!fediUrlInput.value) {
+      alert("Enter URL please");
+      return;
+    }
 
-        connect_link.href = auth_url
-      }).finally(_ => loading.hidden = true);
+    try {
+      loading.hidden = false
+      setup_cta.style.display = "none"
+
+      if (!/^https:\/\/(?:[\w_-]+\.)+[\w]+(?:[\w\/_.-]*)?$/.test(fediUrlInput.value)) {
+        throw new Error("Not a HTTPS URL");
+      }
+
+      var url = new URL(fediUrlInput.value);
+
+      var params = encodeURIComponent(fediUrlInput.value);
+
+      fetch(`/api/setup?fedi_url=${params}`)
+        .then(response => response.json())
+        .then(({ auth_url }) => {
+          connect_link.hidden = false
+          code_input.hidden = false
+          instructions.hidden = false
+          more_instructions.hidden = false
+
+          connect_link.href = auth_url
+        })
+        .catch(e => {
+          alert("CHeck the URL, possibly not a fedi instance or cannot run bot through it.")
+          setup_cta.style.display = "grid"
+          loading.hidden = true
+          throw e;
+        })
+        .finally(_ => loading.hidden = true);
+
+    } catch (error) {
+      console.log("error")
+      console.log(error)
+      alert(error.message ?? error)
+      setup_cta.style.display = "grid"
+      loading.hidden = true
+      return;
+    }
+
+
   }
 
   function connectAccount(event) {

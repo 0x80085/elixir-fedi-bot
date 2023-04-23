@@ -1,4 +1,5 @@
 defmodule Bot.Mastodon.Auth.UserCredentials do
+  alias Bot.Mastodon
   use Agent
 
   @default_state %{
@@ -77,7 +78,8 @@ defmodule Bot.Mastodon.Auth.UserCredentials do
               client_id: client_id,
               client_secret: client_secret,
               app_token: token,
-              user_token: user_token
+              user_token: user_token,
+              fedi_url: Mastodon.Auth.ApplicationCredentials.get_fedi_url()
             })
 
             {:ok, user_token}
