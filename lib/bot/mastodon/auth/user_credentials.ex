@@ -1,5 +1,5 @@
 defmodule Bot.Mastodon.Auth.UserCredentials do
-  alias Bot.Mastodon
+
   use Agent
 
   @default_state %{
@@ -19,8 +19,9 @@ defmodule Bot.Mastodon.Auth.UserCredentials do
           creds ->
             IO.puts("User token found, using from files")
             IO.puts("user_token: #{Map.get(creds, "user_token")}")
+
             %{
-              token: Map.get(creds, "user_token"),
+              token: Map.get(creds, "user_token")
             }
         end
       end,
@@ -44,7 +45,8 @@ defmodule Bot.Mastodon.Auth.UserCredentials do
   end
 
   def authorize_bot_to_user(client_id, client_secret, token, user_code) do
-    url = "https://mas.to/oauth/token"
+    fedi_url = Bot.Mastodon.Auth.ApplicationCredentials.get_fedi_url()
+    url = "#{fedi_url}/oauth/token"
 
     headers = [
       {"Content-Type", "application/x-www-form-urlencoded; charset=utf-8"},
@@ -79,7 +81,7 @@ defmodule Bot.Mastodon.Auth.UserCredentials do
               client_secret: client_secret,
               app_token: token,
               user_token: user_token,
-              fedi_url: Mastodon.Auth.ApplicationCredentials.get_fedi_url()
+              fedi_url: Bot.Mastodon.Auth.ApplicationCredentials.get_fedi_url()
             })
 
             {:ok, user_token}
@@ -94,9 +96,11 @@ defmodule Bot.Mastodon.Auth.UserCredentials do
   end
 
   def is_token_valid(user_token) do
+    fedi_url = Bot.Mastodon.Auth.ApplicationCredentials.get_fedi_url()
+
     case Bot.Mastodon.Auth.VerifyCredentials.verify_token(
            user_token,
-           "https://mas.to/api/v1/accounts/verify_credentials"
+           "#{fedi_url}/api/v1/accounts/verify_credentials"
          ) do
       {:ok, _result} ->
         set_token(user_token)
