@@ -1,17 +1,19 @@
 defmodule Bot.Mastodon.Actions.UploadImage do
   require Logger
 
-  def upload_image(url_remote, upload_url, token) do
-    Logger.debug("Loading image from URL: #{url_remote}")
+  def upload_image(media_url, upload_endpoint, token) do
+    Logger.debug("Loading image from URL: #{media_url}")
 
-    mime_type = MIME.from_path(url_remote)
+    mime_type = MIME.from_path(media_url)
+    IO.inspect(mime_type)
     Logger.debug("Detected MIME type: #{mime_type}")
 
-    case HTTPoison.get(url_remote) do
+    case HTTPoison.get(media_url) do
       {:ok, %{body: body}} ->
-        File.write("temp.jpeg", body)
+        temp_file_path = "temp_file"
+        File.write!(temp_file_path, body)
 
-        Logger.debug("Uploading image to endpoint: #{upload_url}")
+        Logger.debug("Uploading image to endpoint: #{upload_endpoint}")
 
         headers = [
           {"Content-Type", "multipart/form-data"},
@@ -19,17 +21,10 @@ defmodule Bot.Mastodon.Actions.UploadImage do
           {"Accept", "application/json"}
         ]
 
-        response =
-          HTTPoison.post(
-            upload_url,
-            %{
-              file: {:file, "temp.jpeg", mime_type}
-            },
-            headers,
-            timeout: 30_000
-          )
+        post_upload_response =
+          HTTPoison.post(upload_endpoint, {:multipart, [{:file, temp_file_path}]}, headers)
 
-        case response do
+        case post_upload_response do
           {:ok, %{body: body}} ->
             decoded = Jason.decode!(body)
             IO.inspect(decoded)

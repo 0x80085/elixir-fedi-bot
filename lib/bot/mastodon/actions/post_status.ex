@@ -10,13 +10,13 @@ defmodule Bot.Mastodon.Actions.PostStatus do
       {"Authorization", token}
     ]
 
-    formData = %{
+    form_data = %{
       "status" => data.text
     }
 
-    maybe_upload_image(formData, data, is_dry_run)
+    updated_form_data = maybe_upload_image(form_data, data, is_dry_run)
 
-    request_body = Plug.Conn.Query.encode(formData)
+    request_body = Plug.Conn.Query.encode(updated_form_data)
 
     if is_dry_run do
       IO.inspect("DRY RUN: Was going to post:")
@@ -75,19 +75,46 @@ defmodule Bot.Mastodon.Actions.PostStatus do
   end
 
   defp maybe_upload_image(form_data, data, is_dry_run) do
-    if length(data.media) > 0 do
-      IO.inspect("Uploading media to fedi... is dry run? #{is_dry_run}")
+    case data.media do
+      nil ->
+        form_data
 
-      if !is_dry_run do
-        token = UserCredentials.get_token()
-        fedi_url = ApplicationCredentials.get_fedi_url()
-        upload_url = "#{fedi_url}/api/v2/media"
+      _ ->
+        if is_list(data.media) && length(data.media) > 0 do
+          IO.inspect(data)
+          IO.inspect("Uploading media to fedi... is dry run? #{is_dry_run}")
 
-        media_id = UploadImage.upload_image(Enum.at(data.media, 0), upload_url, token)
-        IO.inspect("Uploaded media to fedi...")
+          if !is_dry_run do
+            token = UserCredentials.get_token()
+            fedi_url = ApplicationCredentials.get_fedi_url()
+            upload_url = "#{fedi_url}/api/v2/media"
 
-        Map.put_new(form_data, "media_ids", [media_id])
-      end
+            media_id = UploadImage.upload_image(Enum.at(data.media, 0), upload_url, token)
+            IO.inspect("Uploaded media to fedi...")
+
+            Map.put_new(form_data, "media_ids", [media_id])
+
+            form_data
+          end
+        else
+          IO.inspect(data)
+          IO.inspect("Uploading media to fedi... is dry run? #{is_dry_run}")
+
+          if !is_dry_run do
+            token = UserCredentials.get_token()
+            fedi_url = ApplicationCredentials.get_fedi_url()
+            upload_url = "#{fedi_url}/api/v2/media"
+
+            media_id = UploadImage.upload_image(data.media, upload_url, token)
+            IO.inspect("Uploaded media to fedi...")
+
+            Map.put_new(form_data, "media_ids", [media_id])
+
+            form_data
+          end
+        end
     end
+
+    form_data
   end
 end

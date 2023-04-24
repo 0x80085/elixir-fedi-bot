@@ -88,6 +88,11 @@
             class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900"
             id="message_here" />
         </div>
+        <div class="mt-10 ">
+          <input placeholder="Enter image url here... " onkeydown="postMessage(event)"
+            class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900"
+            id="img_url_here" />
+        </div>
       </div>
     </div>
 
@@ -106,6 +111,7 @@
   var connect_link = document.getElementById("url_here")
   var code_input = document.getElementById('paste_code_here')
   var msg_input = document.getElementById('message_here')
+  var img_url_input = document.getElementById('img_url_here')
   var instructions = document.getElementById('instructions')
   var more_instructions = document.getElementById('more_instructions')
   var success_and_post = document.getElementById('success_and_post')
@@ -142,7 +148,7 @@
     try {
       loading.hidden = false
       setup_cta.style.display = "none"
-      
+
       new URL(fediUrlInput.value);
 
       if (!/^https:\/\/(?:[\w_-]+\.)+[\w]+(?:[\w\/_.-]*)?$/.test(fediUrlInput.value)) {
@@ -206,11 +212,14 @@
   function postMessage(event) {
     var pressedEnter = event.keyCode == 13
     if (pressedEnter && msg_input) {
-      
-       var url = new URL("api/post", window.location.origin);
+
+      var url = new URL("api/post", window.location.origin);
       url.searchParams.append('text', msg_input.value);
-      
-      
+      if (img_url_input.value) {
+        url.searchParams.append('media_url', img_url_input.value);
+      }
+
+
       fetch(url)
         .then(res => res.json())
         .then(console.log)
