@@ -4,14 +4,25 @@
 
 /* This file is for your main application CSS */
 
+body{
+    font-family: 'Inter', sans-serif;
+}
 
-#user-menu{
+#user-menu {
     background: #ffffff;
+    box-shadow: 0px 0px 4px rgba(70, 70, 70, 0.4)
 }
 
-#banner-right{
+#banner-right {
     overflow: hidden;
+    box-shadow:
+     inset -30rem -30em 1px rgba(255, 255, 255, 0.1),
+     inset -20rem -20em 1px rgba(0, 0, 0, 0.4),
+     inset -10rem -10em 1px rgba(59, 14, 0, 0.4)
+     ;
+    
 }
+
 .center-cropped-img {
     object-fit: cover;
     /* Do not scale the image */
