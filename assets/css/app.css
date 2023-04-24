@@ -3,3 +3,21 @@
 @import "tailwindcss/utilities";
 
 /* This file is for your main application CSS */
+
+
+#user-menu{
+    background: #ffffff;
+}
+
+#banner-right{
+    overflow: hidden;
+}
+.center-cropped-img {
+    object-fit: cover;
+    /* Do not scale the image */
+    object-position: center;
+    /* Center the image within the element */
+    height: 100%;
+    width: 100%;
+    filter: grayscale(0%) blur(2px) saturate(150%) opacity(75%) contrast(123%) invert(0%);
+}
