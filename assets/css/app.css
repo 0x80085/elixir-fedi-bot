@@ -25,6 +25,8 @@ body {
         inset -20rem -20em 1px rgba(0, 0, 0, 0.4),
         inset -10rem -10em 1px rgba(59, 14, 0, 0.6);
 
+
+
 }
 
 .center-cropped-img {
@@ -35,6 +37,22 @@ body {
     height: 100%;
     width: 100%;
     filter: grayscale(0%) blur(1px) saturate(150%) opacity(85%) contrast(123%) invert(0%);
+    animation-duration: 10s;
+    animation-name: move;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+@keyframes move {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.02);
+    }
+    100% {
+        transform: scale(1);
+    }
 }
 
 .flip-horizontally {
