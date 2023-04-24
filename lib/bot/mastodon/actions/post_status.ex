@@ -10,13 +10,18 @@ defmodule Bot.Mastodon.Actions.PostStatus do
       {"Authorization", token}
     ]
 
+    media_url = maybe_upload_image(data, is_dry_run)
+
     form_data = %{
-      "status" => data.text
+      "status" => data.text,
+      "media_ids" => [media_url]
     }
 
-    updated_form_data = maybe_upload_image(form_data, data, is_dry_run)
+    IO.inspect("######### form_data")
+    IO.inspect(form_data)
+    IO.inspect("######### END  form_data")
 
-    request_body = Plug.Conn.Query.encode(updated_form_data)
+    request_body = Plug.Conn.Query.encode(form_data)
 
     if is_dry_run do
       IO.inspect("DRY RUN: Was going to post:")
@@ -34,6 +39,9 @@ defmodule Bot.Mastodon.Actions.PostStatus do
       else
         IO.inspect("Posting to fedi...")
         IO.inspect("id: #{data.id}")
+        IO.inspect("form_data")
+        IO.inspect(form_data)
+        IO.inspect("request_body")
         IO.inspect(request_body)
         fedi_url = ApplicationCredentials.get_fedi_url()
         reponse = HTTPoison.post("#{fedi_url}/api/v1/statuses", request_body, headers)
@@ -74,10 +82,10 @@ defmodule Bot.Mastodon.Actions.PostStatus do
     end
   end
 
-  defp maybe_upload_image(form_data, data, is_dry_run) do
+  defp maybe_upload_image(data, is_dry_run) do
     case data.media do
       nil ->
-        form_data
+        nil
 
       _ ->
         if is_list(data.media) && length(data.media) > 0 do
@@ -89,12 +97,14 @@ defmodule Bot.Mastodon.Actions.PostStatus do
             fedi_url = ApplicationCredentials.get_fedi_url()
             upload_url = "#{fedi_url}/api/v2/media"
 
-            media_id = UploadImage.upload_image(Enum.at(data.media, 0), upload_url, token)
-            IO.inspect("Uploaded media to fedi...")
+            {:ok, media_id} = UploadImage.upload_image(Enum.at(data.media, 0), upload_url, token)
+            IO.inspect("Uploaded media #{media_id} to fedi...")
+            :timer.sleep(5_000) # allow procesing of image
 
-            Map.put_new(form_data, "media_ids", [media_id])
+            IO.inspect("media_id")
+            IO.inspect(media_id)
 
-            form_data
+            media_id
           end
         else
           IO.inspect(data)
@@ -105,16 +115,13 @@ defmodule Bot.Mastodon.Actions.PostStatus do
             fedi_url = ApplicationCredentials.get_fedi_url()
             upload_url = "#{fedi_url}/api/v2/media"
 
-            media_id = UploadImage.upload_image(data.media, upload_url, token)
+            {:ok, media_id} = UploadImage.upload_image(data.media, upload_url, token)
             IO.inspect("Uploaded media to fedi...")
+            :timer.sleep(5_000) # allow procesing of image
 
-            Map.put_new(form_data, "media_ids", [media_id])
-
-            form_data
+            media_id
           end
         end
     end
-
-    form_data
   end
 end

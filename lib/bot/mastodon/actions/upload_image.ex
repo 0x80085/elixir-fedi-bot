@@ -28,9 +28,9 @@ defmodule Bot.Mastodon.Actions.UploadImage do
           {:ok, %{body: body}} ->
             decoded = Jason.decode!(body)
             IO.inspect(decoded)
-            IO.puts(decoded.url)
-            decoded.id
-            {:ok, decoded.id}
+
+           IO.inspect(Map.get(decoded, "id", nil))
+            {:ok, Map.get(decoded, "id", nil)}
 
           {:error, %HTTPoison.Error{reason: reason}} ->
             {:error, reason}

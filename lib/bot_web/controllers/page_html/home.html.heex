@@ -211,7 +211,7 @@
 
   function postMessage(event) {
     var pressedEnter = event.keyCode == 13
-    if (pressedEnter && msg_input) {
+    if (pressedEnter && msg_input.value && msg_input.value.trim()) {
 
       var url = new URL("api/post", window.location.origin);
       url.searchParams.append('text', msg_input.value);
