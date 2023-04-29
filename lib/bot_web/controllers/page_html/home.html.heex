@@ -1,11 +1,11 @@
 <link phx-track-static rel="stylesheet" />
 <.flash_group flash={@flash} />
 <div class="left-[40rem] fixed inset-y-0 right-0 z-0 hidden lg:block xl:left-[50rem]" id="banner-right">
-    <img class="center-cropped-img" src={~p"/images/banner-right.png"} alt="banner">
+  <img class="center-cropped-img" src={~p"/images/banner-right.png"} alt="banner">
 </div>
 <div class="px-4 py-10 sm:px-6 sm:py-28 lg:px-8 xl:px-28 xl:py-32">
   <div class="mx-auto max-w-xl lg:mx-0">
-    
+
     <img class="flip-horizontally" src={~p"/images/logo.jpg"} alt="logo" id="logo">
 
     <h1 class="text-brand mt-10 flex items-center text-sm font-semibold leading-6">
@@ -18,27 +18,28 @@
       Fedi Bot Chan
     </p> -->
     <div class="flex">
-      <div class="w-full sm:w-auto">
-        <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2" id="setup_cta">
-          <span class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 sm:py-6"
-            onclick="setupBot()">
-            <span
-              class="absolute inset-0 rounded-2xl bg-zinc-50 transition group-hover:bg-zinc-100 sm:group-hover:scale-105">
-            </span>
-            <span class="relative flex items-center gap-4 sm:flex-col" style="text-align: center;">
-              <div>
-                🤖
-              </div>
-              Click here to setup your bot!
-            </span>
-          </span>
-          <div class="mt-10 ">
-            <input placeholder="Fedi URL... "
-              class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900"
-              style="width: 100%;"
-              id="fedi_url_here" />
+      <div class="w-full sm:w-100">
+        <form id="url-form">
+          <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2" id="setup_cta">
+            <button class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 sm:py-6">
+              <span
+                class="absolute inset-0 rounded-2xl bg-zinc-50 transition group-hover:bg-zinc-100 sm:group-hover:scale-105">
+              </span>
+              <span class="relative flex items-center gap-4 sm:flex-col" style="text-align: center;">
+                <div>
+                  🤖
+                </div>
+                Click here to setup your bot!
+              </span>
+            </button>
+            <div class="mt-10 ">
+              <input placeholder="Enter a HTTPS URL..."
+                class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900" required
+                title="https://domain.tld" style="width: 100%;" id="fedi_url_here"
+                pattern="[Hh][Tt][Tt][Pp][Ss]?:\/\/(?:(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)(?:\.(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)*(?:\.(?:[a-zA-Z\u00a1-\uffff]{2,}))(?::\d{2,5})?(?:\/[^\s]*)?" />
+            </div>
           </div>
-        </div>
+        </form>
       </div>
     </div>
     <div class="flex" style=" flex-direction: column; align-items: center;">
@@ -73,7 +74,7 @@
         <p>
           🤖💬
         </p>
-        <h1 class="text-brand text-sm font-semibold leading-6" >
+        <h1 class="text-brand text-sm font-semibold leading-6">
           Fedi-bot chan at your service!
         </h1>
         <div class="mt-10 ">
@@ -100,6 +101,7 @@
 <script>
   var is_bot_connected_to_fedi = false;
 
+  var fediUrlForm = document.getElementById("url-form");
   var fediUrlInput = document.getElementById("fedi_url_here");
 
   var setup_cta = document.getElementById("setup_cta")
@@ -114,6 +116,8 @@
   var more_instructions = document.getElementById('more_instructions')
   var success_and_post = document.getElementById('success_and_post')
   code_input.value = ""
+
+
 
   function get_has_credentials() {
     loading.hidden = false
@@ -136,12 +140,8 @@
       .finally(_ => loading.hidden = true)
   }
 
-  function setupBot() {
-
-    if (!fediUrlInput.value) {
-      alert("Enter URL please");
-      return;
-    }
+  function setupBot(event) {
+    event.preventDefault();
 
     try {
       loading.hidden = false
@@ -183,8 +183,13 @@
       return;
     }
 
-
   }
+
+  console.log(fediUrlForm);
+  fediUrlForm.addEventListener("submit", event => {
+    this.setupBot(event)
+    event.preventDefault()
+  });
 
   function connectAccount(event) {
     var pressedEnter = event.keyCode == 13
