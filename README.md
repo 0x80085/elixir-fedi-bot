@@ -13,6 +13,7 @@ To connect the bot to your fedi account, follow the instructions on http://local
 # Todo 
 
 - [x] Persist tokens gotten from fedi
+- [x] Post text + image
 - [ ] ~~Refresh token if expired (cant ? at least not user token w/o interaction from user)~~
 - [/] Add CRON job to read and re-post RSS feeds
 - [x] Login protect dev/dashboard 
@@ -20,7 +21,7 @@ To connect the bot to your fedi account, follow the instructions on http://local
 - [x] Enter fedi url to connect to 
 - [ ] Ability to update/reset bot connection config (delete the credentials.json file)
 - [ ] Track/save posts to DB to prevent dupes
-- [/] Grab video link from nitter/twitter and add to twoot 
+- [ ] Grab video link from nitter/twitter and add to twoot 
 
 # ideas to repost
 
