@@ -28,6 +28,7 @@ defmodule Bot.Application do
       Bot.Mastodon.Auth.ApplicationCredentials,
       Bot.Mastodon.Auth.UserCredentials,
       Bot.RSS.FoundUrlArchive,
+      Bot.RSS.RssUrlsStore,
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

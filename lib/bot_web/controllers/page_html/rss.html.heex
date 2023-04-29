@@ -1,0 +1,71 @@
+<link phx-track-static rel="stylesheet" />
+<.flash_group flash={@flash} />
+<div class="left-[40rem] fixed inset-y-0 right-0 z-0 hidden lg:block xl:left-[50rem]" id="banner-right">
+  <img class="center-cropped-img" src={~p"/images/banner-right.png"} alt="banner">
+</div>
+<div class="px-4 py-10 sm:px-6 sm:py-28 lg:px-8 xl:px-28 xl:py-32">
+  <div class="mx-auto max-w-xl lg:mx-0">
+
+    <img class="flip-horizontally" src={~p"/images/logo.jpg"} alt="logo" id="logo" style="width: 5rem;">
+
+    <h1 class="text-brand mt-10 flex items-center text-sm font-semibold leading-6">
+      Fedi-bot Chan
+    </h1>
+    <p class="text-[2rem] mt-4 font-semibold leading-10 tracking-tighter mt-10 text-zinc-900">
+      RSS
+    </p>
+    <div class="flex flex-col">
+      <div class="mt-10 ">
+        <span id="loading" hidden>
+          <.icon name="hero-cog-solid mt-10 text-[5rem] animate-spin" />
+        </span>
+        <pre id="rss_urls" hidden>
+      </pre>
+      </div>
+      <div class="mt-10 ">
+        <input placeholder="Enter new RSS url here... " onkeydown="add_url(event)"
+          class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900" id="url_input" />
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+  var loading_spinner = document.getElementById('loading')
+  var rss_urls = document.getElementById('rss_urls')
+  var url_input = document.getElementById('url_input')
+
+  url_input.value = ""
+
+  function get_urls() {
+    loading.hidden = false
+    fetch("/api/rss/urls")
+      .then(response => response.json())
+      .then(res => rss_urls.innerText = JSON.stringify(res, null, 4))
+      .then(_ => rss_urls.hidden = false)
+      .catch(_ => { })
+      .finally(_ => loading.hidden = true)
+  }
+
+  function add_url(event) {
+    var pressedEnter = event.keyCode == 13
+
+    if (!pressedEnter) {
+      return
+    }
+    const url = url_input.value.trim();
+    var api_url = new URL("api/rss/urls", window.location.origin);
+    api_url.searchParams.append('url', url);
+
+    fetch(api_url, { method: "POST" })
+      .then(response => response.json())
+      .then(console.debug)
+      .catch(e => {console.log(e); })
+      .finally(get_urls)
+  }
+
+  get_urls()
+
+
+</script>

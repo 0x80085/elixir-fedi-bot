@@ -25,6 +25,7 @@ defmodule BotWeb.Router do
     pipe_through [:browser, :require_authenticated_user]
 
     get "/", PageController, :home
+    get "/rss", PageController, :rss
   end
 
   # Other scopes may use custom stacks.
@@ -44,6 +45,9 @@ defmodule BotWeb.Router do
     # Post status/toot/poast/shitpost
     get "/post", Api.ActionsController, :post_status
 
+    # RSS
+    get "/rss/urls", Api.RssController, :get_rss_urls
+    post "/rss/urls", Api.RssController, :add_url
 
     ## Util
     # Test RSS fetcher
