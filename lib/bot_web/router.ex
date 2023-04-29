@@ -38,6 +38,9 @@ defmodule BotWeb.Router do
     # check if creds saved
     get "/has_credentials", Api.AuthController, :has_credentials
 
+    delete  "/app/credentials", Api.AuthController, :delete_app_credentials
+    delete  "/bot/credentials", Api.AuthController, :delete_bot_credentials
+
     # Post status/toot/poast/shitpost
     get "/post", Api.ActionsController, :post_status
 

@@ -66,7 +66,7 @@
         </span>
       </div>
       <div class="mt-10 ">
-        <input placeholder="Code here... " onkeydown="connectAccount(event)"
+        <input placeholder="Code here... " onkeyup="connectAccount(event)"
           class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900"
           id="paste_code_here" hidden />
       </div>
@@ -92,6 +92,11 @@
             class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900"
             id="img_url_here" />
         </div>
+        <hr class="mb-10 mt-10">
+        <button class="bg-brand/5 text-brand rounded-full px-2 font-medium leading-6" onclick="clearBotCredentials()">
+          <.icon name="hero-trash-solid" />
+          Clear bot credentials
+        </button>
       </div>
     </div>
 
@@ -116,8 +121,6 @@
   var more_instructions = document.getElementById('more_instructions')
   var success_and_post = document.getElementById('success_and_post')
   code_input.value = ""
-
-
 
   function get_has_credentials() {
     loading.hidden = false
@@ -185,7 +188,6 @@
 
   }
 
-  console.log(fediUrlForm);
   fediUrlForm.addEventListener("submit", event => {
     this.setupBot(event)
     event.preventDefault()
@@ -203,7 +205,10 @@
       more_instructions.hidden = true
 
       const code = code_input.value
-      fetch(`api/connect_user?user_code=${code}`)
+      var url = new URL("api/connect_user", window.location.origin);
+      url.searchParams.append('user_code', code);
+
+      fetch(url)
         .then(res => res.json())
         .then(console.log)
         .then(_ => success_and_post.hidden = false)
@@ -230,6 +235,40 @@
         .then(_ => msg_input.value = "")
     }
   }
+
+
+  function clearBotCredentials() {
+    var bot_cred_url = new URL("api/bot/credentials", window.location.origin);
+    var app_cred_url = new URL("api/app/credentials", window.location.origin);
+
+    new Promise((resolve) => resolve())
+      .then(
+        confirm('Sure you want to clear the bot credentials?')
+        && fetch(app_cred_url, { method: "DELETE" })
+          .then(res => {
+            console.log();
+            if (res.status !== 204) {
+              throw new Error(`Status ${res.status}`)
+            }
+          })
+          .then(res => res.json())
+          .then(console.log)
+          .then(_ => console.log("Cleared bot creds"))
+          .then(
+            confirm('Also clear Fedi App credentials?')
+            && fetch(app_cred_url, { method: "DELETE" })
+              .then(res => res.json())
+              .then(console.log)
+          )
+      ).then(_ => window.location.reload())
+
+      .catch(e => {
+        console.log("Something went wrong");
+        console.log(e);
+      })
+
+  }
+
 
   loading.hidden = false
   get_has_credentials()
