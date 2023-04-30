@@ -4,6 +4,12 @@
 
 /* This file is for your main application CSS */
 
+html,
+body {
+    height: 100%;
+    width: 100%;
+}
+
 body {
     font-family: 'Inter', sans-serif;
 }
@@ -11,6 +17,8 @@ body {
 #logo {
     max-width: 20%;
     border-radius: 100%;
+    min-height: 4rem;
+    min-width: 4rem;
 }
 
 #user-menu {
@@ -18,15 +26,34 @@ body {
     box-shadow: 0px 0px 4px rgba(70, 70, 70, 0.4)
 }
 
-#banner-right {
+.banner-right {
     overflow: hidden;
     box-shadow:
         inset -30rem -30em 1px rgba(255, 255, 255, 0.2),
         inset -20rem -20em 1px rgba(0, 0, 0, 0.4),
         inset -10rem -10em 1px rgba(59, 14, 0, 0.6);
+}
+ 
 
+.header {
+    align-items: center;
+}
 
+.header > img {
+    max-height: 100px;
+    max-width: 100px;
+}
+/* .gridit {
+    display: grid;
+    grid-template-columns: 1fr 0.7fr;
+    grid-template-rows: 1fr;
+    gap: 0px 0px;
+    grid-template-areas:
+        ". .";
+} */
 
+.main {
+    height: calc(100% - 25px);
 }
 
 .center-cropped-img {
@@ -47,9 +74,11 @@ body {
     0% {
         transform: scale(1);
     }
+
     50% {
         transform: scale(1.02);
     }
+
     100% {
         transform: scale(1);
     }

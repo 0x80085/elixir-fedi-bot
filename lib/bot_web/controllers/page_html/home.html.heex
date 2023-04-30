@@ -1,23 +1,17 @@
 <link phx-track-static rel="stylesheet" />
 <.flash_group flash={@flash} />
-<div class="left-[40rem] fixed inset-y-0 right-0 z-0 hidden lg:block xl:left-[50rem]" id="banner-right">
-  <img class="center-cropped-img" src={~p"/images/banner-right.png"} alt="banner">
-</div>
-<div class="px-4 py-10 sm:px-6 sm:py-28 lg:px-8 xl:px-28 xl:py-32">
-  <div class="mx-auto max-w-xl lg:mx-0">
 
-    <img class="flip-horizontally" src={~p"/images/logo.jpg"} alt="logo" id="logo">
+<div class="grid sm:grid-cols-1 md:grid-cols-2 main">
+  <div class="lg:px-[10rem] py-[4rem]">
+    <div class="flex header flex-col lg:flex-row">
+      <img class="flip-horizontally" src={~p"/images/logo.jpg"} alt="logo" id="logo">
 
-    <h1 class="text-brand mt-10 flex items-center text-sm font-semibold leading-6">
-      Fedi-bot Chan
-      <!-- <small class="bg-brand/5 text-[0.8125rem] ml-3 rounded-full px-2 font-medium leading-6">
-        v<%= Application.spec(:phoenix, :vsn) %>
-      </small> -->
-    </h1>
-    <!-- <p class="text-[2rem] mt-4 font-semibold leading-10 tracking-tighter mt-10 text-zinc-900">
-      Fedi Bot Chan
-    </p> -->
-    <div class="flex">
+      <h1 class="ml-0 mt-5 lg:mt-0 lg:ml-5 text-brand header-title text-sm font-semibold leading-6">
+        Fedi-bot Chan
+      </h1>
+    </div>
+    <div class="grid grid-cols-1">
+
       <div class="w-full sm:w-100">
         <form id="url-form">
           <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2" id="setup_cta">
@@ -41,65 +35,69 @@
           </div>
         </form>
       </div>
-    </div>
-    <div class="flex" style=" flex-direction: column; align-items: center;">
-      <div class="mt-10" id="loading" hidden>
-        <span class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 ">
-          Processing ...
-        </span>
-      </div>
-      <div class="mt-10" id="instructions" hidden>
-        <span class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 ">
-          Connect to your fedi account
-        </span>
-      </div>
-      <div class="mt-10 ">
-        <a href="#" target="_blank" id="url_here" hidden>
-          <button type="button" style="border:1px solid orange; border-radius: 10px; padding: 1rem; color: #fd4f00;">
-            Connect bot to your fedi account
-          </button>
-        </a>
-      </div>
-      <div class="mt-10 " id="more_instructions" hidden>
-        <span class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 ">
-          Then enter the received code and press <code>Enter</code>
-        </span>
-      </div>
-      <div class="mt-10 ">
-        <input placeholder="Code here... " onkeyup="connectAccount(event)"
-          class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900"
-          id="paste_code_here" hidden />
-      </div>
-      <div class="mt-10 " style="text-align: center;" id="success_and_post" hidden>
-        <p>
-          🤖💬
-        </p>
-        <h1 class="text-brand text-sm font-semibold leading-6">
-          Fedi-bot chan at your service!
-        </h1>
-        <div class="mt-10 ">
-          <span class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 mt-10">
-            Post your first bot message:
+      <div class="flex" style=" flex-direction: column; align-items: center;">
+        <div class="mt-10" id="loading" hidden>
+          <span class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 ">
+            Processing ...
+          </span>
+        </div>
+        <div class="mt-10" id="instructions" hidden>
+          <span class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 ">
+            Connect to your fedi account
           </span>
         </div>
         <div class="mt-10 ">
-          <input placeholder="Enter message here... " onkeydown="postMessage(event)"
-            class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900"
-            id="message_here" />
+          <a href="#" target="_blank" id="url_here" hidden>
+            <button type="button" style="border:1px solid orange; border-radius: 10px; padding: 1rem; color: #fd4f00;">
+              Connect bot to your fedi account
+            </button>
+          </a>
+        </div>
+        <div class="mt-10 " id="more_instructions" hidden>
+          <span class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 ">
+            Then enter the received code and press <code>Enter</code>
+          </span>
         </div>
         <div class="mt-10 ">
-          <input placeholder="Enter image url here... " onkeydown="postMessage(event)"
+          <input placeholder="Code here... " onkeyup="connectAccount(event)"
             class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900"
-            id="img_url_here" />
+            id="paste_code_here" hidden />
         </div>
-        <hr class="mb-10 mt-10">
-        <button class="bg-brand/5 text-brand rounded-full px-2 font-medium leading-6" onclick="clearBotCredentials()">
-          <.icon name="hero-trash-solid" />
-          Clear bot credentials
-        </button>
+        <div  style="text-align: center;" id="success_and_post" hidden>
+          <p>
+            🤖💬
+          </p>
+          <h1 class="text-brand text-sm font-semibold leading-6">
+            Fedi-bot chan at your service!
+          </h1>
+          <div class="mt-10 ">
+            <span class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 mt-10">
+              Post your first bot message:
+            </span>
+          </div>
+          <div class="mt-10 ">
+            <input placeholder="Enter message here... " onkeydown="postMessage(event)"
+              class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900"
+              id="message_here" />
+          </div>
+          <div class="mt-10 ">
+            <input placeholder="Enter image url here... " onkeydown="postMessage(event)"
+              class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900"
+              id="img_url_here" />
+          </div>
+          <hr class="mb-10 mt-10">
+          <button class="bg-brand/5 text-brand rounded-full px-4 py-4 font-medium leading-6"
+            onclick="clearBotCredentials()">
+            <.icon name="hero-trash-solid" />
+            Clear bot credentials
+          </button>
+        </div>
       </div>
     </div>
+  </div>
 
+  <div class="banner-right hidden sm:hidden md:block">
+    <img class="center-cropped-img" src={~p"/images/banner-right.png"} alt="banner">
   </div>
 </div>
 
