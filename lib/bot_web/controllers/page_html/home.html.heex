@@ -1,4 +1,10 @@
 <link phx-track-static rel="stylesheet" />
+<div class="mt-10 loading-blocking" id="loading" hidden>
+  <span class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 ">
+    Processing ...
+  </span>
+</div>
+
 <.flash_group flash={@flash} />
 
 <div class="grid sm:grid-cols-1 md:grid-cols-2 main">
@@ -35,11 +41,6 @@
         </form>
       </div>
       <div class="flex" style=" flex-direction: column; align-items: center;">
-        <div class="mt-10" id="loading" hidden>
-          <span class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 ">
-            Processing ...
-          </span>
-        </div>
         <div class="mt-10" id="instructions" hidden>
           <span class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 ">
             Connect to your fedi account
@@ -120,6 +121,7 @@
   var more_instructions = document.getElementById('more_instructions')
   var success_and_post = document.getElementById('success_and_post')
   code_input.value = ""
+  msg_input.value = ""
 
   function get_has_credentials() {
     loading.hidden = false

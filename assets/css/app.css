@@ -26,6 +26,17 @@ body {
     box-shadow: 0px 0px 4px rgba(70, 70, 70, 0.4)
 }
 
+.loading-blocking {
+    position: fixed;
+    left: 16%;
+    background-color: rgba(208, 208, 208, 0.7);
+    border: rgba(208, 208, 208, 0.7) 2px dotted;
+    border-radius: 10px;
+    padding: 5rem;
+    z-index: 10;
+    top: 30%;
+}
+
 .banner-right {
     overflow: hidden;
     box-shadow:
@@ -33,16 +44,17 @@ body {
         inset -20rem -20em 1px rgba(0, 0, 0, 0.4),
         inset -10rem -10em 1px rgba(59, 14, 0, 0.6);
 }
- 
+
 
 .header {
     align-items: center;
 }
 
-.header > img {
+.header>img {
     max-height: 100px;
     max-width: 100px;
 }
+
 /* .gridit {
     display: grid;
     grid-template-columns: 1fr 0.7fr;
