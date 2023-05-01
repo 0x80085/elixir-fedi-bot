@@ -17,10 +17,6 @@ defmodule Bot.Mastodon.Actions.PostStatus do
       "media_ids" => [media_url]
     }
 
-    IO.inspect("######### form_data")
-    IO.inspect(form_data)
-    IO.inspect("######### END  form_data")
-
     request_body = Plug.Conn.Query.encode(form_data)
 
     if is_dry_run do
@@ -39,10 +35,6 @@ defmodule Bot.Mastodon.Actions.PostStatus do
       else
         IO.inspect("Posting to fedi...")
         IO.inspect("id: #{data.id}")
-        IO.inspect("form_data")
-        IO.inspect(form_data)
-        IO.inspect("request_body")
-        IO.inspect(request_body)
         fedi_url = ApplicationCredentials.get_fedi_url()
         reponse = HTTPoison.post("#{fedi_url}/api/v1/statuses", request_body, headers)
 
@@ -99,7 +91,7 @@ defmodule Bot.Mastodon.Actions.PostStatus do
 
             {:ok, media_id} = UploadImage.upload_image(Enum.at(data.media, 0), upload_url, token)
             IO.inspect("Uploaded media #{media_id} to fedi...")
-            :timer.sleep(5_000) # allow procesing of image
+            :timer.sleep(2_000) # allow procesing of image
 
             IO.inspect("media_id")
             IO.inspect(media_id)
@@ -117,7 +109,7 @@ defmodule Bot.Mastodon.Actions.PostStatus do
 
             {:ok, media_id} = UploadImage.upload_image(data.media, upload_url, token)
             IO.inspect("Uploaded media to fedi...")
-            :timer.sleep(5_000) # allow procesing of image
+            :timer.sleep(2_000) # allow procesing of image
 
             media_id
           end

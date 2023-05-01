@@ -7,7 +7,7 @@ defmodule BotWeb.Api.ActionsController do
       Bot.Mastodon.Actions.PostStatus.post(
         %{
           text: Map.get(params, "text"),
-          media: [Map.get(params, "media_url")],
+          media: Map.get(params, "media_url"),
           id: Map.get(params, "text")
           },
         Bot.Mastodon.Auth.UserCredentials.get_token(),
@@ -19,7 +19,8 @@ defmodule BotWeb.Api.ActionsController do
         json(conn, "status posted ")
 
       {:error, reason} ->
-        json(conn, "Could not post status: #{reason}")
+        IO.inspect(reason)
+        send_resp(conn, :internal_server_error , "Credentials probably outdated")
     end
   end
 end
