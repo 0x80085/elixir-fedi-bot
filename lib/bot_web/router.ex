@@ -43,7 +43,7 @@ defmodule BotWeb.Router do
     delete  "/bot/credentials", Api.AuthController, :delete_bot_credentials
 
     # Post status/toot/poast/shitpost
-    get "/post", Api.ActionsController, :post_status
+    post "/post", Api.ActionsController, :post_status
 
     # RSS
     get "/rss/urls", Api.RssController, :get_rss_urls

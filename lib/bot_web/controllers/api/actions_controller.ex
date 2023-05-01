@@ -9,7 +9,7 @@ defmodule BotWeb.Api.ActionsController do
           text: Map.get(params, "text"),
           media: Map.get(params, "media_url"),
           id: Map.get(params, "text")
-          },
+        },
         Bot.Mastodon.Auth.UserCredentials.get_token(),
         false
       )
@@ -20,7 +20,7 @@ defmodule BotWeb.Api.ActionsController do
 
       {:error, reason} ->
         IO.inspect(reason)
-        send_resp(conn, :internal_server_error , "Credentials probably outdated")
+        send_resp(conn, :internal_server_error, Jason.encode!(%{message: reason}))
     end
   end
 end

@@ -230,6 +230,7 @@
         url.searchParams.append('media_url', img_url_input.value);
       }
 
+      fetch(url, {method: "POST"})
       fetch(url)
         .then(res => res.json())
         .then(console.log)
