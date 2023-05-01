@@ -48,6 +48,7 @@ defmodule BotWeb.Router do
     # RSS
     get "/rss/urls", Api.RssController, :get_rss_urls
     post "/rss/urls", Api.RssController, :add_url
+    post "/rss/job", Api.RssController, :trigger_fetch_job_and_print
 
     ## Util
     # Test RSS fetcher

@@ -12,15 +12,17 @@ defmodule Bot.RSS.Cron do
 
   def start_link(_opts) do
     IO.puts("Started CRON GenServer")
-    GenServer.start_link(__MODULE__, @meta_info)
+    GenServer.start_link(__MODULE__, @meta_info, name: __MODULE__)
   end
 
+  @impl true
   def init(state) do
     # Schedule work to be performed at some point
     schedule_work()
     {:ok, state}
   end
 
+  @impl true
   def handle_info(:work, state) do
     # Do the work you desire here
     has_credentials = Bot.Mastodon.Auth.PersistCredentials.has_stored_credentials()
@@ -40,6 +42,26 @@ defmodule Bot.RSS.Cron do
     new_state_incremented_index = update_state(state)
 
     {:noreply, new_state_incremented_index}
+  end
+
+  @impl true
+  def handle_call(:start_manually, _from, state) do
+    has_credentials = Bot.Mastodon.Auth.PersistCredentials.has_stored_credentials()
+
+    case has_credentials do
+      true ->
+        IO.puts("Credentials found, starting RSS scraping ...")
+        fetch_and_post_rss(state)
+
+      _ ->
+        IO.puts("No credentials found, scraping will not be started")
+    end
+
+    {:reply, :ok, state}
+  end
+
+  def start_manually() do
+    GenServer.call(__MODULE__, :start_manually)
   end
 
   defp update_state(state) do
