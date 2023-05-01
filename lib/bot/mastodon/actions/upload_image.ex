@@ -25,12 +25,25 @@ defmodule Bot.Mastodon.Actions.UploadImage do
           HTTPoison.post(upload_endpoint, {:multipart, [{:file, temp_file_path}]}, headers)
 
         case post_upload_response do
-          {:ok, %{body: body}} ->
+          {:ok, %{body: body, status_code: status_code}} ->
             decoded = Jason.decode!(body)
             IO.inspect(decoded)
+            IO.inspect("status code img upload#{status_code}")
+            IO.inspect(Map.get(decoded, "id", nil))
 
-           IO.inspect(Map.get(decoded, "id", nil))
-            {:ok, Map.get(decoded, "id", nil)}
+            case status_code do
+              x when x in 200..299 ->
+                IO.puts("ok when ")
+                {:ok, Map.get(decoded, "id", nil)}
+
+                202 ->
+                  IO.puts("ok 202 ")
+                {:ok, Map.get(decoded, "id", nil)}
+
+              _ ->
+                IO.puts("image upload failed")
+                {:error, status_code}
+            end
 
           {:error, %HTTPoison.Error{reason: reason}} ->
             {:error, reason}

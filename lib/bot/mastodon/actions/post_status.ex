@@ -2,75 +2,15 @@ defmodule Bot.Mastodon.Actions.PostStatus do
   alias Bot.Mastodon.Auth.ApplicationCredentials
   alias Bot.Mastodon.Auth.UserCredentials
   alias Bot.Mastodon.Actions.UploadImage
+  alias Bot.RSS.FoundUrlArchive
 
   def post(data, token, is_dry_run) do
-    headers = [
-      {"Content-Type", "application/x-www-form-urlencoded; charset=utf-8"},
-      {"Accept", "application/json"},
-      {"Authorization", token}
-    ]
+    case maybe_upload_image(data, is_dry_run) do
+      {:ok, media_id} ->
+        post_toot(data.id, data.text, media_id, token, is_dry_run)
 
-    media_url = maybe_upload_image(data, is_dry_run)
-
-    form_data = %{
-      "status" => data.text,
-      "media_ids" => [media_url]
-    }
-
-    request_body = Plug.Conn.Query.encode(form_data)
-
-    if is_dry_run do
-      IO.inspect("DRY RUN: Was going to post:")
-      IO.inspect(request_body)
-      IO.inspect(headers)
-      IO.puts("###")
-
-      {:ok, "status printed"}
-    else
-      was_already_posted = Bot.RSS.FoundUrlArchive.exists(data.id)
-
-      if was_already_posted do
-        IO.inspect("Already posted, ignoring: #{data.id}")
-        {:ok, "status was already posted"}
-      else
-        IO.inspect("Posting to fedi...")
-        IO.inspect("id: #{data.id}")
-        fedi_url = ApplicationCredentials.get_fedi_url()
-        reponse = HTTPoison.post("#{fedi_url}/api/v1/statuses", request_body, headers)
-
-        case reponse do
-          {:ok, result} ->
-            IO.inspect(result)
-            IO.inspect(result.status_code)
-            decoded = Jason.decode(result.body)
-
-            case result.status_code do
-              200 ->
-                IO.inspect("Status posted!")
-
-                IO.inspect("Archiving ID")
-                Bot.RSS.FoundUrlArchive.add_entry_id(data.id)
-
-                case decoded do
-                  {:ok, body} ->
-                    # todo verify 200 ok
-                    IO.inspect(body)
-                    {:ok, "status posted"}
-
-                  {:error, reason} ->
-                    {:error, reason}
-                end
-
-              _ ->
-                IO.inspect("Error in posting")
-                IO.inspect(decoded)
-                {:error, result.status_code}
-            end
-
-          {:error, reason} ->
-            {:error, reason}
-        end
-      end
+      {:error, status_code} ->
+        {:error, status_code}
     end
   end
 
@@ -91,12 +31,13 @@ defmodule Bot.Mastodon.Actions.PostStatus do
 
             {:ok, media_id} = UploadImage.upload_image(Enum.at(data.media, 0), upload_url, token)
             IO.inspect("Uploaded media #{media_id} to fedi...")
-            :timer.sleep(2_000) # allow procesing of image
+            # allow procesing of image
+            :timer.sleep(4_000)
 
             IO.inspect("media_id")
             IO.inspect(media_id)
 
-            media_id
+            {:ok, media_id}
           end
         else
           IO.inspect(data)
@@ -107,12 +48,100 @@ defmodule Bot.Mastodon.Actions.PostStatus do
             fedi_url = ApplicationCredentials.get_fedi_url()
             upload_url = "#{fedi_url}/api/v2/media"
 
-            {:ok, media_id} = UploadImage.upload_image(data.media, upload_url, token)
-            IO.inspect("Uploaded media to fedi...")
-            :timer.sleep(2_000) # allow procesing of image
+            case UploadImage.upload_image(data.media, upload_url, token) do
+              {:ok, media_id} ->
+                IO.inspect("Uploaded media to fedi...")
+                # allow procesing of image
+                :timer.sleep(4_000)
+                {:ok, media_id}
 
-            media_id
+              {:error, reason} ->
+                {:error, reason}
+            end
           end
+        end
+    end
+  end
+
+  defp post_toot(id, text, media_id, token, is_dry_run) do
+    headers = [
+      {"Content-Type", "application/x-www-form-urlencoded; charset=utf-8"},
+      {"Accept", "application/json"},
+      {"Authorization", token}
+    ]
+
+    form_data =
+      cond do
+        is_nil(media_id) ->
+          %{
+            "status" => text
+          }
+
+        String.length(String.trim(media_id)) > 0 ->
+          %{
+            "status" => text,
+            "media_ids" => [media_id]
+          }
+      end
+
+    IO.inspect("About to toot:")
+    IO.inspect(form_data)
+
+    request_body = Plug.Conn.Query.encode(form_data)
+    was_already_posted = FoundUrlArchive.exists(id)
+
+    cond do
+      is_dry_run && was_already_posted ->
+        IO.puts("Printing Toot...")
+        IO.inspect(request_body)
+        IO.inspect(headers)
+
+        if was_already_posted do
+          IO.puts("Was already posted!")
+        end
+
+        {:ok, "status printed"}
+
+      !is_dry_run && !was_already_posted ->
+        reponse =
+          HTTPoison.post(
+            "#{ApplicationCredentials.get_fedi_url()}/api/v1/statuses",
+            request_body,
+            headers
+          )
+
+        case reponse do
+          {:ok, result} ->
+            IO.puts("Posting Toot...")
+            IO.inspect(result)
+            IO.inspect(result.status_code)
+            decoded = Jason.decode(result.body)
+
+            case result.status_code do
+              200 ->
+                IO.inspect("Toot posted!")
+
+                IO.inspect("Archiving ID")
+                FoundUrlArchive.add_entry_id(id)
+
+                case decoded do
+                  {:ok, body} ->
+                    # todo verify 200 ok
+                    IO.inspect(body)
+                    {:ok, "Toot posted!"}
+
+                  {:error, reason} ->
+                    {:error, reason}
+                end
+
+              _ ->
+                IO.inspect("Error in posting")
+                IO.inspect(decoded)
+                {:error, result.status_code}
+            end
+
+          {:error, reason} ->
+            {:error, reason}
         end
     end
   end
