@@ -231,6 +231,13 @@
       }
 
       fetch(url, {method: "POST"})
+        .then(res => {
+          console.log(res);
+          if (res.status !== 200) {
+            throw new Error(res)
+          }
+          return res
+        })
         // .then(res => res.json())
         // .then(console.log)
         .then(_ => alert("success!"))
