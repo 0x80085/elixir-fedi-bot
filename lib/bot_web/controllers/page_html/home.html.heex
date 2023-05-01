@@ -62,7 +62,7 @@
             class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900"
             id="paste_code_here" hidden />
         </div>
-        <div  style="text-align: center;" id="success_and_post" hidden>
+        <div style="text-align: center;" id="success_and_post" hidden>
           <p>
             🤖💬
           </p>
@@ -75,10 +75,12 @@
             </span>
           </div>
           <div class="mt-10 ">
-            <input placeholder="Enter message here... " onkeydown="postMessage(event)"
+            <textarea placeholder="Enter message here... " onkeydown="postMessage(event)"
               class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900"
-              id="message_here" />
+              id="message_here">
+            </textarea>
           </div>
+          <p class="font-light text-zinc-300 mt-2">Press <code>Enter</code> to post!</p>
           <div class="mt-10 ">
             <input placeholder="Enter image url here... " onkeydown="postMessage(event)"
               class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900"
@@ -215,7 +217,7 @@
   }
 
   function postMessage(event) {
-    var pressedEnter = event.keyCode == 13
+    var pressedEnter = event.keyCode == 13 && !event.shiftKey
     if (pressedEnter && msg_input.value && msg_input.value.trim()) {
 
       loading.hidden = false;
