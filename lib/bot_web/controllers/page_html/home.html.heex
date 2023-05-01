@@ -218,18 +218,21 @@
     var pressedEnter = event.keyCode == 13
     if (pressedEnter && msg_input.value && msg_input.value.trim()) {
 
+      loading.hidden = false;
+
       var url = new URL("api/post", window.location.origin);
       url.searchParams.append('text', msg_input.value);
       if (img_url_input.value) {
         url.searchParams.append('media_url', img_url_input.value);
       }
 
-
       fetch(url)
         .then(res => res.json())
         .then(console.log)
         .then(_ => alert("success!"))
         .then(_ => msg_input.value = "")
+        .then(_ => img_url_input.value = "")
+        .finally(_ => loading.hidden = true)
     }
   }
 

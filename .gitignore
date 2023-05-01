@@ -36,3 +36,4 @@ npm-debug.log
 /assets/node_modules/
 
 credentials.json
+temp_file
