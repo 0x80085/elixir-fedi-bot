@@ -6,13 +6,18 @@ defmodule BotWeb.Api.RssController do
   end
 
   def add_url(conn, params) do
-    json(conn, Bot.RSS.RssUrlsStore.add( params["url"]))
+    json(conn, Bot.RSS.RssUrlsStore.add(params["url"]))
   end
 
   def trigger_fetch_job_and_print(conn, params) do
-    Bot.RSS.Cron.start_manually()
+    {:ok, supervisor} = Task.Supervisor.start_link()
 
-    json(conn, Bot.RSS.RssUrlsStore.add( params["url"]))
+    Task.Supervisor.start_child(supervisor, fn ->
+      IO.puts("Bot.RSS.Cron.start_manuallyf from RssController")
+      Bot.RSS.Cron.start_manually()
+    end)
+
+    send_resp(conn, :no_content, "")
   end
 
   # def trigger_fetch_job_and_post(conn, params) do

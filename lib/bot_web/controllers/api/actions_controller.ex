@@ -8,7 +8,7 @@ defmodule BotWeb.Api.ActionsController do
         %{
           text: Map.get(params, "text"),
           media: Map.get(params, "media_url"),
-          id: Map.get(params, "text")
+          id: ""
         },
         Bot.Mastodon.Auth.UserCredentials.get_token(),
         false
