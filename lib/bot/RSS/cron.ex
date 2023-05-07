@@ -7,7 +7,8 @@ defmodule Bot.RSS.Cron do
 
   @meta_info %{
     is_dry_run: true,
-    url_index: 0
+    url_index: 0,
+    max_post_burst: 3
   }
 
   def start_link(_opts) do
@@ -51,13 +52,19 @@ defmodule Bot.RSS.Cron do
     case has_credentials do
       true ->
         IO.puts("Credentials found, starting RSS scraping ...")
-        fetch_and_post_rss(state)
+        fetch_and_post_rss(%{
+          is_dry_run: false,
+          url_index: state.url_index,
+          max_post_burst: state.max_post_burst,
+        })
 
       _ ->
         IO.puts("No credentials found, scraping will not be started")
     end
 
-    {:reply, :ok, state}
+    new_state_incremented_index = update_state(state)
+
+    {:reply, :ok, new_state_incremented_index}
   end
 
   def start_manually() do
@@ -78,7 +85,8 @@ defmodule Bot.RSS.Cron do
 
     %{
       is_dry_run: state.is_dry_run,
-      url_index: incremented_url_index
+      url_index: incremented_url_index,
+      max_post_burst: state.max_post_burst
     }
   end
 
@@ -105,7 +113,10 @@ defmodule Bot.RSS.Cron do
         newest_entries = RssFetcher.filter_by_newest(results)
         IO.puts("Got #{length(newest_entries)} results")
         IO.inspect(newest_entries)
-        post_to_fedi(newest_entries, state.is_dry_run)
+
+        IO.puts("Taking first #{state.max_post_burst} results")
+        Enum.take(newest_entries, state.max_post_burst)
+        |> post_to_fedi(state.is_dry_run)
 
       {:error, reason} ->
         IO.puts("CRON RSS failed")
