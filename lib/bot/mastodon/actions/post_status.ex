@@ -5,19 +5,56 @@ defmodule Bot.Mastodon.Actions.PostStatus do
   alias Bot.RSS.FoundUrlArchive
 
   def post(data, token, is_dry_run) do
+    toot_text = format_toot(data)
+
     case maybe_upload_image(data, is_dry_run) do
       {:ok, media_id} ->
-        post_toot(data.id, data.text, media_id, token, is_dry_run)
+        post_toot(data.id, toot_text, media_id, token, is_dry_run)
+
+      nil ->
+        post_toot(data.id, toot_text, nil, token, is_dry_run)
 
       {:error, status_code} ->
         {:error, status_code}
     end
   end
 
+  defp format_toot(data) do
+    content_link =
+      cond do
+        String.contains?(data.id, "yt:video:") ->
+          format_yt_id_to_url(data.id)
+
+        true ->
+          data.id
+      end
+
+    "🤖 💬 \"#{data.text}\"
+
+    Source: #{content_link}"
+  end
+
+  defp format_yt_id_to_url(id) do
+    regex = ~r/yt:video:(.+)/
+
+    match = Regex.run(regex, id)
+
+    IO.inspect(match)
+    IO.inspect(id)
+
+    case match do
+      nil ->
+        ""
+
+      _ ->
+        "https://inv.riverside.rocks/watch?v=#{List.last(match)}"
+    end
+  end
+
   defp maybe_upload_image(data, is_dry_run) do
     case data.media do
       nil ->
-        nil
+        {:ok, nil}
 
       _ ->
         if is_list(data.media) && length(data.media) > 0 do
@@ -91,7 +128,7 @@ defmodule Bot.Mastodon.Actions.PostStatus do
     was_already_posted = FoundUrlArchive.exists(id)
 
     cond do
-      is_dry_run && was_already_posted ->
+      is_dry_run || was_already_posted ->
         IO.puts("Printing Toot...")
         IO.inspect(request_body)
         IO.inspect(headers)
@@ -122,7 +159,10 @@ defmodule Bot.Mastodon.Actions.PostStatus do
                 IO.inspect("Toot posted!")
 
                 IO.inspect("Archiving ID")
-                FoundUrlArchive.add_entry_id(id)
+
+                if id != "" do
+                  FoundUrlArchive.add_entry_id(id)
+                end
 
                 case decoded do
                   {:ok, body} ->
