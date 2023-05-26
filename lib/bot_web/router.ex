@@ -56,6 +56,8 @@ defmodule BotWeb.Router do
     post "/chatgpt/credentials", Api.ChatgptController, :set_secret_key
     delete "/chatgpt/credentials", Api.ChatgptController, :delete_secret_key
 
+    post "/chatgpt/chat", Api.ChatgptController, :chat
+
     ## Util
     # Test RSS fetcher
     get "/test", Api.TestController, :test_rss_route

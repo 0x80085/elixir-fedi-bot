@@ -36,8 +36,8 @@ defmodule Bot.Mastodon.Actions.UploadImage do
                 IO.puts("ok when ")
                 {:ok, Map.get(decoded, "id", nil)}
 
-                202 ->
-                  IO.puts("ok 202 ")
+              202 ->
+                IO.puts("ok 202 ")
                 {:ok, Map.get(decoded, "id", nil)}
 
               _ ->

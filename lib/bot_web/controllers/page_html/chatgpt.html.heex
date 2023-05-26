@@ -22,7 +22,7 @@
 
         <div id="form" class="flex flex-col">
           <h5 style="text-align: center;">Enter a ChatGPT API key to get started</h5>
-          <div class="mt-10">
+          <div>
             <input placeholder="Enter API key here... " onkeydown="add_secret_key(event)"
               class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 w-full lg:w-auto"
               id="url_input" />
@@ -35,7 +35,18 @@
         </div>
 
         <div id="has-credentials" class="flex flex-col">
-          <h5 style="text-align: center;"><.icon name="hero-check-solid" /> API key added</h5>
+          <textarea placeholder="Enter message for ChatGPT chat here and press enter to query... "
+            onkeydown="chat(event)"
+            class="mt-10 group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 w-full lg:w-auto"
+            id="chat_input"></textarea>
+
+          <p id="response" class="mt-10 text-zinc-500">
+            Answer will appear here...
+          </p>
+          <hr class="mt-10">
+          <h5 style="text-align: center;" class="mt-10">
+            <.icon name="hero-key-solid" /> API key added
+          </h5>
           <button class="bg-brand/5 text-brand rounded-full px-4 py-4 font-medium leading-6 mt-10"
             onclick="delete_secret_key()">
             <.icon name="hero-trash-solid" />
@@ -56,11 +67,43 @@
   var found_credentials = document.getElementById("has-credentials");
   var form = document.getElementById("form");
   var secret_input = document.getElementById("url_input");
+  var chat_input = document.getElementById("chat_input");
+  var response = document.getElementById("response");
 
   form.style = "display: none;"
   found_credentials.style = "display: none;"
 
   secret_input.value = "";
+
+  function chat(event) {
+    var pressedEnter = event && event.keyCode == 13;
+
+    if (!pressedEnter && event) {
+      return;
+    }
+
+    response.innerText = "Fetching answer from ChatGPT, hold please..."
+
+    const text = chat_input.value.trim();
+    var api_url = new URL("api/chatgpt/chat", window.location.origin);
+    api_url.searchParams.append("text", text);
+
+    fetch(api_url, { method: "POST" })
+      .then(response => {
+        const body = response.json()
+        console.log(response);
+        console.log(body);
+        return body
+      })
+      // .then(decoded => JSON.stringify(decoded, null, 4))
+      .then(decoded => decoded.answer)
+      .then(answer => response.innerText = answer)
+      .catch((e) => {
+        console.log(e);
+        response.innerText = "Failed to fetch... Try again later or check the console."
+      })
+      .finally(_ => loading_spinner.hidden = true);
+  }
 
   function get_has_credentials() {
     loading.hidden = false;
