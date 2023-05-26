@@ -25,6 +25,7 @@ defmodule Bot.Application do
       Bot.RSS.Cron,
 
       # Agents aka data stores
+      Bot.Chatgpt.CredentialStore,
       Bot.Mastodon.Auth.ApplicationCredentials,
       Bot.Mastodon.Auth.UserCredentials,
       Bot.RSS.FoundUrlArchive,

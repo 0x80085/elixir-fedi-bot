@@ -9,7 +9,7 @@ defmodule BotWeb.Api.RssController do
     json(conn, Bot.RSS.RssUrlsStore.add(params["url"]))
   end
 
-  def trigger_fetch_job_and_print(conn, params) do
+  def trigger_fetch_job_and_print(conn, _params) do
     {:ok, supervisor} = Task.Supervisor.start_link()
 
     Task.Supervisor.start_child(supervisor, fn ->
