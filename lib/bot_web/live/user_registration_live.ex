@@ -67,6 +67,10 @@ defmodule BotWeb.UserRegistrationLive do
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, socket |> assign(check_errors: true) |> assign_form(changeset)}
+
+      {:conflict, %Ecto.Changeset{} = changeset, reason} ->
+        IO.puts("#{reason}")
+        {:noreply, socket |> assign(check_errors: true) |> assign_form(changeset)}
     end
   end
 
