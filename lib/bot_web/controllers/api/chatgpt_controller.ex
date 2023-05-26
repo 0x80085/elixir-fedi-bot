@@ -6,8 +6,13 @@ defmodule BotWeb.Api.ChatgptController do
   end
 
   def set_secret_key(conn, params) do
-    Bot.Chatgpt.CredentialsWrite.encode_and_persist(params["secret_key"])
-    json(conn, Bot.Chatgpt.CredentialStore.set_secret_key(params["secret_key"]))
+    Bot.Chatgpt.CredentialStore.set_secret_key(params["secret_key"])
+
+    secret_key = Bot.Chatgpt.CredentialStore.get_secret_key()
+
+    Bot.Chatgpt.CredentialsWrite.encode_and_persist(%{ secret_key: secret_key})
+
+    send_resp(conn, :ok, "")
   end
 
   def delete_secret_key(conn, _params) do

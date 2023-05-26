@@ -56,12 +56,12 @@
   function add_secret_key(event) {
     var pressedEnter = event && event.keyCode == 13;
 
-    if (!pressedEnter) {
+    if (!pressedEnter && event) {
       return;
     }
-    const url = url_input.value.trim();
+    const key = url_input.value.trim();
     var api_url = new URL("api/chatgpt/credentials", window.location.origin);
-    api_url.searchParams.append("url", url);
+    api_url.searchParams.append("secret_key", key);
 
     fetch(api_url, { method: "POST" })
       .then((response) => response.json())
