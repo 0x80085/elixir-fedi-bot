@@ -14,14 +14,20 @@ To connect the bot to your fedi account, follow the instructions on http://local
 
 - [x] Persist tokens gotten from fedi
 - [x] Post text + image
-- [ ] ~~Refresh token if expired (cant ? at least not user token w/o interaction from user)~~
-- [/] Add CRON job to read and re-post RSS feeds
+- ~~Refresh token if expired (cant ? at least not user token w/o interaction from user)~~
 - [x] Login protect dev/dashboard 
 - [x] Login protect connect fedi account page
 - [x] Enter fedi url to connect to 
-- [ ] Ability to update/reset bot connection config (delete the credentials.json file)
-- [ ] Track/save posts to DB to prevent dupes
+- [ ] Enter fedi url from pleroma or soapbox or misskey or other popular fediware (needs more code, want just oauth I think...)   
+- [x] Ability to update/reset bot connection config (delete the credentials.json file + clear agent states)
 - [ ] Grab video link from nitter/twitter and add to twoot 
+- [x] Grab image link from nitter/twitter and add to twoot 
+- [x] Trigger RSS reposter job from ui 
+- [x] Add CRON job to read and re-post RSS feeds
+- [x] Track/save posts in memory to prevent dupes
+- [x] Add ChatGPT API key
+- [x] Ask ChatGPT and see result in ui
+- [ ] Track/save posts to DB to prevent dupes
 
 # ideas to repost
 
