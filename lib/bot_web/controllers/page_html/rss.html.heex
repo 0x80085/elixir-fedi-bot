@@ -18,14 +18,27 @@
           <span id="loading" hidden>
             <.icon name="hero-cog-solid mt-10 text-[5rem] animate-spin" />
           </span>
-          <pre id="rss_urls" class="bg-brand/5 overflow-auto rounded-md px-2 py-2" hidden></pre>
+          <div class="flex flex-row justify-center items-center">
+            <input
+              class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 lg:w-auto mr-5"
+              type="checkbox" id="is_dry_run_input" name="is_dry_run_input" />
+            <label for="is_dry_run_input">Dry run mode:<br>Prints the RSS posts to console instead of tooting to
+              fedi</label>
+            <button class="bg-brand/5 text-brand rounded-full px-4 py-4 font-medium leading-6 ml-5"
+              onclick="set_is_dry_run()">
+              Save
+            </button>
+          </div>
+          <hr class="mt-10">
+          <pre id="rss_urls" class="bg-brand/5 overflow-auto rounded-md px-2 py-2 mt-10" hidden></pre>
         </div>
         <div class="mt-10">
           <input placeholder="Enter new RSS url here... " onkeydown="add_url(event)"
             class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 w-full lg:w-auto"
             id="url_input" />
         </div>
-        <button class="bg-brand/5 text-brand rounded-full px-4 py-4 font-medium leading-6" onclick="startJob()">
+        <hr class="mt-10">
+        <button class="bg-brand/5 text-brand rounded-full px-4 py-4 font-medium leading-6 mt-10" onclick="start_job()">
           <.icon name="hero-task-solid" />
           Start RSS posting job
         </button>
@@ -41,6 +54,7 @@
   var loading_spinner = document.getElementById("loading");
   var rss_urls = document.getElementById("rss_urls");
   var url_input = document.getElementById("url_input");
+  var is_dry_run_input = document.getElementById("is_dry_run_input");
 
   url_input.value = "";
 
@@ -73,7 +87,7 @@
       .finally(get_urls);
   }
 
-  function startJob() {
+  function start_job() {
     if (!confirm("Sure to start the RSS job?")) {
       return;
     }
@@ -90,6 +104,33 @@
       .finally(loading_spinner.hidden = true);
   }
 
+  function get_is_dry_run() {
+    loading.hidden = false;
+    fetch("api/rss/is_dry_run")
+      .then((res) => res.json())
+      .then((res) => (is_dry_run_input.checked = res))
+      .catch((_) => { })
+      .finally((_) => (loading.hidden = true));
+  }
+
+  function set_is_dry_run() {
+    if (!confirm("Sure to change dry run mode?")) {
+      return;
+    }
+
+    var api_url = new URL("api/rss/is_dry_run", window.location.origin);
+    api_url.searchParams.append("is_dry_run", is_dry_run_input.checked);
+    loading_spinner.hidden = false;
+
+    fetch(api_url, { method: "PUT" })
+      .then(get_is_dry_run)
+      .catch((e) => {
+        console.log(e);
+      })
+      .finally(loading_spinner.hidden = true);
+  }
+
   loading_spinner.hidden = false;
   get_urls();
+  get_is_dry_run();
 </script>

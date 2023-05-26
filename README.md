@@ -7,8 +7,7 @@ To start your Bot / Phoenix server:
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
-To connect the bot to your fedi account, follow the instructions on http://localhost:4000
-
+To connect the bot to your fedi account just register and login, then follow the instructions on http://localhost:4000
 
 # Todo 
 
@@ -19,7 +18,7 @@ To connect the bot to your fedi account, follow the instructions on http://local
 - [x] Login protect connect fedi account page
 - [x] Enter fedi url to connect to 
 - [ ] Enter fedi url from pleroma or soapbox or misskey or other popular fediware (needs more code, want just oauth I think...)   
-- [x] Ability to update/reset bot connection config (delete the credentials.json file + clear agent states)
+- [x] Ability to update/reset bot fedi config (delete the credentials.json file + clear agent states)
 - [ ] Grab video link from nitter/twitter and add to twoot 
 - [x] Grab image link from nitter/twitter and add to twoot 
 - [x] Trigger RSS reposter job from ui 
@@ -27,7 +26,14 @@ To connect the bot to your fedi account, follow the instructions on http://local
 - [x] Track/save posts in memory to prevent dupes
 - [x] Add ChatGPT API key
 - [x] Ask ChatGPT and see result in ui
+- [x] Block registration after 1 user signed up (becomes admin this way)
+- [ ] Manage: 
+  - dry run mode
+  - scrape interval in ms
+  - on/off RSS URLs
+  - max post burst count 
 - [ ] Track/save posts to DB to prevent dupes
+- [ ] Make deploy/publish ready
 
 # ideas to repost
 

@@ -50,6 +50,8 @@ defmodule BotWeb.Router do
     get "/rss/urls", Api.RssController, :get_rss_urls
     post "/rss/urls", Api.RssController, :add_url
     post "/rss/job", Api.RssController, :trigger_fetch_job_and_print
+    put "/rss/is_dry_run", Api.RssController, :set_is_dry_run
+    get "/rss/is_dry_run", Api.RssController, :get_is_dry_run
 
     # Chatgpt
     get "/chatgpt/credentials", Api.ChatgptController, :get_has_credentials

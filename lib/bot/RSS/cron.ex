@@ -52,10 +52,11 @@ defmodule Bot.RSS.Cron do
     case has_credentials do
       true ->
         IO.puts("Credentials found, starting RSS scraping ...")
+
         fetch_and_post_rss(%{
           is_dry_run: state.is_dry_run,
           url_index: state.url_index,
-          max_post_burst: state.max_post_burst,
+          max_post_burst: state.max_post_burst
         })
 
       _ ->
@@ -67,8 +68,29 @@ defmodule Bot.RSS.Cron do
     {:reply, :ok, new_state_incremented_index}
   end
 
+  @impl true
+  def handle_call({:set_is_dry_run, isEnabled}, _from, state) do
+    new_state = Map.put(state, :is_dry_run, isEnabled)
+    IO.puts(isEnabled)
+    IO.inspect(new_state)
+    {:reply, :ok, new_state}
+  end
+
+  @impl true
+  def handle_call(:get_is_dry_run, _from, state) do
+    {:reply, {:ok, state.is_dry_run}, state}
+  end
+
   def start_manually() do
     GenServer.call(__MODULE__, :start_manually)
+  end
+
+  def set_is_dry_run(isEnabled) do
+    GenServer.call(__MODULE__, {:set_is_dry_run, isEnabled})
+  end
+
+  def get_is_dry_run() do
+    GenServer.call(__MODULE__, :get_is_dry_run)
   end
 
   defp update_state(state) do
@@ -115,6 +137,7 @@ defmodule Bot.RSS.Cron do
         IO.inspect(newest_entries)
 
         IO.puts("Taking first #{state.max_post_burst} results")
+
         Enum.take(newest_entries, state.max_post_burst)
         |> post_to_fedi(state.is_dry_run)
 
@@ -133,6 +156,7 @@ defmodule Bot.RSS.Cron do
       :timer.sleep(random_time_in_ms)
 
       token = Mastodon.Auth.UserCredentials.get_token()
+
       Mastodon.Actions.PostStatus.post(
         %{text: it.title, media: it.media, id: it.id},
         token,
