@@ -11,23 +11,38 @@
     </div>
     <div class="grid grid-cols-1">
       <p class="text-[2rem] mt-4 font-semibold leading-10 tracking-tighter mt-10 text-zinc-900">
-        Chatgpt
+        ChatGPT
       </p>
-      <div class="flex flex-col">
+      <div>
         <div class="mt-10">
           <span id="loading" hidden>
             <.icon name="hero-cog-solid mt-10 text-[5rem] animate-spin" />
           </span>
         </div>
-        <div class="mt-10">
-          <input placeholder="Enter API key... " onkeydown="add_secret_key(event)"
-            class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 w-full lg:w-auto"
-            id="url_input" />
+
+        <div id="form" class="flex flex-col">
+          <h5 style="text-align: center;">Enter a ChatGPT API key to get started</h5>
+          <div class="mt-10">
+            <input placeholder="Enter API key here... " onkeydown="add_secret_key(event)"
+              class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 w-full lg:w-auto"
+              id="url_input" />
+          </div>
+          <button class="bg-brand/5 text-brand rounded-full px-4 py-4 font-medium leading-6 mt-10"
+            onclick="add_secret_key()">
+            <.icon name="hero-arrow-up-solid" />
+            Save API key
+          </button>
         </div>
-        <button class="bg-brand/5 text-brand rounded-full px-4 py-4 font-medium leading-6 mt-10" onclick="add_secret_key()">
-          <.icon name="hero-task-solid" />
-          Save API key
-        </button>
+
+        <div id="has-credentials" class="flex flex-col">
+          <h5 style="text-align: center;"><.icon name="hero-check-solid" /> API key added</h5>
+          <button class="bg-brand/5 text-brand rounded-full px-4 py-4 font-medium leading-6 mt-10"
+            onclick="delete_secret_key()">
+            <.icon name="hero-trash-solid" />
+            Delete API key
+          </button>
+        </div>
+
       </div>
     </div>
   </div>
@@ -38,17 +53,26 @@
 
 <script>
   var loading_spinner = document.getElementById("loading");
-  var rss_urls = document.getElementById("rss_urls");
-  var url_input = document.getElementById("url_input");
+  var found_credentials = document.getElementById("has-credentials");
+  var form = document.getElementById("form");
+  var secret_input = document.getElementById("url_input");
 
-  url_input.value = "";
+  form.style = "display: none;"
+  found_credentials.style = "display: none;"
+
+  secret_input.value = "";
 
   function get_has_credentials() {
     loading.hidden = false;
     fetch("/api/chatgpt/credentials", { method: "GET" })
       .then((response) => response.json())
-      .then((res) => (rss_urls.innerText = JSON.stringify(res, null, 4)))
-      .then((_) => (rss_urls.hidden = false))
+      .then(res => {
+        if (res) {
+          found_credentials.style = "display: flex flex-col;"
+        } else {
+          form.style = "display: flex flex-col;"
+        }
+      })
       .catch((_) => { })
       .finally((_) => (loading.hidden = true));
   }
@@ -59,21 +83,22 @@
     if (!pressedEnter && event) {
       return;
     }
-    const key = url_input.value.trim();
+    const key = secret_input.value.trim();
     var api_url = new URL("api/chatgpt/credentials", window.location.origin);
     api_url.searchParams.append("secret_key", key);
 
     fetch(api_url, { method: "POST" })
-      .then((response) => response.json())
-      .then(console.debug)
+      .then(() => form.style = "display: none;")
+      .then(() => found_credentials.style = "display: flex flex-col;")
+      .then(get_has_credentials)
       .catch((e) => {
         console.log(e);
       })
       .finally(_ => loading_spinner.hidden = true);
   }
 
-  function delete_credentials() {
-    if (!confirm("Sure to delete the Chatgpt API key?")) {
+  function delete_secret_key() {
+    if (!confirm("Sure to delete the ChatGPT API key?")) {
       return;
     }
 
@@ -81,8 +106,10 @@
     loading_spinner.hidden = false;
 
     fetch(api_url, { method: "DELETE" })
-      // .then((response) => response.json())
       .then(console.debug)
+      .then(() => form.style = "display: flex flex-col;")
+      .then(() => found_credentials.style = "display: none;")
+      .then(get_has_credentials)
       .catch((e) => {
         console.log(e);
       })
