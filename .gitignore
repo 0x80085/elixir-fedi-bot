@@ -37,7 +37,7 @@ npm-debug.log
 
 # auth files
 credentials.json
-chatgpt-credentials.json
+chatgpt-credentials*.json
 
 # temporary file used for uploading images
 temp_file
