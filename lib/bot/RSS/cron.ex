@@ -53,7 +53,7 @@ defmodule Bot.RSS.Cron do
       true ->
         IO.puts("Credentials found, starting RSS scraping ...")
         fetch_and_post_rss(%{
-          is_dry_run: false,
+          is_dry_run: state.is_dry_run,
           url_index: state.url_index,
           max_post_burst: state.max_post_burst,
         })
@@ -129,10 +129,10 @@ defmodule Bot.RSS.Cron do
       # TODO
       random_time_in_ms = Enum.random(1000..5000)
 
+      IO.puts("Posting new entry in #{random_time_in_ms}ms")
       :timer.sleep(random_time_in_ms)
 
       token = Mastodon.Auth.UserCredentials.get_token()
-
       Mastodon.Actions.PostStatus.post(
         %{text: it.title, media: it.media, id: it.id},
         token,

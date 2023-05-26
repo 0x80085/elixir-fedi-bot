@@ -5,17 +5,25 @@ defmodule Bot.Mastodon.Actions.PostStatus do
   alias Bot.RSS.FoundUrlArchive
 
   def post(data, token, is_dry_run) do
-    toot_text = format_toot(data)
+    case FoundUrlArchive.exists(data.id) do
+      true ->
+        IO.puts("Was already posted!")
 
-    case maybe_upload_image(data, is_dry_run) do
-      {:ok, media_id} ->
-        post_toot(data.id, toot_text, media_id, token, is_dry_run)
+        {:ok, "status printed"}
 
-      nil ->
-        post_toot(data.id, toot_text, nil, token, is_dry_run)
+      false ->
+        toot_text = format_toot(data)
 
-      {:error, status_code} ->
-        {:error, status_code}
+        case maybe_upload_image(data, is_dry_run) do
+          {:ok, media_id} ->
+            post_toot(data.id, toot_text, media_id, token, is_dry_run)
+
+          nil ->
+            post_toot(data.id, toot_text, nil, token, is_dry_run)
+
+          {:error, status_code} ->
+            {:error, status_code}
+        end
     end
   end
 
@@ -125,21 +133,20 @@ defmodule Bot.Mastodon.Actions.PostStatus do
     IO.inspect(form_data)
 
     request_body = Plug.Conn.Query.encode(form_data)
-    was_already_posted = FoundUrlArchive.exists(id)
 
-    cond do
-      is_dry_run || was_already_posted ->
+    case is_dry_run do
+      true ->
         IO.puts("Printing Toot...")
         IO.inspect(request_body)
         IO.inspect(headers)
 
-        if was_already_posted do
-          IO.puts("Was already posted!")
+        if id != "" do
+          FoundUrlArchive.add_entry_id(id)
         end
 
         {:ok, "status printed"}
 
-      !is_dry_run && !was_already_posted ->
+      false ->
         reponse =
           HTTPoison.post(
             "#{ApplicationCredentials.get_fedi_url()}/api/v1/statuses",
