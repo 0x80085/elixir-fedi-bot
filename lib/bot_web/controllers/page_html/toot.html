@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      html,
+      body {
+        font-family: "Inter", sans-serif;
+        min-height: 100vh;
+      }
+
+      body {
+        display: flex;
+        background-color: #191b22;
+        align-items: center;
+        justify-content: center;
+      }
+
+      article {
+        background-color: #282c37;
+        width: 580px;
+        color: #fff;
+        text-rendering: optimizelegibility;
+        text-size-adjust: none;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        margin: 0;
+        padding: 16px;
+        border: 0;
+        font: inherit;
+        vertical-align: baseline;
+        display: block;
+        border-radius: 10px;
+      }
+
+      article > div {
+        color: #fff;
+        text-rendering: optimizelegibility;
+        text-size-adjust: none;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        margin: 0;
+        padding: 0;
+        border: 0;
+        font: inherit;
+        vertical-align: baseline;
+      }
+
+      .status__wrapper {
+        color: #fff;
+        text-rendering: optimizelegibility;
+        text-size-adjust: none;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        margin: 0;
+        padding: 0;
+        border: 0;
+        font: inherit;
+        vertical-align: baseline;
+        position: relative;
+      }
+
+      .status__info {
+        color: #fff;
+        text-rendering: optimizelegibility;
+        text-size-adjust: none;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        cursor: auto;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        font: inherit;
+        vertical-align: baseline;
+        font-size: 15px;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .status__relative-time {
+        text-rendering: optimizelegibility;
+        text-size-adjust: none;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        margin: 0;
+        padding: 0;
+        border: 0;
+        font: inherit;
+        vertical-align: baseline;
+        display: block;
+        font-size: 15px;
+        line-height: 22px;
+        height: 40px;
+        order: 2;
+        flex: 0 0 auto;
+        color: #606984;
+        text-decoration: none;
+      }
+
+      .status__visibility-icon {
+        text-rendering: optimizelegibility;
+        text-size-adjust: none;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        color: #606984;
+        margin: 0;
+        border: 0;
+        font: inherit;
+        vertical-align: baseline;
+        padding: 0 4px;
+      }
+
+      a.status__relative-time > time {
+        text-rendering: optimizelegibility;
+        text-size-adjust: none;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        color: #606984;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        font: inherit;
+        vertical-align: baseline;
+      }
+
+      div.status__info > a.status__display-name {
+        text-rendering: optimizelegibility;
+        text-size-adjust: none;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        margin: 0;
+        padding: 0;
+        border: 0;
+        font: inherit;
+        vertical-align: baseline;
+        color: #606984;
+        text-decoration: none;
+        max-width: 100%;
+        display: flex;
+        font-size: 15px;
+        line-height: 22px;
+        align-items: center;
+        gap: 10px;
+        overflow: hidden;
+      }
+      .status__avatar {
+        text-rendering: optimizelegibility;
+        text-size-adjust: none;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        color: #606984;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        font: inherit;
+        vertical-align: baseline;
+        width: 46px;
+        height: 46px;
+      }
+      .account__avatar {
+        text-rendering: optimizelegibility;
+        text-size-adjust: none;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        color: #606984;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        font: inherit;
+        vertical-align: baseline;
+        border-radius: 4px;
+        background: transparent no-repeat;
+        background-position: 50%;
+        background-clip: padding-box;
+        display: block;
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+        width: 46px;
+        height: 46px;
+      }
+
+      div.status__info > a.status__display-name > div > div > img {
+        text-rendering: optimizelegibility;
+        text-size-adjust: none;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        color: #606984;
+        cursor: pointer;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        font: inherit;
+        vertical-align: baseline;
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .display-name {
+        text-rendering: optimizelegibility;
+        text-size-adjust: none;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        color: #606984;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        font: inherit;
+        vertical-align: baseline;
+        display: block;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      bdi {
+        text-rendering: optimizelegibility;
+        text-size-adjust: none;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        color: #606984;
+        font: inherit;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .display-name__html {
+        text-rendering: optimizelegibility;
+        text-size-adjust: none;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        white-space: nowrap;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        font: inherit;
+        vertical-align: baseline;
+        font-weight: 500;
+        color: #fff;
+      }
+
+      .display-name__account {
+        text-rendering: optimizelegibility;
+        text-size-adjust: none;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        color: #606984;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        font: inherit;
+        vertical-align: baseline;
+        white-space: nowrap;
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .status__content.status__content--with-action {
+        text-rendering: optimizelegibility;
+        text-size-adjust: none;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        margin: 0;
+        padding: 0;
+        border: 0;
+        font: inherit;
+        vertical-align: baseline;
+        cursor: pointer;
+        clear: both;
+        position: relative;
+        font-size: 15px;
+        line-height: 22px;
+        word-wrap: break-word;
+        font-weight: 400;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding-top: 2px;
+        color: #fff;
+      }
+
+      .media-gallery {
+        color: #fff;
+        text-rendering: optimizelegibility;
+        text-size-adjust: none;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        cursor: auto;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        font: inherit;
+        vertical-align: baseline;
+        border-radius: 4px;
+        width: 100%;
+        min-height: 64px;
+        box-sizing: border-box;
+        overflow: hidden;
+        position: relative;
+        height: 308.25px;
+      }
+
+      .media-gallery__item {
+        color: #fff;
+        text-rendering: optimizelegibility;
+        text-size-adjust: none;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        cursor: auto;
+        margin: 0;
+        padding: 0;
+        font: inherit;
+        vertical-align: baseline;
+        box-sizing: border-box;
+        overflow: hidden;
+        position: relative;
+        border: 0;
+        display: block;
+        float: left;
+        border-radius: 4px;
+        inset: auto;
+        width: 100%;
+        height: 100%;
+      }
+
+      .media-gallery__gifv {
+        color: #fff;
+        text-rendering: optimizelegibility;
+        text-size-adjust: none;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        cursor: auto;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        font: inherit;
+        vertical-align: baseline;
+        height: 100%;
+        overflow: hidden;
+        position: relative;
+        width: 100%;
+      }
+
+      .media-gallery__item-gifv-thumbnail {
+        color: #fff;
+        text-rendering: optimizelegibility;
+        text-size-adjust: none;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        margin: 0;
+        padding: 0;
+        border: 0;
+        font: inherit;
+        vertical-align: baseline;
+        cursor: zoom-in;
+        height: 100%;
+        object-fit: cover;
+        position: relative;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 100%;
+        z-index: 1;
+      }
+
+      .media-gallery__gifv__label {
+        text-rendering: optimizelegibility;
+        text-size-adjust: none;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        cursor: auto;
+        margin: 0;
+        border: 0;
+        font: inherit;
+        vertical-align: baseline;
+        display: block;
+        position: absolute;
+        color: #fff;
+        background: rgba(0, 0, 0, 0.5);
+        bottom: 6px;
+        left: 6px;
+        padding: 2px 6px;
+        border-radius: 2px;
+        font-size: 11px;
+        font-weight: 600;
+        z-index: 1;
+        pointer-events: none;
+        opacity: 0.9;
+        transition: opacity 0.1s ease;
+        line-height: 18px;
+      }
+    </style>
+  </head>
+  <body>
+    <article
+      aria-posinset="1"
+      aria-setsize="20"
+      data-id="110457509604261500"
+      tabindex="0"
+      style=""
+    >
+      <div tabindex="-1">
+        <div
+          class="status__wrapper status__wrapper-public focusable"
+          tabindex="0"
+        >
+          <div class="status status-public" data-id="110457509604261500">
+            <div class="status__info">
+              <a
+                href="#"
+                class="status__relative-time"
+                target="_blank"
+                rel="noopener noreferrer"
+                ><span class="status__visibility-icon"
+                  ><i class="fa fa-globe" title="Public"></i></span
+                ><time
+                  datetime="2023-05-30T11:57:19.423Z"
+                  title="May 30, 2023, 13:57"
+                  >2m</time
+                ></a
+              ><a
+                href="#"
+                title="username"
+                class="status__display-name"
+                target="_blank"
+                rel="noopener noreferrer"
+                ><div class="status__avatar">
+                  <div
+                    class="account__avatar"
+                    style="width: 46px; height: 46px"
+                  >
+                    <img
+                      src="https://media.tenor.com/oJ-_WhQreUMAAAAM/rebel-robot.gif"
+                      alt="username"
+                    />
+                  </div>
+                </div>
+                <span class="display-name"
+                  ><bdi><strong class="display-name__html">n4me</strong></bdi>
+                  <span class="display-name__account">@usern4me</span></span
+                ></a
+              >
+            </div>
+            <div
+              class="status__content status__content--with-action"
+              tabindex="0"
+            >
+              <div
+                class="status__content__text status__content__text--visible translate"
+                lang="en"
+              >
+                <p id="text_preview">TESTING TESTING</p>
+              </div>
+            </div>
+            <div class="media-gallery">
+              <div
+                class="media-gallery__item"
+                style="inset: auto; width: 100%; height: 100%"
+              >
+                <div class="media-gallery__gifv autoplay">
+                  <img
+                    id="media_preview"
+                    class="media-gallery__item-gifv-thumbnail"
+                    src="#"
+                    alt="Testing"
+                  />
+                  <span class="media-gallery__gifv__label">GIF</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <script>
+      var text_preview = document.getElementById("text_preview");
+      var media_preview = document.getElementById("media_preview");
+
+      function get_query_params() {
+        var default_value = {
+          text: "Hello there johnny",
+          mediaUrl: "https://files.catbox.moe/r5m428.gif",
+        };
+
+        const params = new URL(document.location).searchParams;
+        const text_from_params = params.get("text");
+        const mediaUrl_from_params = params.get("mediaUrl");
+
+        return text_from_params
+          ? {
+              text: text_from_params,
+              mediaUrl: mediaUrl_from_params,
+            }
+          : default_value;
+      }
+
+      const { mediaUrl, text } = get_query_params();
+
+      text_preview.innerText = text;
+
+      if (!mediaUrl) {
+        const hide = "display: none;";
+        document.getElementsByClassName("media-gallery")[0].style = hide;
+        media_preview.style = hide;
+      } else {
+        media_preview.src = mediaUrl;
+      }
+    </script>
+  </body>
+</html>
