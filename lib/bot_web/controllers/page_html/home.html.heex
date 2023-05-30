@@ -1,6 +1,8 @@
 <link phx-track-static rel="stylesheet" />
 <div class="mt-10 loading-blocking" id="loading" hidden>
-  <span class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 ">
+  <span
+    class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900"
+  >
     Processing ...
   </span>
 </div>
@@ -8,90 +10,139 @@
 <.flash_group flash={@flash} />
 
 <div class="grid sm:grid-cols-1 md:grid-cols-2 main">
-  <div class="lg:px-[10rem] py-[4rem] content-left ">
+  <div class="lg:px-[10rem] py-[4rem] content-left">
     <div class="flex header flex-col lg:flex-row">
-      <img class="flip-horizontally" src={~p"/images/logo.jpg"} alt="logo" id="logo">
+      <img class="flip-horizontally" src={~p"/images/logo.jpg"} alt="logo"
+      id="logo">
 
-      <h1 class="ml-0 mt-5 lg:mt-0 lg:ml-5 text-brand header-title text-sm font-semibold leading-6">
+      <h1
+        class="ml-0 mt-5 lg:mt-0 lg:ml-5 text-brand header-title text-sm font-semibold leading-6"
+      >
         Fedi-bot Chan
       </h1>
     </div>
     <div class="grid grid-cols-1">
       <div class="w-full sm:w-100">
         <form id="url-form">
-          <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2" id="setup_cta">
-            <button class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 sm:py-6">
+          <div
+            class="mt-10 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2"
+            id="setup_cta"
+          >
+            <button
+              class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 sm:py-6"
+            >
               <span
-                class="absolute inset-0 rounded-2xl bg-zinc-50 transition group-hover:bg-zinc-100 sm:group-hover:scale-105">
+                class="absolute inset-0 rounded-2xl bg-zinc-50 transition group-hover:bg-zinc-100 sm:group-hover:scale-105"
+              >
               </span>
-              <span class="relative flex items-center gap-4 sm:flex-col" style="text-align: center;">
-                <div>
-                  🤖
-                </div>
+              <span
+                class="relative flex items-center gap-4 sm:flex-col"
+                style="text-align: center"
+              >
+                <div>🤖</div>
                 Click here to setup your bot!
               </span>
             </button>
-            <div class="mt-10 ">
-              <input placeholder="Enter a HTTPS URL..."
-                class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900" required
-                title="https://domain.tld" style="width: 100%;" id="fedi_url_here"
-                pattern="[Hh][Tt][Tt][Pp][Ss]?:\/\/(?:(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)(?:\.(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)*(?:\.(?:[a-zA-Z\u00a1-\uffff]{2,}))(?::\d{2,5})?(?:\/[^\s]*)?" />
+            <div class="mt-10">
+              <input
+                placeholder="Enter a HTTPS URL..."
+                class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900"
+                required
+                title="https://domain.tld"
+                style="width: 100%"
+                id="fedi_url_here"
+                pattern="[Hh][Tt][Tt][Pp][Ss]?:\/\/(?:(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)(?:\.(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)*(?:\.(?:[a-zA-Z\u00a1-\uffff]{2,}))(?::\d{2,5})?(?:\/[^\s]*)?"
+              />
             </div>
           </div>
         </form>
       </div>
-      <div class="flex" style=" flex-direction: column; align-items: center;">
+      <div class="flex" style="flex-direction: column; align-items: center">
         <div class="mt-10" id="instructions" hidden>
-          <span class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 ">
+          <span
+            class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900"
+          >
             Connect to your fedi account
           </span>
         </div>
-        <div class="mt-10 ">
+        <div class="mt-10">
           <a href="#" target="_blank" id="url_here" hidden>
-            <button type="button" style="border:1px solid orange; border-radius: 10px; padding: 1rem; color: #fd4f00;">
+            <button
+              type="button"
+              style="
+                border: 1px solid orange;
+                border-radius: 10px;
+                padding: 1rem;
+                color: #fd4f00;
+              "
+            >
               Connect bot to your fedi account
             </button>
           </a>
         </div>
-        <div class="mt-10 " id="more_instructions" hidden>
-          <span class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 ">
+        <div class="mt-10" id="more_instructions" hidden>
+          <span
+            class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900"
+          >
             Then enter the received code and press <code>Enter</code>
           </span>
         </div>
-        <div class="mt-10 ">
-          <input placeholder="Code here... " onkeyup="connectAccount(event)"
+        <div class="mt-10">
+          <input
+            placeholder="Code here... "
+            onkeyup="connectAccount(event)"
             class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900"
-            id="paste_code_here" hidden />
+            id="paste_code_here"
+            hidden
+          />
         </div>
-        <div style="text-align: center;" id="success_and_post" hidden>
-          <p>
-            🤖💬
-          </p>
+        <div style="text-align: center" id="success_and_post" hidden>
+          <p>🤖💬</p>
           <h1 class="text-brand text-sm font-semibold leading-6">
             Fedi-bot chan at your service!
           </h1>
-          <div class="mt-10 ">
-            <span class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 mt-10">
+          <div class="mt-10">
+            <span
+              class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 mt-10"
+            >
               Post your first bot message:
             </span>
           </div>
-          <div class="mt-10 ">
-            <textarea placeholder="Enter message here... " onkeydown="postMessage(event)"
+          <div class="mt-10">
+            <textarea
+              placeholder="Enter message here... "
+              onkeydown="postMessage(event)"
               class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900"
-              id="message_here">
+              id="message_here"
+            >
             </textarea>
           </div>
-          <p class="font-light text-zinc-300 mt-2">Press <code>Enter</code> to post!</p>
-          <div class="mt-10 ">
-            <input placeholder="Enter image url here... " onkeydown="postMessage(event)"
+          <p class="font-light text-zinc-300 mt-2">
+            Press <code>Enter</code> to post!
+          </p>
+          <div class="mt-10">
+            <input
+              placeholder="Enter image url here... "
+              onkeydown="postMessage(event)"
               class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900"
-              id="img_url_here" />
+              id="img_url_here"
+            />
           </div>
-          <hr class="mb-10 mt-10">
-          <button class="bg-brand/5 text-brand rounded-full px-4 py-4 font-medium leading-6"
-            onclick="clearBotCredentials()">
-            <.icon name="hero-trash-solid" />
-            Clear bot credentials
+
+          <button
+            class="bg-brand/5 text-brand rounded-full px-4 py-4 font-medium leading-6"
+            onclick="preview_toot()"
+          >
+            Preview
+          </button>
+          <iframe id="iframed_toot" src="#" frameborder="0"></iframe>
+
+          <hr class="mb-10 mt-10" />
+          <button
+            class="bg-brand/5 text-brand rounded-full px-4 py-4 font-medium leading-6"
+            onclick="clearBotCredentials()"
+          >
+            <.icon name="hero-trash-solid" /> Clear bot credentials
           </button>
         </div>
       </div>
@@ -99,8 +150,14 @@
   </div>
 
   <div class="banner-right hidden sm:hidden md:block">
-    <img class="center-cropped-img" src={~p"/images/banner-right.png"} alt="banner">
+    <img class="center-cropped-img" src={~p"/images/banner-right.png"}
+    alt="banner">
   </div>
+  <dialog id="dialog_error">
+    <p>Oops</p>
+   <p>Somethinng went wrong</p>
+  </dialog>
+  
 </div>
 
 <script>
@@ -109,145 +166,157 @@
   var fediUrlForm = document.getElementById("url-form");
   var fediUrlInput = document.getElementById("fedi_url_here");
 
-  var setup_cta = document.getElementById("setup_cta")
-  setup_cta.style.display = "none"
+  var setup_cta = document.getElementById("setup_cta");
+  setup_cta.style.display = "none";
 
-  var loading = document.getElementById("loading")
-  var connect_link = document.getElementById("url_here")
-  var code_input = document.getElementById('paste_code_here')
-  var msg_input = document.getElementById('message_here')
-  var img_url_input = document.getElementById('img_url_here')
-  var instructions = document.getElementById('instructions')
-  var more_instructions = document.getElementById('more_instructions')
-  var success_and_post = document.getElementById('success_and_post')
-  code_input.value = ""
-  msg_input.value = ""
+  var loading = document.getElementById("loading");
+  var connect_link = document.getElementById("url_here");
+  var code_input = document.getElementById("paste_code_here");
+  var msg_input = document.getElementById("message_here");
+  var img_url_input = document.getElementById("img_url_here");
+  var instructions = document.getElementById("instructions");
+  var more_instructions = document.getElementById("more_instructions");
+  var success_and_post = document.getElementById("success_and_post");
+  code_input.value = "";
+  msg_input.value = "";
 
   function get_has_credentials() {
-    loading.hidden = false
+    loading.hidden = false;
     fetch("/api/has_credentials")
-      .then(response => response.json())
-      .then(({ has_credentials }) => is_bot_connected_to_fedi = has_credentials)
-      .then(_ => {
+      .then((response) => response.json())
+      .then(
+        ({ has_credentials }) => (is_bot_connected_to_fedi = has_credentials)
+      )
+      .then((_) => {
         if (is_bot_connected_to_fedi) {
-          connect_link.hidden = true
-          code_input.hidden = true
-          instructions.hidden = true
-          more_instructions.hidden = true
+          connect_link.hidden = true;
+          code_input.hidden = true;
+          instructions.hidden = true;
+          more_instructions.hidden = true;
 
-          success_and_post.hidden = false
+          success_and_post.hidden = false;
         } else {
-          setup_cta.style.display = "grid"
+          setup_cta.style.display = "grid";
         }
       })
-      .catch(_ => { loading.hidden = true; setup_cta.style.display = "grid"; })
-      .finally(_ => loading.hidden = true)
+      .catch((_) => {
+        loading.hidden = true;
+        setup_cta.style.display = "grid";
+      })
+      .finally((_) => (loading.hidden = true));
   }
 
   function setupBot(event) {
     event.preventDefault();
 
     try {
-      loading.hidden = false
-      setup_cta.style.display = "none"
+      loading.hidden = false;
+      setup_cta.style.display = "none";
 
       new URL(fediUrlInput.value);
 
-      if (!/^https:\/\/(?:[\w_-]+\.)+[\w]+(?:[\w\/_.-]*)?$/.test(fediUrlInput.value)) {
+      if (
+        !/^https:\/\/(?:[\w_-]+\.)+[\w]+(?:[\w\/_.-]*)?$/.test(
+          fediUrlInput.value
+        )
+      ) {
         throw new Error("Not a HTTPS URL");
       }
 
       var url = new URL("/api/setup", window.location.origin);
-      url.searchParams.append('fedi_url', fediUrlInput.value);
+      url.searchParams.append("fedi_url", fediUrlInput.value);
 
       fetch(url)
-        .then(response => response.json())
+        .then((response) => response.json())
         .then(({ auth_url }) => {
-          connect_link.hidden = false
-          code_input.hidden = false
-          instructions.hidden = false
-          more_instructions.hidden = false
+          connect_link.hidden = false;
+          code_input.hidden = false;
+          instructions.hidden = false;
+          more_instructions.hidden = false;
 
-          connect_link.href = auth_url
+          connect_link.href = auth_url;
         })
-        .catch(e => {
-          alert("Check the URL, possibly not a fedi instance or cannot run bot through it.")
-          setup_cta.style.display = "grid"
-          loading.hidden = true
+        .catch((e) => {
+          alert(
+            "Check the URL, possibly not a fedi instance or cannot run bot through it."
+          );
+          dialog_error.open = true
+
+          setup_cta.style.display = "grid";
+          loading.hidden = true;
           throw e;
         })
-        .finally(_ => loading.hidden = true);
-
+        .finally((_) => (loading.hidden = true));
     } catch (error) {
-      console.log("error")
-      console.log(error)
-      alert(error.message ?? error)
-      setup_cta.style.display = "grid"
-      loading.hidden = true
+      console.log("error");
+      console.log(error);
+      alert(error.message ?? error);
+      setup_cta.style.display = "grid";
+      loading.hidden = true;
       return;
     }
-
   }
 
-  fediUrlForm.addEventListener("submit", event => {
-    this.setupBot(event)
-    event.preventDefault()
+  fediUrlForm.addEventListener("submit", (event) => {
+    this.setupBot(event);
+    event.preventDefault();
   });
 
   function connectAccount(event) {
-    var pressedEnter = event.keyCode == 13
+    var pressedEnter = event.keyCode == 13;
 
     if (pressedEnter && code_input.value) {
-      loading.hidden = false
+      loading.hidden = false;
 
-      connect_link.hidden = true
-      code_input.hidden = true
-      instructions.hidden = true
-      more_instructions.hidden = true
+      connect_link.hidden = true;
+      code_input.hidden = true;
+      instructions.hidden = true;
+      more_instructions.hidden = true;
 
-      const code = code_input.value
+      const code = code_input.value;
       var url = new URL("api/connect_user", window.location.origin);
-      url.searchParams.append('user_code', code);
+      url.searchParams.append("user_code", code);
 
       fetch(url)
-        .then(res => res.json())
+        .then((res) => res.json())
         .then(console.log)
-        .then(_ => success_and_post.hidden = false)
-        .then(_ => msg_input.value = "")
-        .finally(_ => loading.hidden = true);
+        .then((_) => (success_and_post.hidden = false))
+        .then((_) => (msg_input.value = ""))
+        .finally((_) => (loading.hidden = true));
     }
   }
 
   function postMessage(event) {
-    var pressedEnter = event.keyCode == 13 && !event.shiftKey
+    var pressedEnter = event.keyCode == 13 && !event.shiftKey;
     if (pressedEnter && msg_input.value && msg_input.value.trim()) {
-
       loading.hidden = false;
 
       var url = new URL("api/post", window.location.origin);
-      url.searchParams.append('text', msg_input.value);
+      url.searchParams.append("text", msg_input.value);
       if (img_url_input.value) {
-        url.searchParams.append('media_url', img_url_input.value);
+        url.searchParams.append("media_url", img_url_input.value);
       }
 
-      fetch(url, {method: "POST"})
-        .then(res => {
+      fetch(url, { method: "POST" })
+        .then((res) => {
           console.log(res);
           if (res.status !== 200) {
-            throw new Error(res)
+            throw new Error(res);
           }
-          return res
+          return res;
         })
         // .then(res => res.json())
         // .then(console.log)
-        .then(_ => alert("success!"))
-        .then(_ => msg_input.value = "")
-        .then(_ => img_url_input.value = "")
-        .catch(e => { alert('Failed to post 🤷‍♀️'); console.log(e); })
-        .finally(_ => loading.hidden = true)
+        .then((_) => alert("success!"))
+        .then((_) => (msg_input.value = ""))
+        .then((_) => (img_url_input.value = ""))
+        .catch((e) => {
+          alert("Failed to post 🤷‍♀️");
+          console.log(e);
+        })
+        .finally((_) => (loading.hidden = true));
     }
   }
-
 
   function clearBotCredentials() {
     var bot_cred_url = new URL("api/bot/credentials", window.location.origin);
@@ -255,35 +324,42 @@
 
     new Promise((resolve) => resolve())
       .then(
-        confirm('Sure you want to clear the bot credentials?')
-        && fetch(app_cred_url, { method: "DELETE" })
-          .then(res => {
-            console.log();
-            if (res.status !== 204) {
-              throw new Error(`Status ${res.status}`)
-            }
-          })
-          .then(res => res.json())
-          .then(console.log)
-          .then(_ => console.log("Cleared bot creds"))
-          .then(
-            confirm('Also clear Fedi App credentials?')
-            && fetch(app_cred_url, { method: "DELETE" })
-              .then(res => res.json())
-              .then(console.log)
-          )
-      ).then(_ => window.location.reload())
+        confirm("Sure you want to clear the bot credentials?") &&
+          fetch(app_cred_url, { method: "DELETE" })
+            .then((res) => {
+              console.log();
+              if (res.status !== 204) {
+                throw new Error(`Status ${res.status}`);
+              }
+            })
+            .then((res) => res.json())
+            .then(console.log)
+            .then((_) => console.log("Cleared bot creds"))
+            .then(
+              confirm("Also clear Fedi App credentials?") &&
+                fetch(app_cred_url, { method: "DELETE" })
+                  .then((res) => res.json())
+                  .then(console.log)
+            )
+      )
+      .then((_) => window.location.reload())
 
-      .catch(e => {
+      .catch((e) => {
         console.log("Something went wrong");
         console.log(e);
-      })
-
+      });
   }
 
+  function preview_toot() {
+    msg_input;
+    img_url_input;
 
-  loading.hidden = false
-  get_has_credentials()
+    var iframe = document.getElementById("iframed_toot");
 
+    iframe.src = `/api/preview?text=${msg_input.value}&mediaUrl=${img_url_input.value}`;
+    iframe.hidden = false;
+  }
 
+  loading.hidden = false;
+  get_has_credentials();
 </script>

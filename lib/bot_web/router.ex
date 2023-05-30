@@ -33,18 +33,19 @@ defmodule BotWeb.Router do
   scope "/api", BotWeb do
     pipe_through [:api, :require_authenticated_user]
 
-    # Setup the bot / connect to a mastodon instance
+    # bot setup
     get "/setup", Api.AuthController, :connect_application
-    # Connect masto user to bot application
     get "/connect_user", Api.AuthController, :connect_user
-    # check if creds saved
     get "/has_credentials", Api.AuthController, :has_credentials
 
+    # bot reset
     delete  "/app/credentials", Api.AuthController, :delete_app_credentials
     delete  "/bot/credentials", Api.AuthController, :delete_bot_credentials
 
-    # Post status/toot/poast/shitpost
+    # Post status or toot
     post "/post", Api.ActionsController, :post_status
+    # Preview status or toot
+    get "/preview", Api.ActionsController, :preview_status
 
     # RSS
     get "/rss/urls", Api.RssController, :get_rss_urls

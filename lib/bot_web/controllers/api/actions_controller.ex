@@ -23,4 +23,9 @@ defmodule BotWeb.Api.ActionsController do
         send_resp(conn, :internal_server_error, Jason.encode!(%{message: reason}))
     end
   end
+
+  @spec preview_status(Plug.Conn.t(), map) :: Plug.Conn.t()
+  def preview_status(conn, _params) do
+    send_file(conn, 200, "priv/static/templates/toot.html")
+  end
 end
