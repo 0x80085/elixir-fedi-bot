@@ -11,7 +11,7 @@
 
 <div class="grid sm:grid-cols-1 md:grid-cols-2 main">
   <div class="py-[4rem] content-left">
-    <div class="flex header flex-col lg:flex-row lg:px-[10rem] ">
+    <div class="flex header flex-col lg:flex-row lg:px-[10rem]">
       <img class="flip-horizontally" src={~p"/images/logo.jpg"} alt="logo"
       id="logo">
 
@@ -22,7 +22,7 @@
       </h1>
     </div>
     <div class="grid grid-cols-1">
-      <div class="w-full sm:w-100 lg:px-[10rem] ">
+      <div class="w-full sm:w-100 lg:px-[10rem]">
         <form id="url-form">
           <div
             class="mt-10 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2"
@@ -57,7 +57,7 @@
           </div>
         </form>
       </div>
-      <div class="flex" style="flex-direction: column; align-items: center ">
+      <div class="flex" style="flex-direction: column; align-items: center">
         <div class="mt-10" id="instructions" hidden>
           <span
             class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900"
@@ -80,14 +80,14 @@
             </button>
           </a>
         </div>
-        <div class="mt-10 lg:px-[10rem] " id="more_instructions" hidden>
+        <div class="mt-10 lg:px-[10rem]" id="more_instructions" hidden>
           <span
             class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900"
           >
             Then enter the received code and press <code>Enter</code>
           </span>
         </div>
-        <div class="mt-10 lg:px-[10rem] ">
+        <div class="mt-10 lg:px-[10rem]">
           <input
             placeholder="Code here... "
             onkeyup="connectAccount(event)"
@@ -96,7 +96,12 @@
             hidden
           />
         </div>
-        <div style="text-align: center" class="lg:px-[10rem] " id="success_and_post" hidden>
+        <div
+          style="text-align: center"
+          class="lg:px-[10rem]"
+          id="success_and_post"
+          hidden
+        >
           <p>🤖💬</p>
           <h1 class="text-brand text-sm font-semibold leading-6">
             Fedi-bot chan at your service!
@@ -111,33 +116,38 @@
           <div class="mt-10">
             <textarea
               placeholder="Enter message here... "
-              onkeydown="postMessage(event)"
+              onkeydown="post_message(event)"
               class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900"
               id="message_here"
             >
             </textarea>
           </div>
-          <p class="font-light text-zinc-300 mt-2">
-            Press <code>Enter</code> to post!
-          </p>
+
           <div class="mt-10">
             <input
               placeholder="Enter image url here... "
-              onkeydown="postMessage(event)"
+              onkeydown="post_message(event)"
               class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900"
               id="img_url_here"
             />
           </div>
-
+          <p class="font-light text-zinc-300 mt-2">
+            Press <code>Enter</code> to post!
+          </p>
           <button
-            class="bg-brand/5 text-brand rounded-full px-4 py-4 font-medium leading-6"
+            class="bg-brand/5 text-brand rounded-full px-4 py-4 font-medium leading-6 mt-10"
             onclick="preview_toot()"
           >
             Preview
           </button>
         </div>
-        <iframe id="iframed_toot" src="#" frameborder="0" class="w-full h-[80vh]"></iframe>
-        <div class="lg:px-[10rem] ">
+        <iframe
+          id="iframed_toot"
+          src="#"
+          frameborder="0"
+          class="w-full h-[80vh] mt-10"
+        ></iframe>
+        <div class="lg:px-[10rem]">
           <hr class="mb-10 mt-10" />
           <button
             class="bg-brand/5 text-brand rounded-full px-4 py-4 font-medium leading-6"
@@ -288,9 +298,12 @@
     }
   }
 
-  function postMessage(event) {
+  function post_message(event) {
     var pressedEnter = event.keyCode == 13 && !event.shiftKey;
     if (pressedEnter && msg_input.value && msg_input.value.trim()) {
+      if (!confirm("Ready to post?")) {
+        return;
+      }
       loading.hidden = false;
 
       var url = new URL("api/post", window.location.origin);
@@ -355,8 +368,17 @@
   function preview_toot() {
     msg_input;
     img_url_input;
+    const params = new URLSearchParams({
+      text: msg_input.value,
+      mediaUrl: img_url_input.value,
+    });
 
-    iframe.src = `/api/preview?text=${msg_input.value}&mediaUrl=${img_url_input.value}`;
+    var api_url = new URL("api/preview", window.location.origin);
+
+    api_url.searchParams.append("text", msg_input.value);
+    api_url.searchParams.append("mediaUrl", img_url_input.value);
+
+    iframe.src = api_url;
     iframe.style = "display: block";
   }
 

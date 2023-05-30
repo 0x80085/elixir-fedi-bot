@@ -10,6 +10,7 @@
       body {
         font-family: "Inter", sans-serif;
         min-height: 100vh;
+        margin: 0;
       }
 
       body {
@@ -32,7 +33,7 @@
         font: inherit;
         vertical-align: baseline;
         display: block;
-        border-radius: 10px;
+        border-radius: 4px;
       }
 
       article > div {
@@ -480,9 +481,9 @@
         const text_from_params = params.get("text");
         const mediaUrl_from_params = params.get("mediaUrl");
 
-        return text_from_params
+        return text_from_params || mediaUrl_from_params
           ? {
-              text: text_from_params,
+              text: text_from_params || "",
               mediaUrl: mediaUrl_from_params,
             }
           : default_value;
