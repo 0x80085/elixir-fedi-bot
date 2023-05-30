@@ -37,9 +37,15 @@ defmodule Bot.Mastodon.Actions.PostStatus do
           data.id
       end
 
-    "🤖 💬 \"#{data.text}\"
+    case data.id do
+      "" ->
+        "🤖 💬 \"#{data.text}\""
+
+      _ ->
+        "🤖 💬 \"#{data.text}\"
 
     Source: #{content_link}"
+    end
   end
 
   defp format_yt_id_to_url(id) do
