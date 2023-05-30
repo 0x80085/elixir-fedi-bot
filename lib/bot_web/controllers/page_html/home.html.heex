@@ -10,8 +10,8 @@
 <.flash_group flash={@flash} />
 
 <div class="grid sm:grid-cols-1 md:grid-cols-2 main">
-  <div class="lg:px-[10rem] py-[4rem] content-left">
-    <div class="flex header flex-col lg:flex-row">
+  <div class="py-[4rem] content-left">
+    <div class="flex header flex-col lg:flex-row lg:px-[10rem] ">
       <img class="flip-horizontally" src={~p"/images/logo.jpg"} alt="logo"
       id="logo">
 
@@ -22,7 +22,7 @@
       </h1>
     </div>
     <div class="grid grid-cols-1">
-      <div class="w-full sm:w-100">
+      <div class="w-full sm:w-100 lg:px-[10rem] ">
         <form id="url-form">
           <div
             class="mt-10 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2"
@@ -57,7 +57,7 @@
           </div>
         </form>
       </div>
-      <div class="flex" style="flex-direction: column; align-items: center">
+      <div class="flex" style="flex-direction: column; align-items: center ">
         <div class="mt-10" id="instructions" hidden>
           <span
             class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900"
@@ -80,14 +80,14 @@
             </button>
           </a>
         </div>
-        <div class="mt-10" id="more_instructions" hidden>
+        <div class="mt-10 lg:px-[10rem] " id="more_instructions" hidden>
           <span
             class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900"
           >
             Then enter the received code and press <code>Enter</code>
           </span>
         </div>
-        <div class="mt-10">
+        <div class="mt-10 lg:px-[10rem] ">
           <input
             placeholder="Code here... "
             onkeyup="connectAccount(event)"
@@ -96,7 +96,7 @@
             hidden
           />
         </div>
-        <div style="text-align: center" id="success_and_post" hidden>
+        <div style="text-align: center" class="lg:px-[10rem] " id="success_and_post" hidden>
           <p>🤖💬</p>
           <h1 class="text-brand text-sm font-semibold leading-6">
             Fedi-bot chan at your service!
@@ -135,8 +135,9 @@
           >
             Preview
           </button>
-          <iframe id="iframed_toot" src="#" frameborder="0"></iframe>
-
+        </div>
+        <iframe id="iframed_toot" src="#" frameborder="0" class="w-full h-[80vh]"></iframe>
+        <div class="lg:px-[10rem] ">
           <hr class="mb-10 mt-10" />
           <button
             class="bg-brand/5 text-brand rounded-full px-4 py-4 font-medium leading-6"
@@ -155,9 +156,8 @@
   </div>
   <dialog id="dialog_error">
     <p>Oops</p>
-   <p>Somethinng went wrong</p>
+    <p>Somethinng went wrong</p>
   </dialog>
-  
 </div>
 
 <script>
@@ -177,8 +177,10 @@
   var instructions = document.getElementById("instructions");
   var more_instructions = document.getElementById("more_instructions");
   var success_and_post = document.getElementById("success_and_post");
+  var iframe = document.getElementById("iframed_toot");
   code_input.value = "";
   msg_input.value = "";
+  iframe.style = "display: none;";
 
   function get_has_credentials() {
     loading.hidden = false;
@@ -240,7 +242,7 @@
           alert(
             "Check the URL, possibly not a fedi instance or cannot run bot through it."
           );
-          dialog_error.open = true
+          dialog_error.open = true;
 
           setup_cta.style.display = "grid";
           loading.hidden = true;
@@ -354,12 +356,9 @@
     msg_input;
     img_url_input;
 
-    var iframe = document.getElementById("iframed_toot");
-
     iframe.src = `/api/preview?text=${msg_input.value}&mediaUrl=${img_url_input.value}`;
-    iframe.hidden = false;
+    iframe.style = "display: block";
   }
 
-  loading.hidden = false;
   get_has_credentials();
 </script>
