@@ -423,8 +423,8 @@
                   </div>
                 </div>
                 <span class="display-name"
-                  ><bdi><strong class="display-name__html">n4me</strong></bdi>
-                  <span class="display-name__account">@usern4me</span></span
+                  ><bdi><strong class="display-name__html">NPC1412101</strong></bdi>
+                  <span class="display-name__account">@NPCno1412101</span></span
                 ></a
               >
             </div>
@@ -436,7 +436,7 @@
                 class="status__content__text status__content__text--visible translate"
                 lang="en"
               >
-                <p id="text_preview">TESTING TESTING</p>
+                <p id="text_preview">Loading...</p>
               </div>
             </div>
             <div class="media-gallery">
@@ -461,8 +461,14 @@
     </article>
 
     <script>
+      const hide = "display: none;";
+      const show = "display: block;";
+
       var text_preview = document.getElementById("text_preview");
       var media_preview = document.getElementById("media_preview");
+      var media_container = document.getElementsByClassName("media-gallery")[0];
+
+      media_container.style = hide;
 
       function get_query_params() {
         var default_value = {
@@ -486,11 +492,8 @@
 
       text_preview.innerText = text;
 
-      if (!mediaUrl) {
-        const hide = "display: none;";
-        document.getElementsByClassName("media-gallery")[0].style = hide;
-        media_preview.style = hide;
-      } else {
+      if (mediaUrl) {
+        media_container.style = show;
         media_preview.src = mediaUrl;
       }
     </script>
