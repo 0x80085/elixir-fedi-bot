@@ -29,15 +29,25 @@ defmodule Bot.Chatgpt.ChatActions do
             IO.puts("Successfully fetched answer from GPT")
             IO.inspect(decoded)
 
-            answer =
-              Map.get(decoded, "choices")
-              |> Enum.at(0)
-              |> Map.get("message")
-              |> Map.get("content")
+            cond do
+              !is_nil(Map.get(decoded, "choices")) ->
+                answer =
+                  Map.get(decoded, "choices")
+                  |> Enum.at(0)
+                  |> Map.get("message")
+                  |> Map.get("content")
 
-            IO.puts(answer)
+                IO.puts(answer)
 
-            {:ok, %{answer: answer}}
+                {:ok, %{answer: answer}}
+
+              !is_nil(Map.get(decoded, "error")) ->
+                answer =
+                  Map.get(decoded, "error")
+                  |> Map.get("message")
+
+                {:ok, %{answer: answer}}
+            end
 
           {:error, reason} ->
             {:error, reason}
