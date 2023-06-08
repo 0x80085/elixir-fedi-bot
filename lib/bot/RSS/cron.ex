@@ -5,7 +5,7 @@ defmodule Bot.RSS.Cron do
   alias Bot.RSS.RssFetcher
   alias Bot.Mastodon
 
-  @meta_info %{
+  @state %{
     is_dry_run: true,
     url_index: 0,
     max_post_burst: 3
@@ -13,7 +13,7 @@ defmodule Bot.RSS.Cron do
 
   def start_link(_opts) do
     IO.puts("Started CRON GenServer")
-    GenServer.start_link(__MODULE__, @meta_info, name: __MODULE__)
+    GenServer.start_link(__MODULE__, @state, name: __MODULE__)
   end
 
   @impl true
