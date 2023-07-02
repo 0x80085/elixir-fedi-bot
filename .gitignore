@@ -41,3 +41,6 @@ chatgpt-credentials*.json
 
 # temporary file used for uploading images
 temp_file
+
+# publishing file
+dist.zip
