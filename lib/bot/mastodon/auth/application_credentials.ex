@@ -16,11 +16,11 @@ defmodule Bot.Mastodon.Auth.ApplicationCredentials do
 
         case creds do
           nil ->
-            IO.puts("Creds not found")
+            IO.puts("Fedi creds not found")
             @default_state
 
           creds ->
-            IO.puts("Creds found, using from files")
+            IO.puts("Fedi creds found, using from files")
             IO.puts("fedi instance url: #{Map.get(creds, "fedi_url")}")
             IO.puts("app token: #{Map.get(creds, "app_token")}")
 

@@ -12,7 +12,7 @@ defmodule Bot.Chatgpt.CredentialStore do
 
         case creds do
           nil ->
-            IO.puts("Creds not found")
+            IO.puts("ChatGPT creds not found")
             @default_state
 
           creds ->
