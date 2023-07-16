@@ -1,16 +1,21 @@
 <link phx-track-static rel="stylesheet" />
 <.flash_group flash={@flash} />
 <div class="grid sm:grid-cols-1 md:grid-cols-2 main">
-  <div class="px-5 2xl:px-[10rem] py-[4rem] content-left ">
+  <div class="px-5 2xl:px-[10rem] py-[4rem] content-left">
     <div class="flex header flex-col lg:flex-row">
-      <img class="flip-horizontally" src={~p"/images/logo.jpg"} alt="logo" id="logo">
+      <img class="flip-horizontally" src={~p"/images/logo.jpg"} alt="logo"
+      id="logo">
 
-      <h1 class="ml-0 mt-5 lg:mt-0 lg:ml-5 text-brand header-title text-sm font-semibold leading-6">
+      <h1
+        class="ml-0 mt-5 lg:mt-0 lg:ml-5 text-brand header-title text-sm font-semibold leading-6"
+      >
         Fedi-bot Chan
       </h1>
     </div>
     <div class="grid grid-cols-1">
-      <p class="text-[2rem] mt-4 font-semibold leading-10 tracking-tighter mt-10 text-zinc-900">
+      <p
+        class="text-[2rem] mt-4 font-semibold leading-10 tracking-tighter mt-10 text-zinc-900"
+      >
         RSS
       </p>
       <div class="flex flex-col">
@@ -21,50 +26,101 @@
           <div class="flex flex-row justify-center items-center">
             <input
               class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 lg:w-auto mr-5"
-              type="checkbox" id="is_dry_run_input" name="is_dry_run_input" />
-            <label for="is_dry_run_input">Dry run mode:<br>Prints the RSS posts to console instead of tooting to
-              fedi</label>
-            <button class="bg-brand/5 text-brand rounded-full px-4 py-4 font-medium leading-6 ml-5"
-              onclick="set_is_dry_run()">
+              type="checkbox"
+              id="is_dry_run_input"
+              name="is_dry_run_input"
+            />
+            <label for="is_dry_run_input"
+              >Dry run mode:<br />Prints the RSS posts to console instead of
+              tooting to fedi
+            </label>
+            <button
+              class="bg-brand/5 text-brand rounded-full px-4 py-4 font-medium leading-6 ml-5"
+              onclick="set_is_dry_run()"
+            >
               Save
             </button>
           </div>
-          <hr class="mt-10">
-          <pre id="rss_urls" class="bg-brand/5 overflow-auto rounded-md px-2 py-2 mt-10" hidden></pre>
+          <hr class="mt-10" />
+          <div class="px-2 py-2 mt-4">
+            <p
+              class="text-[1.5rem] font-semibold leading-10 tracking-tighter text-zinc-900"
+            >
+              Watched URLs
+            </p>
+            <div class="mt-4">
+              <ul class="w-96" id="urls_list">
+                <li class="w-full py-4 text-neutral-500">Loading list...</li>
+              </ul>
+            </div>
+          </div>
         </div>
         <div class="mt-10">
-          <input placeholder="Enter new RSS url here... " onkeydown="add_url(event)"
+          <input
+            placeholder="Enter new RSS url here... "
+            onkeydown="add_url(event)"
             class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 w-full lg:w-auto"
-            id="url_input" />
+            id="url_input"
+          />
         </div>
-        <hr class="mt-10">
-        <button class="bg-brand/5 text-brand rounded-full px-4 py-4 font-medium leading-6 mt-10" onclick="start_job()">
-          <.icon name="hero-task-solid" />
-          Start RSS posting job
+        <hr class="mt-10" />
+        <button
+          class="bg-brand/5 text-brand rounded-full px-4 py-4 font-medium leading-6 mt-10"
+          onclick="start_job()"
+        >
+          <.icon name="hero-task-solid" /> Start RSS posting job
         </button>
       </div>
     </div>
   </div>
   <div class="banner-right hidden sm:hidden md:block">
-    <img class="center-cropped-img" src={~p"/images/banner-right.png"} alt="banner">
+    <img class="center-cropped-img" src={~p"/images/banner-right.png"}
+    alt="banner">
   </div>
 </div>
 
 <script>
   var loading_spinner = document.getElementById("loading");
-  var rss_urls = document.getElementById("rss_urls");
+
+  var urls_list = document.getElementById("urls_list");
   var url_input = document.getElementById("url_input");
   var is_dry_run_input = document.getElementById("is_dry_run_input");
-
   url_input.value = "";
 
   function get_urls() {
+    const save_btn = (url) =>
+      `<button class="inline-block ml-4 px-4 py-4  bg-brand/5 text-brand rounded-full" onclick="update_rss_url(this)" x-url-value="${url}">Save</button>`;
+    const checkbox = (is_enabled, url, index) => ` <input
+    type="checkbox"
+    class="relative float-left -ml-[1.5rem] mr-[6px] mt-[0.15rem] h-[1.125rem] w-[1.125rem] appearance-none rounded-[0.25rem] border-[0.125rem] border-solid border-neutral-300 outline-none before:pointer-events-none before:absolute before:h-[0.875rem] before:w-[0.875rem] before:scale-0 before:rounded-full before:bg-transparent before:opacity-0 before:shadow-[0px_0px_0px_13px_transparent] before:content-[''] checked:border-primary checked:bg-primary checked:before:opacity-[0.16] checked:after:absolute checked:after:-mt-px checked:after:ml-[0.25rem] checked:after:block checked:after:h-[0.8125rem] checked:after:w-[0.375rem] checked:after:rotate-45 checked:after:border-[0.125rem] checked:after:border-l-0 checked:after:border-t-0 checked:after:border-solid checked:after:border-white checked:after:bg-transparent checked:after:content-[''] hover:cursor-pointer hover:before:opacity-[0.04] hover:before:shadow-[0px_0px_0px_13px_rgba(0,0,0,0.6)] focus:shadow-none focus:transition-[border-color_0.2s] focus:before:scale-100 focus:before:opacity-[0.12] focus:before:shadow-[0px_0px_0px_13px_rgba(0,0,0,0.6)] focus:before:transition-[box-shadow_0.2s,transform_0.2s] focus:after:absolute focus:after:z-[1] focus:after:block focus:after:h-[0.875rem] focus:after:w-[0.875rem] focus:after:rounded-[0.125rem] focus:after:content-[''] checked:focus:before:scale-100 checked:focus:before:shadow-[0px_0px_0px_13px_#3b71ca] checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s] checked:focus:after:-mt-px checked:focus:after:ml-[0.25rem] checked:focus:after:h-[0.8125rem] checked:focus:after:w-[0.375rem] checked:focus:after:rotate-45 checked:focus:after:rounded-none checked:focus:after:border-[0.125rem] checked:focus:after:border-l-0 checked:focus:after:border-t-0 checked:focus:after:border-solid checked:focus:after:border-white checked:focus:after:bg-transparent dark:border-neutral-600 dark:checked:border-primary dark:checked:bg-primary dark:focus:before:shadow-[0px_0px_0px_13px_rgba(255,255,255,0.4)] dark:checked:focus:before:shadow-[0px_0px_0px_13px_#3b71ca]"
+    ${is_enabled ? "checked" : ""}
+    id="checkboxIsEnabled-${index}"/>
+  <label
+    class="inline-block pl-[0.15rem] hover:cursor-pointer"
+    for="checkboxIsEnabled-${index}">
+    <code>${url}</code>
+  </label>`;
+
+    const li_content = (is_enabled, url, index) =>
+      `${checkbox(is_enabled, url, index)} ${save_btn(url)}`;
+
+    const list_item = (content) =>
+      `<li class="w-full  py-4 text-neutral-500 ">${content}</li>`;
+
     loading.hidden = false;
     fetch("/api/rss/urls")
       .then((response) => response.json())
-      .then((res) => (rss_urls.innerText = JSON.stringify(res, null, 4)))
+      .then((res) => {
+        const list = res.reduce((prev, current, index) => {
+          const li = list_item(
+            li_content(current.is_enabled, current.url, index)
+          );
+          return prev + li;
+        }, "");
+        urls_list.innerHTML = list;
+      })
       .then((_) => (rss_urls.hidden = false))
-      .catch((_) => { })
+      .catch((_) => {})
       .finally((_) => (loading.hidden = true));
   }
 
@@ -87,6 +143,24 @@
       .finally(get_urls);
   }
 
+  function update_rss_url(event) {
+    var url = event.attributes["x-url-value"].value;
+    var is_enabled = Boolean(event.parentNode.children[0].checked);
+
+    var api_url = new URL("api/rss/urls", window.location.origin);
+    api_url.searchParams.append("url", url);
+    api_url.searchParams.append("is_enabled", is_enabled);
+
+    loading_spinner.hidden = false;
+
+    fetch(api_url, { method: "PATCH" })
+      .then(get_urls)
+      .catch((e) => {
+        console.log(e);
+      })
+      .finally((loading_spinner.hidden = true));
+  }
+
   function start_job() {
     if (!confirm("Sure to start the RSS job?")) {
       return;
@@ -101,7 +175,7 @@
       .catch((e) => {
         console.log(e);
       })
-      .finally(loading_spinner.hidden = true);
+      .finally((loading_spinner.hidden = true));
   }
 
   function get_is_dry_run() {
@@ -109,7 +183,7 @@
     fetch("api/rss/is_dry_run")
       .then((res) => res.json())
       .then((res) => (is_dry_run_input.checked = res))
-      .catch((_) => { })
+      .catch((_) => {})
       .finally((_) => (loading.hidden = true));
   }
 
@@ -127,7 +201,7 @@
       .catch((e) => {
         console.log(e);
       })
-      .finally(loading_spinner.hidden = true);
+      .finally((loading_spinner.hidden = true));
   }
 
   loading_spinner.hidden = false;

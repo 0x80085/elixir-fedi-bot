@@ -29,12 +29,12 @@ To connect the bot to your fedi account just register and login, then follow the
 - [ ] Enter fedi url from pleroma or soapbox or misskey or other popular fediware (needs more code, wont be just oauth I think...)   
 - [ ] Grab video from nitter/twitter and add to twoot 
 - [ ] Manage + put in DB: 
+  - [x] RSS URLs
   - [ ] Dry run mode
-  - [ ] Toot formatting template (the 🤖💬 "your text here> \n Source:# ")
   - [ ] Scrape interval in ms
-  - [ ] On/off RSS URLs
   - [ ] Max post burst count 
   - [ ] Track/save posts to prevent dupes
+  - [ ] Toot formatting template (the 🤖💬 "your text here> \n Source:# ")
 - [ ] Use Logger.debug instead of IO.* for logging important messages
 
 Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).

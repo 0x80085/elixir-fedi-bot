@@ -12,7 +12,10 @@ defmodule BotWeb.Api.RssController do
 
     urls =
       Enum.map(results, fn it ->
-        it.url
+        %{
+          "url" => it.url,
+          "is_enabled" => it.is_enabled
+        }
       end)
 
     json(conn, urls)
@@ -24,6 +27,26 @@ defmodule BotWeb.Api.RssController do
     Bot.Repo.insert(entry)
 
     send_resp(conn, :created, "OK")
+  end
+
+  def set_is_enabled(conn, params) do
+    target_url = params["url"]
+    is_enabled_state = params["is_enabled"]
+
+    IO.inspect(target_url)
+    IO.inspect(is_enabled_state)
+
+    # target_entry = Bot.Repo.get_by(Bot.RssRepo, url: target_url)
+
+    # Bot.Repo.update(target_entry, set: [is_enabled: is_enabled_state])
+
+    huh = from(p in Bot.RssRepo, where: p.url == ^target_url)
+    IO.inspect(huh)
+
+    huh
+    |> Bot.Repo.update_all(set: [is_enabled: is_enabled_state])
+
+    send_resp(conn, :no_content, "")
   end
 
   def trigger_fetch_job_and_print(conn, _params) do

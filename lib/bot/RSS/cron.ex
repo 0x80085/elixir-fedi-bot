@@ -94,13 +94,18 @@ defmodule Bot.RSS.Cron do
     GenServer.call(__MODULE__, :get_is_dry_run)
   end
 
-  defp get_presisted_urls do
-    query = from(u in Bot.RssRepo, select: u)
+  defp get_enabled_urls do
+    query =
+      from(u in Bot.RssRepo,
+        where: u.is_enabled == true,
+        select: u
+      )
+
     Bot.Repo.all(query)
   end
 
   defp update_state(state) do
-    max_index = length(get_presisted_urls()) - 1
+    max_index = length(get_enabled_urls()) - 1
 
     incremented_url_index =
       case state.url_index == max_index do
@@ -119,18 +124,17 @@ defmodule Bot.RSS.Cron do
   end
 
   defp schedule_work() do
-    two_hours = 2 * 60 * 60 * 1000
-
     # (debug) Every minute
-    # one_minute = 60000
-    twenty_secs_in_ms = 1000 * 20
-    IO.puts("Queued job to run after #{two_hours}ms ...")
-    Process.send_after(self(), :work, two_hours)
+    one_minute = 60000
+    # two_hours = 2 * 60 * 60 * 1000
+    # twenty_secs_in_ms = 1000 * 20
+    IO.puts("Queued job to run after #{one_minute * 2}ms ...")
+    Process.send_after(self(), :work, one_minute * 2)
   end
 
   defp fetch_and_post_rss(state) do
     IO.puts("Index = #{state.url_index}")
-    persisted_urls = get_presisted_urls()
+    persisted_urls = get_enabled_urls()
     IO.puts("Size = #{length(persisted_urls)}")
 
     current_rss_url = Enum.at(persisted_urls, state.url_index).url
