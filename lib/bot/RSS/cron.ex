@@ -1,7 +1,8 @@
 defmodule Bot.RSS.Cron do
   use GenServer
+  use Ecto.Schema
+  import Ecto.Query
 
-  alias Bot.RSS.RssUrlsStore
   alias Bot.RSS.RssFetcher
   alias Bot.Mastodon
 
@@ -93,8 +94,13 @@ defmodule Bot.RSS.Cron do
     GenServer.call(__MODULE__, :get_is_dry_run)
   end
 
+  defp get_presisted_urls do
+    query = from(u in Bot.RssRepo, select: u)
+    Bot.Repo.all(query)
+  end
+
   defp update_state(state) do
-    max_index = length(RssUrlsStore.get_urls()) - 1
+    max_index = length(get_presisted_urls()) - 1
 
     incremented_url_index =
       case state.url_index == max_index do
@@ -124,9 +130,10 @@ defmodule Bot.RSS.Cron do
 
   defp fetch_and_post_rss(state) do
     IO.puts("Index = #{state.url_index}")
-    IO.puts("Size = #{length(RssUrlsStore.get_urls())}")
+    persisted_urls = get_presisted_urls()
+    IO.puts("Size = #{length(persisted_urls)}")
 
-    current_rss_url = Enum.at(RssUrlsStore.get_urls(), state.url_index)
+    current_rss_url = Enum.at(persisted_urls, state.url_index).url
 
     IO.puts("current_rss_url = #{current_rss_url}")
 

@@ -25,8 +25,9 @@ To connect the bot to your fedi account just register and login, then follow the
 - [x] Add ChatGPT API key
 - [x] Ask ChatGPT and see result in ui
 - [x] Block registration after 1 user signed up (becomes admin this way)
+- [x] Make deploy/publish ready if needed (scripts etc.?)
 - [ ] Enter fedi url from pleroma or soapbox or misskey or other popular fediware (needs more code, wont be just oauth I think...)   
-- [ ] Grab video link from nitter/twitter and add to twoot 
+- [ ] Grab video from nitter/twitter and add to twoot 
 - [ ] Manage + put in DB: 
   - [ ] Dry run mode
   - [ ] Toot formatting template (the 🤖💬 "your text here> \n Source:# ")
@@ -34,7 +35,7 @@ To connect the bot to your fedi account just register and login, then follow the
   - [ ] On/off RSS URLs
   - [ ] Max post burst count 
   - [ ] Track/save posts to prevent dupes
-- [ ] Make deploy/publish ready if needed (scripts etc.?)
+- [ ] Use Logger.debug instead of IO.* for logging important messages
 
 Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
 ## Learn more

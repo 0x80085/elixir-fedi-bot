@@ -10,10 +10,6 @@ defmodule Bot.RSS.RssUrlsStore do
 
     # Feed of anime episodes that have aired in the last 24 hours
     # "https://www.livechart.me/feeds/episodes",
-    # tiwtter
-    # fishtank live tweets
-    "https://nitter.snopyta.org/fishtankdotlive/rss",
-    "https://nitter.snopyta.org/luna__mae/rss",
 
     # LiveChart.me aka anime news stuff
     # Feed of the latest anime headlines curated by the LiveChart.me team

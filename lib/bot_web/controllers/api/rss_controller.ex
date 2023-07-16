@@ -1,12 +1,29 @@
 defmodule BotWeb.Api.RssController do
   use BotWeb, :controller
+  use Ecto.Schema
+  import Ecto.Query
 
   def get_rss_urls(conn, _params) do
-    json(conn, Bot.RSS.RssUrlsStore.get_urls())
+    query = from(u in Bot.RssRepo, select: u)
+
+    results = Bot.Repo.all(query)
+
+    IO.inspect(results)
+
+    urls =
+      Enum.map(results, fn it ->
+        it.url
+      end)
+
+    json(conn, urls)
   end
 
   def add_url(conn, params) do
-    json(conn, Bot.RSS.RssUrlsStore.add(params["url"]))
+    entry = %Bot.RssRepo{is_enabled: true, url: params["url"]}
+
+    Bot.Repo.insert(entry)
+
+    send_resp(conn, :created, "OK")
   end
 
   def trigger_fetch_job_and_print(conn, _params) do

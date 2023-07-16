@@ -8,7 +8,7 @@
 import Config
 
 config :bot,
-  ecto_repos: [Bot.Repo]
+  ecto_repos: [Bot.Repo, Bot.RssRepo]
 
 # Configures the endpoint
 config :bot, BotWeb.Endpoint,
