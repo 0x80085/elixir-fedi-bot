@@ -68,7 +68,7 @@ defmodule Bot.RSS.RssFetcher do
       # why the ", _}" vv ?
       {:ok, feed, _} -> {:ok, feed}
       {:error, reason} -> {:error, reason}
-      {:fatal_error, _} -> {:error, "fatal error"}
+      {:fatal_error, reason} -> {:error, reason}
     end
   end
 

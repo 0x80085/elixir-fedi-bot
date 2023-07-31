@@ -124,12 +124,26 @@ defmodule Bot.RSS.Cron do
   end
 
   defp schedule_work() do
-    # (debug) Every minute
     one_minute = 60000
-    # two_hours = 2 * 60 * 60 * 1000
-    # twenty_secs_in_ms = 1000 * 20
-    IO.puts("Queued job to run after #{one_minute * 2}ms ...")
-    Process.send_after(self(), :work, one_minute * 2)
+    default_interval = one_minute * 2
+
+    query = from(u in Bot.Settings, select: u, where: u.key == "rss_scrape_interval_in_ms")
+
+    results = Bot.Repo.all(query)
+
+    interval =
+      case length(results) > 0 do
+        true ->
+          Enum.at(results, 0).value
+          |> String.to_integer()
+
+        _ ->
+          default_interval
+      end
+
+    IO.puts("Queued job to run after #{interval}ms ...")
+
+    Process.send_after(self(), :work, interval)
   end
 
   defp fetch_and_post_rss(state) do

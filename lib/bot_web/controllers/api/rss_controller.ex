@@ -8,8 +8,6 @@ defmodule BotWeb.Api.RssController do
 
     results = Bot.Repo.all(query)
 
-    IO.inspect(results)
-
     urls =
       Enum.map(results, fn it ->
         %{
@@ -88,6 +86,50 @@ defmodule BotWeb.Api.RssController do
 
       _ ->
         send_resp(conn, :internal_error, "")
+    end
+  end
+
+  def get_scrape_interval(conn, _params) do
+    setting = get_scrape_interval_setting()
+
+    result = setting || 60000 * 2
+
+    json(conn, result)
+  end
+
+  def set_scrape_interval(conn, params) do
+    case get_scrape_interval_setting() do
+      nil ->
+        entry = %Bot.Settings{
+          key: "rss_scrape_interval_in_ms",
+          value: params["rss_scrape_interval_in_ms"]
+        }
+
+        Bot.Repo.insert(entry)
+        send_resp(conn, :created, "OK")
+
+      _ ->
+        from(p in Bot.Settings, where: p.key == "rss_scrape_interval_in_ms")
+        |> Bot.Repo.update_all(set: [value: params["rss_scrape_interval_in_ms"]])
+
+        send_resp(conn, :ok, "OK")
+    end
+  end
+
+  defp get_scrape_interval_setting do
+    query = from(u in Bot.Settings, select: u, where: u.key == "rss_scrape_interval_in_ms")
+
+    results = Bot.Repo.all(query)
+    IO.inspect(results)
+
+    case length(results) > 0 do
+      true ->
+        IO.inspect(Enum.at(results, 0))
+        IO.inspect( Enum.at(results, 0).value)
+        Enum.at(results, 0).value
+
+      _ ->
+        nil
     end
   end
 end

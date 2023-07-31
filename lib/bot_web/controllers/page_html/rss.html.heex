@@ -41,6 +41,24 @@
               Save
             </button>
           </div>
+          <hr class="my-10" />
+          <div class="flex flex-row justify-center items-center">
+            <input
+              class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 lg:w-auto mr-5"
+              type="number"
+              id="scrape_interval_input"
+              name="scrape_interval_input"
+            />
+            <label for="scrape_interval_input"
+              >Scrape Interval:<br />Time between RSS URL scrapes (in ms) 
+            </label>
+            <button
+              class="bg-brand/5 text-brand rounded-full px-4 py-4 font-medium leading-6 ml-5"
+              onclick="set_scrape_interval()"
+            >
+              Save
+            </button>
+          </div>
           <hr class="mt-10" />
           <div class="px-2 py-2 mt-4">
             <p
@@ -180,7 +198,7 @@
 
   function get_is_dry_run() {
     loading.hidden = false;
-    fetch("api/rss/is_dry_run")
+    fetch("api/rss/settings/is_dry_run")
       .then((res) => res.json())
       .then((res) => (is_dry_run_input.checked = res))
       .catch((_) => {})
@@ -192,7 +210,7 @@
       return;
     }
 
-    var api_url = new URL("api/rss/is_dry_run", window.location.origin);
+    var api_url = new URL("api/rss/settings/is_dry_run", window.location.origin);
     api_url.searchParams.append("is_dry_run", is_dry_run_input.checked);
     loading_spinner.hidden = false;
 
@@ -204,7 +222,35 @@
       .finally((loading_spinner.hidden = true));
   }
 
+
+  function get_scrape_interval() {
+    loading.hidden = false;
+    fetch("api/rss/settings/scrape_interval")
+      .then((res) => res.json())
+      .then((res) => (scrape_interval_input.value = res))
+      .catch((_) => {})
+      .finally((_) => (loading.hidden = true));
+  }
+
+  function set_scrape_interval() {
+    if (!confirm("Sure to change scrape interval?")) {
+      return;
+    }
+
+    var api_url = new URL("api/rss/settings/scrape_interval", window.location.origin);
+    api_url.searchParams.append("rss_scrape_interval_in_ms", scrape_interval_input.value);
+    loading_spinner.hidden = false;
+
+    fetch(api_url, { method: "PUT" })
+      .then(get_scrape_interval)
+      .catch((e) => {
+        console.log(e);
+      })
+      .finally((loading_spinner.hidden = true));
+  }
+
   loading_spinner.hidden = false;
   get_urls();
+  get_scrape_interval();
   get_is_dry_run();
 </script>
