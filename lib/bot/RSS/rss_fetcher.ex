@@ -1,18 +1,19 @@
 defmodule Bot.RSS.RssFetcher do
   use Timex
+  require Logger
 
   @spec get_entries(binary) :: {:error, any} | {:ok, list}
   def get_entries(rss_url) do
-    IO.puts("get_entries for #{rss_url}")
+    Logger.debug("get_entries for #{rss_url}")
     response = HTTPoison.get(rss_url, [{"Accept-Encoding:", "utf-8"}])
 
     case response do
       {:ok, %HTTPoison.Response{body: body}} ->
-        IO.puts("OK #{rss_url} parsing results")
+        Logger.debug("OK #{rss_url} parsing results")
         parse_response(body)
 
       {:error, %HTTPoison.Error{reason: reason}} ->
-        IO.puts("FAIL for #{rss_url}")
+        Logger.error("FAIL for #{rss_url}")
         {:error, reason}
     end
   end
@@ -100,7 +101,7 @@ defmodule Bot.RSS.RssFetcher do
           Enum.map(
             Regex.scan(regex, it.summary),
             fn [_, src] ->
-              IO.puts("Found img source = #{src}")
+              Logger.debug("Found img source = #{src}")
               src
             end
           )
@@ -121,18 +122,13 @@ defmodule Bot.RSS.RssFetcher do
         updatedTime
 
       {:error, _} ->
-        # IO.inspect(error)
-        # IO.puts("Could not parse as ISO Extended #{value}")
-
         case Timex.parse(value, "{RFC1123}") do
           {:ok, parsedTime} ->
-            # IO.puts("ok parsed as {RFC1123}")
-            # IO.inspect(parsedTime)
             parsedTime
 
           {:error, error} ->
             IO.inspect(error)
-            IO.puts("Could not parse #{value} at all")
+            Logger.warn("Could not parse #{value} at all")
             nil
         end
     end

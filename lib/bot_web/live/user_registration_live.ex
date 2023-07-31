@@ -1,6 +1,6 @@
 defmodule BotWeb.UserRegistrationLive do
   use BotWeb, :live_view
-
+  require Logger
   alias Bot.Accounts
   alias Bot.Accounts.User
 
@@ -69,7 +69,7 @@ defmodule BotWeb.UserRegistrationLive do
         {:noreply, socket |> assign(check_errors: true) |> assign_form(changeset)}
 
       {:conflict, %Ecto.Changeset{} = changeset, reason} ->
-        IO.puts("#{reason}")
+        Logger.error("#{reason}")
         {:noreply, socket |> assign(check_errors: true) |> assign_form(changeset)}
     end
   end

@@ -1,12 +1,12 @@
 defmodule BotWeb.Api.AuthController do
   use BotWeb, :controller
+  require Logger
 
   def has_credentials(conn, _params) do
     try do
       json(conn, %{has_credentials: Bot.Mastodon.Auth.PersistCredentials.has_stored_credentials()})
     catch
       _ ->
-        IO.puts("failed to get creds file")
         json(conn, %{has_credentials: false})
     end
   end
@@ -27,8 +27,8 @@ defmodule BotWeb.Api.AuthController do
 
   def connect_user(conn, params) do
     user_code = Map.get(params, "user_code")
-    IO.puts("user_code")
-    IO.puts(user_code)
+    Logger.debug("user_code")
+    Logger.debug(user_code)
 
     response =
       Bot.Mastodon.Auth.UserCredentials.authorize_bot_to_user(

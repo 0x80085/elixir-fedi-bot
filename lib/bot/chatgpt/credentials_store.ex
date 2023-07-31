@@ -1,5 +1,6 @@
 defmodule Bot.Chatgpt.CredentialStore do
   use Agent
+  require Logger
 
   @default_state %{
     secret_key: nil
@@ -12,12 +13,12 @@ defmodule Bot.Chatgpt.CredentialStore do
 
         case creds do
           nil ->
-            IO.puts("ChatGPT creds not found")
+            Logger.debug("ChatGPT creds not found")
             @default_state
 
           creds ->
-            IO.puts("Chatgpt Creds found, using from files")
-            IO.puts("Chatgpt api token: #{Map.get(creds, "secret_key")}")
+            Logger.debug("Chatgpt Creds found, using from files")
+            Logger.debug("Chatgpt api token: #{Map.get(creds, "secret_key")}")
 
             %{
               secret_key: Map.get(creds, "secret_key")

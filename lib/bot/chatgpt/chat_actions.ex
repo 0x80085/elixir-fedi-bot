@@ -1,8 +1,10 @@
 defmodule Bot.Chatgpt.ChatActions do
+  require Logger
+
   def chat_with_gpt(text) do
     api_key = Bot.Chatgpt.CredentialStore.get_secret_key()
 
-    IO.puts("Asking GPT using api_key vv")
+    Logger.debug("Asking GPT using api_key vv")
     IO.inspect(api_key)
 
     # 1 min timeout bc chatgpt takes a while to complete
@@ -26,7 +28,7 @@ defmodule Bot.Chatgpt.ChatActions do
       {:ok, result} ->
         case Jason.decode(result.body) do
           {:ok, decoded} ->
-            IO.puts("Successfully fetched answer from GPT")
+            Logger.debug("Successfully fetched answer from GPT")
             IO.inspect(decoded)
 
             cond do
@@ -37,7 +39,7 @@ defmodule Bot.Chatgpt.ChatActions do
                   |> Map.get("message")
                   |> Map.get("content")
 
-                IO.puts(answer)
+                Logger.debug(answer)
 
                 {:ok, %{answer: answer}}
 
@@ -54,8 +56,8 @@ defmodule Bot.Chatgpt.ChatActions do
         end
 
       {:error, reason} ->
-        IO.puts("error chatting with GPT")
-        IO.puts(reason)
+        Logger.error("error chatting with GPT")
+        Logger.error(reason)
         {:error, reason}
     end
   end

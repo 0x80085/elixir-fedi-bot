@@ -1,20 +1,20 @@
 defmodule BotWeb.Api.TestController do
   use BotWeb, :controller
-
+  require Logger
   @spec test_rss_route(Plug.Conn.t(), any) :: Plug.Conn.t()
   def test_rss_route(conn, params) do
     case get_rss_url(params) do
       {:ok, url} ->
         case Bot.RSS.RssFetcher.get_entries(url) do
           {:ok, entries} ->
-            IO.puts("parsed, try send to client")
+            Logger.debug("parsed, try send to client")
 
             try do
               json(conn, entries)
             catch
               value ->
-                IO.puts("Caught #{inspect(value)}")
-                IO.puts("parse failed")
+                Logger.error("Caught #{inspect(value)}")
+                Logger.error("parse failed")
                 json(conn, "Can't encode RSS to JSON:  #{inspect(value)}")
             end
 

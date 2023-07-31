@@ -3,11 +3,12 @@ defmodule Bot.Mastodon.Actions.PostStatus do
   alias Bot.Mastodon.Auth.UserCredentials
   alias Bot.Mastodon.Actions.UploadImage
   alias Bot.RSS.FoundUrlArchive
+  require Logger
 
   def post(data, token, is_dry_run) do
     case FoundUrlArchive.exists(data.id) do
       true ->
-        IO.puts("Was already posted!")
+        Logger.debug("Was already posted!")
 
         {:ok, "status printed"}
 
@@ -144,7 +145,7 @@ defmodule Bot.Mastodon.Actions.PostStatus do
 
     case is_dry_run do
       true ->
-        IO.puts("Printing Toot...")
+        Logger.debug("Printing Toot...")
         IO.inspect(request_body)
         IO.inspect(headers)
 
@@ -164,7 +165,7 @@ defmodule Bot.Mastodon.Actions.PostStatus do
 
         case reponse do
           {:ok, result} ->
-            IO.puts("Posting Toot...")
+            Logger.debug("Posting Toot...")
             IO.inspect(result)
             IO.inspect(result.status_code)
             decoded = Jason.decode(result.body)

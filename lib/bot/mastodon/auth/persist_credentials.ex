@@ -1,5 +1,6 @@
 defmodule Bot.Mastodon.Auth.PersistCredentials do
   @file_path "credentials.json"
+  require Logger
 
   def get_from_file() do
     case File.read(@file_path) do
@@ -9,13 +10,13 @@ defmodule Bot.Mastodon.Auth.PersistCredentials do
             creds
 
           {:error, reason} ->
-            IO.puts("failed to read credentials")
-            IO.puts(reason)
+            Logger.error("failed to read credentials")
+            Logger.error(reason)
             nil
         end
 
       {:error, :enoent} ->
-        IO.puts("File #{@file_path} not found")
+        Logger.warn("File #{@file_path} not found")
         nil
     end
   end

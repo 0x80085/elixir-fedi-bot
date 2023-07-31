@@ -2,7 +2,7 @@ defmodule BotWeb.Api.RssController do
   use BotWeb, :controller
   use Ecto.Schema
   import Ecto.Query
-
+  require Logger
   def get_rss_urls(conn, _params) do
     query = from(u in Bot.RssRepo, select: u)
 
@@ -51,7 +51,7 @@ defmodule BotWeb.Api.RssController do
     {:ok, supervisor} = Task.Supervisor.start_link()
 
     Task.Supervisor.start_child(supervisor, fn ->
-      IO.puts("Bot.RSS.Cron.start_manuallyf from RssController")
+      Logger.debug("Bot.RSS.Cron.start_manuallyf from RssController")
       Bot.RSS.Cron.start_manually()
     end)
 

@@ -1,5 +1,6 @@
-
 defmodule Bot.Chatgpt.CredentialsWrite do
+  require Logger
+
   @file_path "chatgpt-credentials.json"
 
   @spec get_from_file :: any
@@ -11,17 +12,17 @@ defmodule Bot.Chatgpt.CredentialsWrite do
             creds
 
           {:error, reason} ->
-            IO.puts("failed to read credentials")
-            IO.puts(reason)
+            Logger.warn("failed to read credentials")
+            Logger.warn(reason)
             nil
         end
 
       {:error, :enoent} ->
-        IO.puts("File #{@file_path} not found")
+        Logger.warn("File #{@file_path} not found")
         nil
 
       _ ->
-        IO.puts("Something went wrong in get_from_file")
+        Logger.error("Something went wrong in get_from_file")
         nil
     end
   end

@@ -33,15 +33,15 @@ defmodule Bot.Mastodon.Actions.UploadImage do
 
             case status_code do
               x when x in 200..299 ->
-                IO.puts("ok when ")
+                Logger.debug("ok when ")
                 {:ok, Map.get(decoded, "id", nil)}
 
               202 ->
-                IO.puts("ok 202 ")
+                Logger.debug("ok 202 ")
                 {:ok, Map.get(decoded, "id", nil)}
 
               _ ->
-                IO.puts("image upload failed")
+                Logger.warn("image upload failed")
                 {:error, status_code}
             end
 

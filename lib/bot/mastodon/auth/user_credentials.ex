@@ -1,6 +1,7 @@
 defmodule Bot.Mastodon.Auth.UserCredentials do
 
   use Agent
+  require Logger
 
   @default_state %{
     token: nil
@@ -13,12 +14,12 @@ defmodule Bot.Mastodon.Auth.UserCredentials do
 
         case creds do
           nil ->
-            IO.puts("No user token found")
+            Logger.warn("No user token found")
             @default_state
 
           creds ->
-            IO.puts("User token found, using from files")
-            IO.puts("user_token: #{Map.get(creds, "user_token")}")
+            Logger.debug("User token found, using from files")
+            Logger.debug("user_token: #{Map.get(creds, "user_token")}")
 
             %{
               token: Map.get(creds, "user_token")
@@ -72,7 +73,7 @@ defmodule Bot.Mastodon.Auth.UserCredentials do
         case decoded do
           {:ok, body} ->
             user_token = "Bearer #{Map.get(body, "access_token")}"
-            IO.puts("Got user token !! #{user_token}")
+            Logger.debug("Got user token !!")
 
             is_token_valid(user_token)
 

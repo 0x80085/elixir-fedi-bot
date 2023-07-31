@@ -1,7 +1,9 @@
 defmodule Bot.Mastodon.Auth.VerifyCredentials do
+  require Logger
+
   def verify_token(token, url) do
-    IO.puts("Verifying token: #{token}")
-    IO.puts("at URL: #{url}")
+    Logger.debug("Verifying token: #{token}")
+    Logger.debug("at URL: #{url}")
 
     headers = [
       {"Accept", "application/json"},
@@ -14,27 +16,27 @@ defmodule Bot.Mastodon.Auth.VerifyCredentials do
       {:ok, result} ->
         case result.status_code do
           200 ->
-            IO.puts("SUCCESS Token verified !")
+            Logger.debug("SUCCESS Token verified !")
 
             case Jason.decode(result.body) do
               {:ok, body} ->
-                IO.puts(Map.get(body, "error"))
+                Logger.debug(Map.get(body, "error"))
                 {:ok, result}
 
               {:error, reason} ->
-                IO.puts("error body not decoded")
-                IO.puts(reason)
+                Logger.debug("error body not decoded")
+                Logger.debug(reason)
                 {:error, reason}
             end
 
           _ ->
-            IO.puts("FAILED Token NOT verified... status: #{result.status_code}")
+            Logger.error("FAILED Token NOT verified... status: #{result.status_code}")
             {:error, result.status_code}
         end
 
       {:error, reason} ->
-        IO.puts("FAILED Token NOT verified...")
-        IO.puts("#{reason}")
+        Logger.error("FAILED Token NOT verified...")
+        Logger.error("#{reason}")
         {:error, reason}
     end
   end

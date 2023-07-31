@@ -1,5 +1,6 @@
 defmodule Bot.Mastodon.Auth.ApplicationCredentials do
   use Agent
+  require Logger
 
   @default_state %{
     client_id: nil,
@@ -16,13 +17,13 @@ defmodule Bot.Mastodon.Auth.ApplicationCredentials do
 
         case creds do
           nil ->
-            IO.puts("Fedi creds not found")
+            Logger.warn("Fedi creds not found")
             @default_state
 
           creds ->
-            IO.puts("Fedi creds found, using from files")
-            IO.puts("fedi instance url: #{Map.get(creds, "fedi_url")}")
-            IO.puts("app token: #{Map.get(creds, "app_token")}")
+            Logger.debug("Fedi creds found, using from files")
+            Logger.debug("fedi instance url: #{Map.get(creds, "fedi_url")}")
+            Logger.debug("app token: #{Map.get(creds, "app_token")}")
 
             %{
               client_id: Map.get(creds, "client_id"),
@@ -133,13 +134,13 @@ defmodule Bot.Mastodon.Auth.ApplicationCredentials do
          }}
 
       {:error, reason} ->
-        IO.puts("encountered error during setup credentials: #{reason}")
+        Logger.error("encountered error during setup credentials: #{reason}")
         {:error, reason}
     end
   end
 
   def get_client_connect_info(fedi_url) do
-    IO.puts("getting connect info")
+    Logger.debug("getting connect info")
 
     payload = %{
       "client_name" => "Bot Test Application",
@@ -164,9 +165,9 @@ defmodule Bot.Mastodon.Auth.ApplicationCredentials do
             client_id = Map.get(decoded, "client_id")
             client_secret = Map.get(decoded, "client_secret")
 
-            IO.puts("Successfully fetched connect info")
-            IO.puts(client_id)
-            IO.puts(client_secret)
+            Logger.debug("Successfully fetched connect info")
+            Logger.debug(client_id)
+            Logger.debug(client_secret)
 
             {:ok, %{client_id: client_id, client_secret: client_secret}}
 
@@ -175,17 +176,17 @@ defmodule Bot.Mastodon.Auth.ApplicationCredentials do
         end
 
       {:error, reason} ->
-        IO.puts("error fetching connect info")
-        IO.puts(reason)
+        Logger.warn("error fetching connect info")
+        Logger.warn(reason)
         {:error, reason}
     end
   end
 
   def create_client(connect_info, fedi_url) do
-    IO.puts("Create client and get token")
-    IO.puts(connect_info.client_id)
-    IO.puts(connect_info.client_secret)
-    IO.puts("---")
+    Logger.debug("Create client and get token")
+    Logger.debug(connect_info.client_id)
+    Logger.debug(connect_info.client_secret)
+    Logger.debug("---")
 
     client =
       OAuth2.Client.new(
@@ -200,8 +201,7 @@ defmodule Bot.Mastodon.Auth.ApplicationCredentials do
     case Jason.decode(client.token.access_token) do
       {:ok, result} ->
         token = "Bearer #{Map.get(result, "access_token")}"
-        IO.puts(token)
-        IO.puts("^^^^^^ Got oauth TOKEN!")
+        Logger.debug("Got oauth TOKEN!")
 
         Bot.Mastodon.Auth.VerifyCredentials.verify_token(
           token,
@@ -215,7 +215,7 @@ defmodule Bot.Mastodon.Auth.ApplicationCredentials do
         }
 
       {:error, result} ->
-        IO.puts("error fetching token: #{result}")
+        Logger.error("error fetching token: #{result}")
     end
   end
 end
