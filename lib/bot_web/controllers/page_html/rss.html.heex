@@ -43,14 +43,17 @@
           </div>
           <hr class="my-10" />
           <div class="flex flex-row justify-center items-center">
-            <input
-              class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 lg:w-auto mr-5"
-              type="number"
-              id="scrape_interval_input"
-              name="scrape_interval_input"
-            />
+            <div class="relative">
+              <input
+                class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 lg:w-auto mr-5"
+                type="number"
+                id="scrape_interval_input"
+                name="scrape_interval_input"
+              />
+              <label for="scrape_interval_input" class="absolute right-[5rem] top-[1rem] text-zinc-500">ms</label>
+            </div>
             <label for="scrape_interval_input"
-              >Scrape Interval:<br />Time between RSS URL scrapes (in ms) 
+              >Scrape Interval:<br />Time between RSS URL scrapes (in milliseconds)
             </label>
             <button
               class="bg-brand/5 text-brand rounded-full px-4 py-4 font-medium leading-6 ml-5"
@@ -59,6 +62,10 @@
               Save
             </button>
           </div>
+          <p class="text-zinc-500 ml-4">
+            Will scrape every
+            <span id="scrape_interval_in_minutes">?</span> minute(s)
+          </p>
           <hr class="mt-10" />
           <div class="px-2 py-2 mt-4">
             <p
@@ -103,6 +110,10 @@
   var urls_list = document.getElementById("urls_list");
   var url_input = document.getElementById("url_input");
   var is_dry_run_input = document.getElementById("is_dry_run_input");
+  var scrape_interval_input = document.getElementById("scrape_interval_input");
+  var scrape_interval_in_minutes = document.getElementById(
+    "scrape_interval_in_minutes"
+  );
   url_input.value = "";
 
   function get_urls() {
@@ -210,7 +221,10 @@
       return;
     }
 
-    var api_url = new URL("api/rss/settings/is_dry_run", window.location.origin);
+    var api_url = new URL(
+      "api/rss/settings/is_dry_run",
+      window.location.origin
+    );
     api_url.searchParams.append("is_dry_run", is_dry_run_input.checked);
     loading_spinner.hidden = false;
 
@@ -222,12 +236,12 @@
       .finally((loading_spinner.hidden = true));
   }
 
-
   function get_scrape_interval() {
     loading.hidden = false;
     fetch("api/rss/settings/scrape_interval")
       .then((res) => res.json())
       .then((res) => (scrape_interval_input.value = res))
+      .then(previewIntervalInMinutes)
       .catch((_) => {})
       .finally((_) => (loading.hidden = true));
   }
@@ -237,8 +251,14 @@
       return;
     }
 
-    var api_url = new URL("api/rss/settings/scrape_interval", window.location.origin);
-    api_url.searchParams.append("rss_scrape_interval_in_ms", scrape_interval_input.value);
+    var api_url = new URL(
+      "api/rss/settings/scrape_interval",
+      window.location.origin
+    );
+    api_url.searchParams.append(
+      "rss_scrape_interval_in_ms",
+      scrape_interval_input.value
+    );
     loading_spinner.hidden = false;
 
     fetch(api_url, { method: "PUT" })
@@ -248,6 +268,14 @@
       })
       .finally((loading_spinner.hidden = true));
   }
+
+  function previewIntervalInMinutes() {
+    var fixed = (scrape_interval_input.value / 60000).toFixed(2);
+    var preview = fixed.replace(".00", "")
+    scrape_interval_in_minutes.innerText = preview;
+  }
+
+  scrape_interval_input.addEventListener("input", previewIntervalInMinutes);
 
   loading_spinner.hidden = false;
   get_urls();
