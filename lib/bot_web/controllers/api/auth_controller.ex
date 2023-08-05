@@ -27,8 +27,8 @@ defmodule BotWeb.Api.AuthController do
 
   def connect_user(conn, params) do
     user_code = Map.get(params, "user_code")
-    Logger.debug("user_code")
-    Logger.debug(user_code)
+    Logger.info("user_code")
+    Logger.info(user_code)
 
     response =
       Bot.Mastodon.Auth.UserCredentials.authorize_bot_to_user(

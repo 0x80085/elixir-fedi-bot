@@ -35,7 +35,7 @@ To connect the bot to your fedi account just register and login, then follow the
   - [ ] Max post burst count 
   - [ ] Track/save posts to prevent dupes
   - [ ] Toot formatting template (the 🤖💬 "your text here> \n Source:# ")
-- [x] Use Logger.debug instead of IO.* for logging important messages
+- [x] Use Logger.info instead of IO.* for logging important messages
 - [ ] add hashtags to certain posts from certain rss feeds 
 
 Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).

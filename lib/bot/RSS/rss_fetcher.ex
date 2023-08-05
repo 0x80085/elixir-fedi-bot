@@ -4,12 +4,12 @@ defmodule Bot.RSS.RssFetcher do
 
   @spec get_entries(binary) :: {:error, any} | {:ok, list}
   def get_entries(rss_url) do
-    Logger.debug("get_entries for #{rss_url}")
+    Logger.info("get_entries for #{rss_url}")
     response = HTTPoison.get(rss_url, [{"Accept-Encoding:", "utf-8"}])
 
     case response do
       {:ok, %HTTPoison.Response{body: body}} ->
-        Logger.debug("OK #{rss_url} parsing results")
+        Logger.info("OK #{rss_url} parsing results")
         parse_response(body)
 
       {:error, %HTTPoison.Error{reason: reason}} ->
@@ -66,7 +66,6 @@ defmodule Bot.RSS.RssFetcher do
       end
 
     case result do
-      # why the ", _}" vv ?
       {:ok, feed, _} -> {:ok, feed}
       {:error, reason} -> {:error, reason}
       {:fatal_error, reason} -> {:error, reason}
@@ -101,7 +100,7 @@ defmodule Bot.RSS.RssFetcher do
           Enum.map(
             Regex.scan(regex, it.summary),
             fn [_, src] ->
-              Logger.debug("Found img source = #{src}")
+              Logger.info("Found img source = #{src}")
               src
             end
           )

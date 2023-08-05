@@ -13,7 +13,7 @@ defmodule Bot.RSS.Cron do
   }
 
   def start_link(_opts) do
-    Logger.debug("Started CRON GenServer")
+    Logger.info("Started CRON GenServer")
     GenServer.start_link(__MODULE__, @state, name: __MODULE__)
   end
 
@@ -31,7 +31,7 @@ defmodule Bot.RSS.Cron do
 
     case has_credentials do
       true ->
-        Logger.debug("Credentials found, starting RSS scraping ...")
+        Logger.info("Credentials found, starting RSS scraping ...")
         fetch_and_post_rss(state)
 
       _ ->
@@ -52,7 +52,7 @@ defmodule Bot.RSS.Cron do
 
     case has_credentials do
       true ->
-        Logger.debug("Credentials found, starting RSS scraping ...")
+        Logger.info("Credentials found, starting RSS scraping ...")
 
         fetch_and_post_rss(%{
           is_dry_run: state.is_dry_run,
@@ -72,7 +72,7 @@ defmodule Bot.RSS.Cron do
   @impl true
   def handle_call({:set_is_dry_run, isEnabled}, _from, state) do
     new_state = Map.put(state, :is_dry_run, isEnabled)
-    Logger.debug(isEnabled)
+    Logger.info(isEnabled)
     IO.inspect(new_state)
     {:reply, :ok, new_state}
   end
@@ -141,27 +141,27 @@ defmodule Bot.RSS.Cron do
           default_interval
       end
 
-    Logger.debug("Queued job to run after #{interval}ms ...")
+    Logger.info("Queued job to run after #{interval}ms ...")
 
     Process.send_after(self(), :work, interval)
   end
 
   defp fetch_and_post_rss(state) do
-    Logger.debug("Index = #{state.url_index}")
+    Logger.info("Index = #{state.url_index}")
     persisted_urls = get_enabled_urls()
-    Logger.debug("Size = #{length(persisted_urls)}")
+    Logger.info("Size = #{length(persisted_urls)}")
 
     current_rss_url = Enum.at(persisted_urls, state.url_index).url
 
-    Logger.debug("current_rss_url = #{current_rss_url}")
+    Logger.info("current_rss_url = #{current_rss_url}")
 
     case RssFetcher.get_entries(current_rss_url) do
       {:ok, results} ->
         newest_entries = RssFetcher.filter_by_newest(results)
-        Logger.debug("Got #{length(newest_entries)} results")
+        Logger.info("Got #{length(newest_entries)} results")
         IO.inspect(newest_entries)
 
-        Logger.debug("Taking first #{state.max_post_burst} results")
+        Logger.info("Taking first #{state.max_post_burst} results")
 
         Enum.take(newest_entries, state.max_post_burst)
         |> post_to_fedi(state.is_dry_run)
@@ -177,7 +177,7 @@ defmodule Bot.RSS.Cron do
       # TODO
       random_time_in_ms = Enum.random(1000..5000)
 
-      Logger.debug("Posting new entry in #{random_time_in_ms}ms")
+      Logger.info("Posting new entry in #{random_time_in_ms}ms")
       :timer.sleep(random_time_in_ms)
 
       token = Mastodon.Auth.UserCredentials.get_token()

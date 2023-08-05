@@ -51,7 +51,7 @@ defmodule BotWeb.Api.RssController do
     {:ok, supervisor} = Task.Supervisor.start_link()
 
     Task.Supervisor.start_child(supervisor, fn ->
-      Logger.debug("Bot.RSS.Cron.start_manuallyf from RssController")
+      Logger.info("Bot.RSS.Cron.start_manuallyf from RssController")
       Bot.RSS.Cron.start_manually()
     end)
 

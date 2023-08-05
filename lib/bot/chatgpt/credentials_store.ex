@@ -13,12 +13,12 @@ defmodule Bot.Chatgpt.CredentialStore do
 
         case creds do
           nil ->
-            Logger.debug("ChatGPT creds not found")
+            Logger.info("ChatGPT creds not found")
             @default_state
 
           creds ->
-            Logger.debug("Chatgpt Creds found, using from files")
-            Logger.debug("Chatgpt api token: #{Map.get(creds, "secret_key")}")
+            Logger.info("Chatgpt Creds found, using from files")
+            Logger.info("Chatgpt api token: #{Map.get(creds, "secret_key")}")
 
             %{
               secret_key: Map.get(creds, "secret_key")

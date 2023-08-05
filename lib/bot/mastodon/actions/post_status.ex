@@ -8,7 +8,7 @@ defmodule Bot.Mastodon.Actions.PostStatus do
   def post(data, token, is_dry_run) do
     case FoundUrlArchive.exists(data.id) do
       true ->
-        Logger.debug("Was already posted!")
+        Logger.info("Was already posted!")
 
         {:ok, "status printed"}
 
@@ -76,7 +76,7 @@ defmodule Bot.Mastodon.Actions.PostStatus do
       _ ->
         if is_list(data.media) && length(data.media) > 0 do
           IO.inspect(data)
-          IO.inspect("Uploading media to fedi... is dry run? #{is_dry_run}")
+          Logger.info("Uploading media to fedi... is dry run? #{is_dry_run}")
 
           if !is_dry_run do
             token = UserCredentials.get_token()
@@ -84,18 +84,18 @@ defmodule Bot.Mastodon.Actions.PostStatus do
             upload_url = "#{fedi_url}/api/v2/media"
 
             {:ok, media_id} = UploadImage.upload_image(Enum.at(data.media, 0), upload_url, token)
-            IO.inspect("Uploaded media #{media_id} to fedi...")
+            Logger.info("Uploaded media #{media_id} to fedi...")
             # allow procesing of image
             :timer.sleep(4_000)
 
-            IO.inspect("media_id")
+            Logger.info("media_id")
             IO.inspect(media_id)
 
             {:ok, media_id}
           end
         else
           IO.inspect(data)
-          IO.inspect("Uploading media to fedi... is dry run? #{is_dry_run}")
+          Logger.info("Uploading media to fedi... is dry run? #{is_dry_run}")
 
           if !is_dry_run do
             token = UserCredentials.get_token()
@@ -104,7 +104,7 @@ defmodule Bot.Mastodon.Actions.PostStatus do
 
             case UploadImage.upload_image(data.media, upload_url, token) do
               {:ok, media_id} ->
-                IO.inspect("Uploaded media to fedi...")
+                Logger.info("Uploaded media to fedi...")
                 # allow procesing of image
                 :timer.sleep(4_000)
                 {:ok, media_id}
@@ -138,14 +138,14 @@ defmodule Bot.Mastodon.Actions.PostStatus do
           }
       end
 
-    IO.inspect("About to toot:")
+    Logger.info("About to toot:")
     IO.inspect(form_data)
 
     request_body = Plug.Conn.Query.encode(form_data)
 
     case is_dry_run do
       true ->
-        Logger.debug("Printing Toot...")
+        Logger.info("Printing Toot...")
         IO.inspect(request_body)
         IO.inspect(headers)
 
@@ -165,16 +165,16 @@ defmodule Bot.Mastodon.Actions.PostStatus do
 
         case reponse do
           {:ok, result} ->
-            Logger.debug("Posting Toot...")
+            Logger.info("Posting Toot...")
             IO.inspect(result)
             IO.inspect(result.status_code)
             decoded = Jason.decode(result.body)
 
             case result.status_code do
               200 ->
-                IO.inspect("Toot posted!")
+                Logger.info("Toot posted!")
 
-                IO.inspect("Archiving ID")
+                Logger.info("Archiving ID")
 
                 if id != "" do
                   FoundUrlArchive.add_entry_id(id)
@@ -191,7 +191,7 @@ defmodule Bot.Mastodon.Actions.PostStatus do
                 end
 
               _ ->
-                IO.inspect("Error in posting")
+                Logger.info("Error in posting")
                 IO.inspect(decoded)
                 {:error, result.status_code}
             end

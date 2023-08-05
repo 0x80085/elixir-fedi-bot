@@ -18,8 +18,8 @@ defmodule Bot.Mastodon.Auth.UserCredentials do
             @default_state
 
           creds ->
-            Logger.debug("User token found, using from files")
-            Logger.debug("user_token: #{Map.get(creds, "user_token")}")
+            Logger.info("User token found, using from files")
+            Logger.info("user_token: #{Map.get(creds, "user_token")}")
 
             %{
               token: Map.get(creds, "user_token")
@@ -73,7 +73,7 @@ defmodule Bot.Mastodon.Auth.UserCredentials do
         case decoded do
           {:ok, body} ->
             user_token = "Bearer #{Map.get(body, "access_token")}"
-            Logger.debug("Got user token !!")
+            Logger.info("Got user token !!")
 
             is_token_valid(user_token)
 

@@ -21,9 +21,9 @@ defmodule Bot.Mastodon.Auth.ApplicationCredentials do
             @default_state
 
           creds ->
-            Logger.debug("Fedi creds found, using from files")
-            Logger.debug("fedi instance url: #{Map.get(creds, "fedi_url")}")
-            Logger.debug("app token: #{Map.get(creds, "app_token")}")
+            Logger.info("Fedi creds found, using from files")
+            Logger.info("fedi instance url: #{Map.get(creds, "fedi_url")}")
+            Logger.info("app token: #{Map.get(creds, "app_token")}")
 
             %{
               client_id: Map.get(creds, "client_id"),
@@ -140,7 +140,7 @@ defmodule Bot.Mastodon.Auth.ApplicationCredentials do
   end
 
   def get_client_connect_info(fedi_url) do
-    Logger.debug("getting connect info")
+    Logger.info("getting connect info")
 
     payload = %{
       "client_name" => "Bot Test Application",
@@ -165,9 +165,9 @@ defmodule Bot.Mastodon.Auth.ApplicationCredentials do
             client_id = Map.get(decoded, "client_id")
             client_secret = Map.get(decoded, "client_secret")
 
-            Logger.debug("Successfully fetched connect info")
-            Logger.debug(client_id)
-            Logger.debug(client_secret)
+            Logger.info("Successfully fetched connect info")
+            Logger.info(client_id)
+            Logger.info(client_secret)
 
             {:ok, %{client_id: client_id, client_secret: client_secret}}
 
@@ -183,10 +183,10 @@ defmodule Bot.Mastodon.Auth.ApplicationCredentials do
   end
 
   def create_client(connect_info, fedi_url) do
-    Logger.debug("Create client and get token")
-    Logger.debug(connect_info.client_id)
-    Logger.debug(connect_info.client_secret)
-    Logger.debug("---")
+    Logger.info("Create client and get token")
+    Logger.info(connect_info.client_id)
+    Logger.info(connect_info.client_secret)
+    Logger.info("---")
 
     client =
       OAuth2.Client.new(
@@ -201,7 +201,7 @@ defmodule Bot.Mastodon.Auth.ApplicationCredentials do
     case Jason.decode(client.token.access_token) do
       {:ok, result} ->
         token = "Bearer #{Map.get(result, "access_token")}"
-        Logger.debug("Got oauth TOKEN!")
+        Logger.info("Got oauth TOKEN!")
 
         Bot.Mastodon.Auth.VerifyCredentials.verify_token(
           token,

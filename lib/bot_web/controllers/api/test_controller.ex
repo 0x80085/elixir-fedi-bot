@@ -7,7 +7,7 @@ defmodule BotWeb.Api.TestController do
       {:ok, url} ->
         case Bot.RSS.RssFetcher.get_entries(url) do
           {:ok, entries} ->
-            Logger.debug("parsed, try send to client")
+            Logger.info("parsed, try send to client")
 
             try do
               json(conn, entries)
