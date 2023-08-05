@@ -132,4 +132,48 @@ defmodule BotWeb.Api.RssController do
         nil
     end
   end
+
+  def get_scrape_max_age(conn, _params) do
+    setting = get_scrape_max_age_setting()
+
+    result = setting || 3600 # one hour
+
+    json(conn, result)
+  end
+
+  def set_scrape_max_age(conn, params) do
+    case get_scrape_max_age_setting() do
+      nil ->
+        entry = %Bot.Settings{
+          key: "rss_scrape_max_age_in_s",
+          value: params["rss_scrape_max_age_in_s"]
+        }
+
+        Bot.Repo.insert(entry)
+        send_resp(conn, :created, "OK")
+
+      _ ->
+        from(p in Bot.Settings, where: p.key == "rss_scrape_max_age_in_s")
+        |> Bot.Repo.update_all(set: [value: params["rss_scrape_max_age_in_s"]])
+
+        send_resp(conn, :ok, "OK")
+    end
+  end
+
+  defp get_scrape_max_age_setting do
+    query = from(u in Bot.Settings, select: u, where: u.key == "rss_scrape_max_age_in_s")
+
+    results = Bot.Repo.all(query)
+    IO.inspect(results)
+
+    case length(results) > 0 do
+      true ->
+        IO.inspect(Enum.at(results, 0))
+        IO.inspect( Enum.at(results, 0).value)
+        Enum.at(results, 0).value
+
+      _ ->
+        nil
+    end
+  end
 end

@@ -1,5 +1,7 @@
 defmodule Bot.RSS.RssFetcher do
   use Timex
+  use Ecto.Schema
+  import Ecto.Query
   require Logger
 
   @spec get_entries(binary) :: {:error, any} | {:ok, list}
@@ -47,11 +49,25 @@ defmodule Bot.RSS.RssFetcher do
     now = DateTime.utc_now()
     one_hour_in_s = 3600
 
+    query = from(u in Bot.Settings, select: u, where: u.key == "rss_scrape_max_age_in_s")
+
+    results = Bot.Repo.all(query)
+
+    max_age_in_s =
+      case length(results) > 0 do
+        true ->
+          Enum.at(results, 0).value
+          |> String.to_integer()
+
+        _ ->
+          one_hour_in_s
+      end
+
     Enum.filter(entries, fn it ->
       parsed_time = parse_time_string(it.updated)
 
       if parsed_time,
-        do: DateTime.diff(now, parsed_time, :second) < one_hour_in_s,
+        do: DateTime.diff(now, parsed_time, :second) < max_age_in_s,
         else: false
     end)
   end

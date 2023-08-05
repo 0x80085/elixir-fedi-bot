@@ -56,6 +56,8 @@ defmodule BotWeb.Router do
     get "/rss/settings/is_dry_run", Api.RssController, :get_is_dry_run
     get "/rss/settings/scrape_interval", Api.RssController, :get_scrape_interval
     put "/rss/settings/scrape_interval", Api.RssController, :set_scrape_interval
+    get "/rss/settings/max_age", Api.RssController, :get_scrape_max_age
+    put "/rss/settings/max_age", Api.RssController, :set_scrape_max_age
 
     # Chatgpt
     get "/chatgpt/credentials", Api.ChatgptController, :get_has_credentials

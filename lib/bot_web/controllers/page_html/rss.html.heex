@@ -42,30 +42,55 @@
             </button>
           </div>
           <hr class="my-10" />
-          <div class="flex flex-row justify-center items-center">
-            <div class="relative">
+          <div class="flex flex-col justify-center items-center">
+          <label for="scrape_interval_input"
+            >Scrape Interval 
+          </label>
+            <div class="relative w-full mt-4">
               <input
-                class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 lg:w-auto mr-5"
+                class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 w-full"
                 type="number"
                 id="scrape_interval_input"
                 name="scrape_interval_input"
               />
-              <label for="scrape_interval_input" class="absolute right-[5rem] top-[1rem] text-zinc-500">ms</label>
+              <label for="scrape_interval_input" class="absolute right-[5rem] top-[1rem] text-zinc-500">minute(s)</label>
             </div>
-            <label for="scrape_interval_input"
-              >Scrape Interval:<br />Time between RSS URL scrapes (in milliseconds)
-            </label>
+            <p class="text-zinc-500 ml-4 text-center mt-4">
+              Time in milliseconds between RSS URL scrapes. <br /> Will scrape every
+              <span id="scrape_interval_in_minutes">?</span> minute(s)
+            </p>
             <button
-              class="bg-brand/5 text-brand rounded-full px-4 py-4 font-medium leading-6 ml-5"
+              class="bg-brand/5 text-brand rounded-full px-4 py-4 font-medium leading-6 w-full mt-4"
               onclick="set_scrape_interval()"
             >
               Save
             </button>
           </div>
-          <p class="text-zinc-500 ml-4">
-            Will scrape every
-            <span id="scrape_interval_in_minutes">?</span> minute(s)
-          </p>
+          <hr class="my-10" />
+          <div class="flex flex-col justify-center items-center">
+          <label for="max_age_input" 
+            >Max age news item
+          </label>
+            <div class="relative w-full mt-4">
+              <input
+                class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 w-full"
+                type="number"
+                id="max_age_input"
+                name="max_age_input"
+              />
+              <label for="max_age_input" class="absolute right-[5rem] top-[1rem] text-zinc-500">second(s)</label>
+            </div>
+            <p class="text-zinc-500 ml-4 text-center mt-4">
+              RSS item publish date cannot be older than  
+              <span id="max_age_in_seconds">?</span> second(s)
+            </p>
+            <button
+              class="bg-brand/5 text-brand rounded-full px-4 py-4 font-medium leading-6 w-full mt-4"
+              onclick="set_max_age()"
+            >
+              Save
+            </button>
+          </div>
           <hr class="mt-10" />
           <div class="px-2 py-2 mt-4">
             <p
@@ -269,16 +294,55 @@
       .finally((loading_spinner.hidden = true));
   }
 
+  function get_max_age() {
+    loading.hidden = false;
+    fetch("api/rss/settings/max_age")
+      .then((res) => res.json())
+      .then((res) => (max_age_input.value = res))
+      .then(previewMaxAgeInSeconds)
+      .catch((_) => {})
+      .finally((_) => (loading.hidden = true));
+  }
+
+  function set_max_age() {
+    if (!confirm("Sure to change scrape max age?")) {
+      return;
+    }
+
+    var api_url = new URL(
+      "api/rss/settings/max_age",
+      window.location.origin
+    );
+    api_url.searchParams.append(
+      "rss_scrape_max_age_in_s",
+      max_age_input.value
+    );
+    loading_spinner.hidden = false;
+
+    fetch(api_url, { method: "PUT" })
+      .then(get_max_age)
+      .catch((e) => {
+        console.log(e);
+      })
+      .finally((loading_spinner.hidden = true));
+  }
+
   function previewIntervalInMinutes() {
     var fixed = (scrape_interval_input.value / 60000).toFixed(2);
     var preview = fixed.replace(".00", "")
     scrape_interval_in_minutes.innerText = preview;
   }
 
+  function previewMaxAgeInSeconds() {
+    max_age_in_seconds.innerText = max_age_input.value;
+  }
+
+  max_age_input.addEventListener("input", previewMaxAgeInSeconds);
   scrape_interval_input.addEventListener("input", previewIntervalInMinutes);
 
   loading_spinner.hidden = false;
   get_urls();
   get_scrape_interval();
+  get_max_age();
   get_is_dry_run();
 </script>

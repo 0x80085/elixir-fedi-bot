@@ -21,6 +21,7 @@ defmodule Bot.Settings do
     case key in [
            "is_dry_run",
            "max_post_burst_amount",
+           "rss_scrape_max_age_in_s",
            "rss_scrape_interval_in_ms"
          ] do
       true ->
