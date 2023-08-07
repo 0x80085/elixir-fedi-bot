@@ -46,7 +46,9 @@ To connect the bot to your fedi account just register and login, then follow the
 - [ ] better rss page ui
 - [ ] privategpt?
 - [ ] mastodon account info display like username
-- [ ] release as foss
+- [ ] fix bug w manual scrape if still there
+- [ ] post page improve ui
+- [ ] post stats
 
 ## Deploy
 
