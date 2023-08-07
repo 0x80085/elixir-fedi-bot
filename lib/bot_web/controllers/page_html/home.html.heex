@@ -25,9 +25,20 @@
       <div class="w-full sm:w-100 lg:px-[10rem]">
         <form id="url-form">
           <div
-            class="mt-10 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2"
+            class="mt-10 grid grid-rows-1 gap-x-6 gap-y-4 sm:grid-rows-2 mx-4"
             id="setup_cta"
           >
+            <div class="mt-10">
+              <input
+                placeholder="Enter fediverse URL..."
+                class="group relative rounded-2xl py-4 px-4 text-sm font-semibold leading-6 text-zinc-900 border-2 w-full"
+                required
+                title="https://domain.tld"
+                style="width: 100%"
+                id="fedi_url_here"
+                pattern="[Hh][Tt][Tt][Pp][Ss]?:\/\/(?:(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)(?:\.(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)*(?:\.(?:[a-zA-Z\u00a1-\uffff]{2,}))(?::\d{2,5})?(?:\/[^\s]*)?"
+              />
+            </div>
             <button
               class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 sm:py-6"
             >
@@ -43,21 +54,10 @@
                 Click here to setup your bot!
               </span>
             </button>
-            <div class="mt-10">
-              <input
-                placeholder="Enter a HTTPS URL..."
-                class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900"
-                required
-                title="https://domain.tld"
-                style="width: 100%"
-                id="fedi_url_here"
-                pattern="[Hh][Tt][Tt][Pp][Ss]?:\/\/(?:(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)(?:\.(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)*(?:\.(?:[a-zA-Z\u00a1-\uffff]{2,}))(?::\d{2,5})?(?:\/[^\s]*)?"
-              />
-            </div>
           </div>
         </form>
       </div>
-      <div class="flex" style="flex-direction: column; align-items: center">
+      <div class="flex flex-col items-center" >
         <div class="mt-10" id="instructions" hidden>
           <span
             class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900"
@@ -65,8 +65,7 @@
             Connect to your fedi account
           </span>
         </div>
-        <div class="mt-10">
-          <a href="#" target="_blank" id="url_here" hidden>
+          <a href="#" target="_blank" id="url_here"  class="mt-10" hidden>
             <button
               type="button"
               style="
@@ -79,26 +78,24 @@
               Connect bot to your fedi account
             </button>
           </a>
-        </div>
-        <div class="mt-10 lg:px-[10rem]" id="more_instructions" hidden>
+        <div class="mt-10 text-center" id="more_instructions" hidden>
           <span
-            class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900"
+            class="group relative py-4 text-sm font-semibold leading-6 text-zinc-900 text-center"
           >
-            Then enter the received code and press <code>Enter</code>
+            Enter the received code <br>And press <code>Enter</code>
           </span>
         </div>
-        <div class="mt-10 lg:px-[10rem]">
+        <div class="mt-10">
           <input
             placeholder="Code here... "
             onkeyup="connectAccount(event)"
-            class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900"
+            class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 border-2"
             id="paste_code_here"
             hidden
           />
         </div>
         <div
-          style="text-align: center"
-          class="lg:px-[10rem]"
+          class="w-full px-4 max-w-sm margin-auto text-center"
           id="success_and_post"
           hidden
         >
@@ -113,7 +110,7 @@
               Post your first bot message:
             </span>
           </div>
-          <div class="mt-10">
+          <div class="mt-10 flex flex-col">
             <textarea
               placeholder="Enter message here... "
               onkeydown="post_message(event)"
@@ -122,22 +119,24 @@
               maxlength="500"
             >
             </textarea>
-            <label for="message_here">max. 500 characters</label>
-          </div>
-
-          <div class="mt-10">
+            <label for="message_here" class="w-full text-center mt-2 text-zinc-500 text-sm">max. 500 characters</label>
             <input
               placeholder="Enter image url here... "
               onkeydown="post_message(event)"
-              class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900"
+              class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 border-solid border-2 mt-4"
               id="img_url_here"
             />
+            <label for="img_url_here" class="w-full text-center mt-2 text-zinc-500 text-sm">max. 2Mb</label>
           </div>
-          <p class="font-light text-zinc-300 mt-2">
-            Press <code>Enter</code> to post!
-          </p>
           <button
             class="bg-brand/5 text-brand rounded-full px-4 py-4 font-medium leading-6 mt-10"
+            onclick="post_message()"
+          >
+          <.icon name="hero-paper-airplane-solid" /> Post!
+          </button>
+          <button
+            class="text-brand px-4 py-4 font-medium leading-6 mt-10 border-solid"
+            title="Preview in mastodon style UI"
             onclick="preview_toot()"
           >
             Preview
@@ -149,10 +148,10 @@
           frameborder="0"
           class="w-full h-[80vh] mt-10"
         ></iframe>
-        <div class="lg:px-[10rem]">
+        <div class="px-4 lg:px-20">
           <hr class="mb-10 mt-10" />
           <button
-            class="bg-brand/5 text-brand rounded-full px-4 py-4 font-medium leading-6"
+            class="text-brand rounded-full px-4 py-4 font-medium leading-6 w-full"
             onclick="clearBotCredentials()"
           >
             <.icon name="hero-trash-solid" /> Clear bot credentials
