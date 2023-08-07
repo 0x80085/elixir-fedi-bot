@@ -27,24 +27,26 @@ To connect the bot to your fedi account just register and login, then follow the
 - [x] Block registration after 1 user signed up (becomes admin this way)
 - [x] Make deploy/publish ready if needed (scripts etc.?)
 - [ ] Enter fedi url from pleroma or soapbox or misskey or other popular fediware (needs more code, wont be just oauth I think...)   
-- [ ] Grab video from nitter/twitter and add to twoot 
+- [ ] ~~Grab video from nitter/twitter and add to twoot~~
 - [ ] Manage + put in DB: 
   - [x] RSS URLs
   - [ ] Dry run mode
   - [ ] Scrape interval in ms
-  - [ ] Max post burst count 
+  - [ ] Max post burst count
+  - [ ] Fedi account info
   - [ ] Track/save posts to prevent dupes
   - [ ] Toot formatting template (the 🤖💬 "your text here> \n Source:# ")
 - [x] Use Logger.info instead of IO.* for logging important messages
-- [ ] add hashtags to certain posts from certain rss feeds
+- [ ] add/remove hashtags to certain posts from certain rss feeds
 - [ ] file upload limit 2mb on frontend
 - [ ] file upload limit backend
-- [ ] error handling rss fetcher or we causes it to sometimes crash
-- [ ] remove chatgpt ep
+- [ ] error handling rss fetcher or w/e causes it to sometimes crash
+- [ ] remove chatgpt impl
 - [ ] rss scrape log per url
 - [ ] better rss page ui
 - [ ] privategpt?
 - [ ] mastodon account info display like username
+- [ ] release as foss
 
 Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
 ## Learn more
