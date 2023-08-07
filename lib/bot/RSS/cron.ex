@@ -72,7 +72,6 @@ defmodule Bot.RSS.Cron do
   @impl true
   def handle_call({:set_is_dry_run, isEnabled}, _from, state) do
     new_state = Map.put(state, :is_dry_run, isEnabled)
-    Logger.info(isEnabled)
     IO.inspect(new_state)
     {:reply, :ok, new_state}
   end
