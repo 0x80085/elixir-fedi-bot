@@ -48,6 +48,7 @@ To connect the bot to your fedi account just register and login, then follow the
 - [ ] fix bug w manual scrape if still there
 - [x] post page improve ui
 - [ ] post stats
+- [ ] Better post fail feedback on image topo big or other
 
 ## Deploy
 
