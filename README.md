@@ -48,6 +48,10 @@ To connect the bot to your fedi account just register and login, then follow the
 - [ ] mastodon account info display like username
 - [ ] release as foss
 
+## Deploy
+
+check the `/deploy` folder gor scripts.
+
 Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
 ## Learn more
 
