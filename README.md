@@ -36,7 +36,15 @@ To connect the bot to your fedi account just register and login, then follow the
   - [ ] Track/save posts to prevent dupes
   - [ ] Toot formatting template (the 🤖💬 "your text here> \n Source:# ")
 - [x] Use Logger.info instead of IO.* for logging important messages
-- [ ] add hashtags to certain posts from certain rss feeds 
+- [ ] add hashtags to certain posts from certain rss feeds
+- [ ] file upload limit 2mb on frontend
+- [ ] file upload limit backend
+- [ ] error handling rss fetcher or we causes it to sometimes crash
+- [ ] remove chatgpt ep
+- [ ] rss scrape log per url
+- [ ] better rss page ui
+- [ ] privategpt?
+- [ ] mastodon account info display like username
 
 Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
 ## Learn more
