@@ -50,7 +50,7 @@ To connect the bot to your fedi account just register and login, then follow the
 
 ## Deploy
 
-check the `/deploy` folder gor scripts.
+check the `/deploy` folder for scripts.
 
 Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
 ## Learn more
