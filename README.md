@@ -32,7 +32,7 @@ To connect the bot to your fedi account just register and login, then follow the
   - [x] RSS URLs
   - [x] Dry run mode
   - [x] Scrape interval in ms
-  - [ ] Max post burst count
+  - [x] Max post burst count
   - [ ] Fedi account creds
   - [ ] Track/save posts to prevent dupes
   - [ ] Toot formatting template (the 🤖💬 "your text here \n Source:# ")
