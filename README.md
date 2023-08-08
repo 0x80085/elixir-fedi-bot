@@ -30,15 +30,15 @@ To connect the bot to your fedi account just register and login, then follow the
 - [ ] ~~Grab video from nitter/twitter and add to twoot~~
 - [ ] Manage + put in DB: 
   - [x] RSS URLs
-  - [ ] Dry run mode
-  - [ ] Scrape interval in ms
+  - [x] Dry run mode
+  - [x] Scrape interval in ms
   - [ ] Max post burst count
-  - [ ] Fedi account info
+  - [ ] Fedi account creds
   - [ ] Track/save posts to prevent dupes
-  - [ ] Toot formatting template (the 🤖💬 "your text here> \n Source:# ")
+  - [ ] Toot formatting template (the 🤖💬 "your text here \n Source:# ")
 - [x] Use Logger.info instead of IO.* for logging important messages
 - [ ] add/remove hashtags to certain posts from certain rss feeds
-- [ ] file upload limit backend 2Mb
+- [ ] ~~file upload limit backend 2Mb~~ instead show error somewhere when upload img failed
 - [ ] error handling rss fetcher or w/e causes it to sometimes crash
 - [ ] remove chatgpt impl
 - [ ] rss scrape log per url
