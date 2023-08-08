@@ -80,8 +80,11 @@ defmodule BotWeb.Api.RssSettings do
   def get_is_dry_run() do
     setting = get_is_dry_run_setting()
 
-    # one hour
-    setting || false
+    case setting do
+      "true" -> true
+      "false" -> false
+      _ -> true
+    end
   end
 
   def set_is_dry_run(is_dry_run) do

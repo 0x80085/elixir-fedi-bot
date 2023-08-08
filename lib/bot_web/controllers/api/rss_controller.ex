@@ -68,13 +68,7 @@ defmodule BotWeb.Api.RssController do
   end
 
   def get_is_dry_run(conn, _params) do
-    case RssSettings.get_is_dry_run() do
-      "true" ->
-        json(conn, true)
-
-      "false" ->
-        json(conn, false)
-    end
+    json(conn, RssSettings.get_is_dry_run())
   end
 
   def get_scrape_interval(conn, _params) do
