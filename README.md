@@ -49,6 +49,7 @@ To connect the bot to your fedi account just register and login, then follow the
 - [x] post page improve ui
 - [ ] post stats
 - [ ] Better post fail feedback on image topo big or other
+- [ ] also filter out the ones that are already posted before uploading img etc 
 
 ## Deploy
 
