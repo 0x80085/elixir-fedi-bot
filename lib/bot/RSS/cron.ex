@@ -121,7 +121,7 @@ defmodule Bot.RSS.Cron do
   end
 
   defp fetch_and_post_rss(state) do
-    Logger.info("Index = #{state.url_index}")
+    Logger.info("Index = #{state.url_index + 1}")
     persisted_urls = get_enabled_urls()
     Logger.info("Size = #{length(persisted_urls)}")
 
