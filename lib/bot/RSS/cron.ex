@@ -3,11 +3,11 @@ defmodule Bot.RSS.Cron do
   use Ecto.Schema
   import Ecto.Query
   require Logger
+  alias BotWeb.Api.RssSettings
   alias Bot.RSS.RssFetcher
   alias Bot.Mastodon
 
   @state %{
-    is_dry_run: true,
     url_index: 0,
     max_post_burst: 3
   }
@@ -54,8 +54,10 @@ defmodule Bot.RSS.Cron do
       true ->
         Logger.info("Credentials found, starting RSS scraping ...")
 
+        is_dry_run = RssSettings.get_is_dry_run()
+
         fetch_and_post_rss(%{
-          is_dry_run: state.is_dry_run,
+          is_dry_run: is_dry_run,
           url_index: state.url_index,
           max_post_burst: state.max_post_burst
         })
@@ -69,28 +71,8 @@ defmodule Bot.RSS.Cron do
     {:reply, :ok, new_state_incremented_index}
   end
 
-  @impl true
-  def handle_call({:set_is_dry_run, isEnabled}, _from, state) do
-    new_state = Map.put(state, :is_dry_run, isEnabled)
-    IO.inspect(new_state)
-    {:reply, :ok, new_state}
-  end
-
-  @impl true
-  def handle_call(:get_is_dry_run, _from, state) do
-    {:reply, {:ok, state.is_dry_run}, state}
-  end
-
   def start_manually() do
     GenServer.call(__MODULE__, :start_manually)
-  end
-
-  def set_is_dry_run(isEnabled) do
-    GenServer.call(__MODULE__, {:set_is_dry_run, isEnabled})
-  end
-
-  def get_is_dry_run() do
-    GenServer.call(__MODULE__, :get_is_dry_run)
   end
 
   defp get_enabled_urls do
@@ -116,7 +98,6 @@ defmodule Bot.RSS.Cron do
       end
 
     %{
-      is_dry_run: state.is_dry_run,
       url_index: incremented_url_index,
       max_post_burst: state.max_post_burst
     }
@@ -162,8 +143,10 @@ defmodule Bot.RSS.Cron do
 
         Logger.info("Taking first #{state.max_post_burst} results")
 
+        is_dry_run = RssSettings.get_is_dry_run()
+
         Enum.take(newest_entries, state.max_post_burst)
-        |> post_to_fedi(state.is_dry_run)
+        |> post_to_fedi(is_dry_run)
 
       {:error, reason} ->
         Logger.error("CRON RSS failed")

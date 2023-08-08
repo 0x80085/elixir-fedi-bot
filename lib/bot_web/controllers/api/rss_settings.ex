@@ -76,4 +76,41 @@ defmodule BotWeb.Api.RssSettings do
         nil
     end
   end
+
+  def get_is_dry_run() do
+    setting = get_is_dry_run_setting()
+
+    # one hour
+    setting || false
+  end
+
+  def set_is_dry_run(is_dry_run) do
+    case get_is_dry_run_setting() do
+      nil ->
+        entry = %Bot.Settings{
+          key: "rss_is_dry_run",
+          value: is_dry_run
+        }
+
+        Bot.Repo.insert(entry)
+
+      _ ->
+        from(p in Bot.Settings, where: p.key == "rss_is_dry_run")
+        |> Bot.Repo.update_all(set: [value: is_dry_run])
+    end
+  end
+
+  defp get_is_dry_run_setting do
+    query = from(u in Bot.Settings, select: u, where: u.key == "rss_is_dry_run")
+
+    results = Bot.Repo.all(query)
+
+    case length(results) > 0 do
+      true ->
+        Enum.at(results, 0).value
+
+      _ ->
+        nil
+    end
+  end
 end

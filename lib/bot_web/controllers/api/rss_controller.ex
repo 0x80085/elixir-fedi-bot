@@ -59,15 +59,8 @@ defmodule BotWeb.Api.RssController do
   def set_is_dry_run(conn, params) do
     cond do
       params["is_dry_run"] == "true" || params["is_dry_run"] == "false" ->
-        case params["is_dry_run"] do
-          "true" ->
-            Bot.RSS.Cron.set_is_dry_run(true)
-            send_resp(conn, :no_content, "")
-
-          "false" ->
-            Bot.RSS.Cron.set_is_dry_run(false)
-            send_resp(conn, :no_content, "")
-        end
+        RssSettings.set_is_dry_run(params["is_dry_run"])
+        send_resp(conn, :no_content, "")
 
       true ->
         send_resp(conn, :bad_request, "Provide boolean value")
@@ -75,15 +68,12 @@ defmodule BotWeb.Api.RssController do
   end
 
   def get_is_dry_run(conn, _params) do
-    result = Bot.RSS.Cron.get_is_dry_run()
-    IO.inspect(result)
+    case RssSettings.get_is_dry_run() do
+      "true" ->
+        json(conn, true)
 
-    case result do
-      {:ok, res} ->
-        json(conn, res)
-
-      _ ->
-        send_resp(conn, :internal_error, "")
+      "false" ->
+        json(conn, false)
     end
   end
 
