@@ -64,7 +64,7 @@ defmodule BotWeb.Api.RssSettings do
   end
 
   defp get_scrape_max_age_setting do
-    query = from(u in Bot.Settings, select: u, where: u.key == "rss_scrape_max_age_in_s")
+    query = from(u in Bot.Settings, select: u, where: u.key == "max")
 
     results = Bot.Repo.all(query)
 
@@ -105,6 +105,48 @@ defmodule BotWeb.Api.RssSettings do
 
   defp get_is_dry_run_setting do
     query = from(u in Bot.Settings, select: u, where: u.key == "rss_is_dry_run")
+
+    results = Bot.Repo.all(query)
+
+    case length(results) > 0 do
+      true ->
+        Enum.at(results, 0).value
+
+      _ ->
+        nil
+    end
+  end
+
+  def get_max_post_burst_amount do
+    setting = get_max_post_burst_amount_setting()
+
+    case setting do
+      nil ->
+        3
+
+      _ ->
+        String.to_integer(setting)
+    end
+  end
+
+  def set_max_post_burst_amount(max_post_burst_amount) do
+    case get_max_post_burst_amount_setting() do
+      nil ->
+        entry = %Bot.Settings{
+          key: "max_post_burst_amount",
+          value: max_post_burst_amount
+        }
+
+        Bot.Repo.insert(entry)
+
+      _ ->
+        from(p in Bot.Settings, where: p.key == "max_post_burst_amount")
+        |> Bot.Repo.update_all(set: [value: max_post_burst_amount])
+    end
+  end
+
+  defp get_max_post_burst_amount_setting do
+    query = from(u in Bot.Settings, select: u, where: u.key == "max_post_burst_amount")
 
     results = Bot.Repo.all(query)
 

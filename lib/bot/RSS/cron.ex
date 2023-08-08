@@ -8,8 +8,7 @@ defmodule Bot.RSS.Cron do
   alias Bot.Mastodon
 
   @state %{
-    url_index: 0,
-    max_post_burst: 3
+    url_index: 0
   }
 
   def start_link(_opts) do
@@ -54,12 +53,8 @@ defmodule Bot.RSS.Cron do
       true ->
         Logger.info("Credentials found, starting RSS scraping ...")
 
-        is_dry_run = RssSettings.get_is_dry_run()
-
         fetch_and_post_rss(%{
-          is_dry_run: is_dry_run,
-          url_index: state.url_index,
-          max_post_burst: state.max_post_burst
+          url_index: state.url_index
         })
 
       _ ->
@@ -99,7 +94,6 @@ defmodule Bot.RSS.Cron do
 
     %{
       url_index: incremented_url_index,
-      max_post_burst: state.max_post_burst
     }
   end
 
@@ -132,8 +126,8 @@ defmodule Bot.RSS.Cron do
     Logger.info("Size = #{length(persisted_urls)}")
 
     current_rss_url = Enum.at(persisted_urls, state.url_index).url
-
     Logger.info("current_rss_url = #{current_rss_url}")
+
 
     case RssFetcher.get_entries(current_rss_url) do
       {:ok, results} ->
@@ -141,12 +135,12 @@ defmodule Bot.RSS.Cron do
         Logger.info("Got #{length(newest_entries)} results")
         IO.inspect(newest_entries)
 
-        Logger.info("Taking first #{state.max_post_burst} results")
+        max_post_burst_amount = RssSettings.get_max_post_burst_amount()
+        Logger.info("Taking first #{max_post_burst_amount} results")
 
-        is_dry_run = RssSettings.get_is_dry_run()
 
-        Enum.take(newest_entries, state.max_post_burst)
-        |> post_to_fedi(is_dry_run)
+        Enum.take(newest_entries, max_post_burst_amount)
+        |> post_to_fedi_with_delay()
 
       {:error, reason} ->
         Logger.error("CRON RSS failed")
@@ -154,20 +148,18 @@ defmodule Bot.RSS.Cron do
     end
   end
 
-  defp post_to_fedi(entries, is_dry_run) do
+  defp post_to_fedi_with_delay(entries) do
     Enum.each(entries, fn it ->
-      # TODO
       random_time_in_ms = Enum.random(1000..5000)
 
-      Logger.info("Posting new entry in #{random_time_in_ms}ms")
+      Logger.info("Posting new entry with a delay of #{random_time_in_ms}ms")
       :timer.sleep(random_time_in_ms)
 
       token = Mastodon.Auth.UserCredentials.get_token()
 
       Mastodon.Actions.PostStatus.post(
         %{text: it.title, media: it.media, id: it.id},
-        token,
-        is_dry_run
+        token
       )
     end)
   end

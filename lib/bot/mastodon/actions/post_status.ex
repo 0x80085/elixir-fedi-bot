@@ -5,7 +5,10 @@ defmodule Bot.Mastodon.Actions.PostStatus do
   alias Bot.RSS.FoundUrlArchive
   require Logger
 
-  def post(data, token, is_dry_run) do
+  def post(data, token) do
+    is_dry_run = BotWeb.Api.RssSettings.get_is_dry_run()
+    Logger.info("Running dry mode? #{is_dry_run}")
+
     case FoundUrlArchive.exists(data.id) do
       true ->
         Logger.info("Was already posted!")

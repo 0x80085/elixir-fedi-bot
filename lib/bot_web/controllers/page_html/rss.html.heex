@@ -43,9 +43,7 @@
           </div>
           <hr class="my-10" />
           <div class="flex flex-col justify-center items-center">
-          <label for="scrape_interval_input"
-            >Scrape Interval 
-          </label>
+            <label for="scrape_interval_input">Scrape Interval </label>
             <div class="relative w-full mt-4">
               <input
                 class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 w-full"
@@ -53,10 +51,13 @@
                 id="scrape_interval_input"
                 name="scrape_interval_input"
               />
-              <label for="scrape_interval_input" class="absolute right-[5rem] top-[1rem] text-zinc-500">minute(s)</label>
+              <label
+                for="scrape_interval_input"
+                class="absolute right-[5rem] top-[1rem] text-zinc-500">minute(s)</label>
             </div>
             <p class="text-zinc-500 ml-4 text-center mt-4 text-sm">
-              Time in milliseconds between RSS URL scrapes. <br /> Will scrape every
+              Time in milliseconds between RSS URL scrapes. <br />
+              Will scrape every
               <span id="scrape_interval_in_minutes">?</span> minute(s)
             </p>
             <button
@@ -68,9 +69,7 @@
           </div>
           <hr class="my-10" />
           <div class="flex flex-col justify-center items-center">
-          <label for="max_age_input" 
-            >Max age news item
-          </label>
+            <label for="max_age_input">Max age news item </label>
             <div class="relative w-full mt-4">
               <input
                 class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 w-full"
@@ -78,15 +77,43 @@
                 id="max_age_input"
                 name="max_age_input"
               />
-              <label for="max_age_input" class="absolute right-[5rem] top-[1rem] text-zinc-500">second(s)</label>
+              <label
+                for="max_age_input"
+                class="absolute right-[5rem] top-[1rem] text-zinc-500"
+                >second(s)</label>
             </div>
             <p class="text-zinc-500 ml-4 text-center mt-4 text-sm">
-              RSS item publish date cannot be older than  
+              RSS item publish date cannot be older than
               <span id="max_age_in_seconds">?</span> second(s)
             </p>
             <button
               class="bg-brand/5 text-brand rounded-full px-4 py-4 font-medium leading-6 w-full mt-4"
               onclick="set_max_age()"
+            >
+              Save
+            </button>
+          </div>
+          <div class="flex flex-col justify-center items-center">
+            <label for="max_post_burst_amount_input">Max post burst amount</label>
+            <div class="relative w-full mt-4">
+              <input
+                class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 w-full"
+                type="number"
+                id="max_post_burst_amount_input"
+                name="max_post_burst_amount_input"
+              />
+              <label
+                for="max_post_burst_amount_input"
+                class="absolute right-[5rem] top-[1rem] text-zinc-500"
+                >post(s)</label>
+            </div>
+            <p class="text-zinc-500 ml-4 text-center mt-4 text-sm">
+              Every URL scrape process can generate maximum
+              <span id="max_post_burst_amount">?</span> post(s) at a time.
+            </p>
+            <button
+              class="bg-brand/5 text-brand rounded-full px-4 py-4 font-medium leading-6 w-full mt-4"
+              onclick="set_max_post_burst_amount()"
             >
               Save
             </button>
@@ -135,6 +162,7 @@
   var urls_list = document.getElementById("urls_list");
   var url_input = document.getElementById("url_input");
   var is_dry_run_input = document.getElementById("is_dry_run_input");
+  var max_post_burst_amount_input = document.getElementById("max_post_burst_amount_input");
   var scrape_interval_input = document.getElementById("scrape_interval_input");
   var scrape_interval_in_minutes = document.getElementById(
     "scrape_interval_in_minutes"
@@ -309,14 +337,8 @@
       return;
     }
 
-    var api_url = new URL(
-      "api/rss/settings/max_age",
-      window.location.origin
-    );
-    api_url.searchParams.append(
-      "rss_scrape_max_age_in_s",
-      max_age_input.value
-    );
+    var api_url = new URL("api/rss/settings/max_age", window.location.origin);
+    api_url.searchParams.append("rss_scrape_max_age_in_s", max_age_input.value);
     loading_spinner.hidden = false;
 
     fetch(api_url, { method: "PUT" })
@@ -327,22 +349,54 @@
       .finally((loading_spinner.hidden = true));
   }
 
+  function get_max_post_burst_amount() {
+    loading.hidden = false;
+    fetch("api/rss/settings/max_post_burst_amount")
+      .then((res) => res.json())
+      .then((res) => (max_post_burst_amount_input.value = res))
+      .then(previewMaxPostBurst)
+      .catch((_) => {})
+      .finally((_) => (loading.hidden = true));
+  }
+
+  function set_max_post_burst_amount() {
+    if (!confirm("Sure to change scrape max post burst amount?")) {
+      return;
+    }
+
+    var api_url = new URL("api/rss/settings/max_post_burst_amount", window.location.origin);
+    api_url.searchParams.append("max_post_burst_amount", max_post_burst_amount_input.value);
+    loading_spinner.hidden = false;
+
+    fetch(api_url, { method: "PUT" })
+      .then(get_max_post_burst_amount)
+      .catch((e) => {
+        console.log(e);
+      })
+      .finally((loading_spinner.hidden = true));
+  }
+
   function previewIntervalInMinutes() {
     var fixed = (scrape_interval_input.value / 60000).toFixed(2);
-    var preview = fixed.replace(".00", "")
+    var preview = fixed.replace(".00", "");
     scrape_interval_in_minutes.innerText = preview;
   }
 
   function previewMaxAgeInSeconds() {
     max_age_in_seconds.innerText = max_age_input.value;
   }
+  function previewMaxPostBurst() {
+    max_post_burst_amount.innerText = max_post_burst_amount_input.value;
+  }
 
   max_age_input.addEventListener("input", previewMaxAgeInSeconds);
   scrape_interval_input.addEventListener("input", previewIntervalInMinutes);
+  max_post_burst_amount_input.addEventListener("input", previewMaxPostBurst);
 
   loading_spinner.hidden = false;
   get_urls();
   get_scrape_interval();
   get_max_age();
   get_is_dry_run();
+  get_max_post_burst_amount();
 </script>

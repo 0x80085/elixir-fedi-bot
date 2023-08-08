@@ -88,4 +88,13 @@ defmodule BotWeb.Api.RssController do
     RssSettings.set_scrape_max_age(params["rss_scrape_max_age_in_s"])
     send_resp(conn, :ok, "OK")
   end
+
+  def get_max_post_burst_amount(conn, _params) do
+    json(conn, RssSettings.get_max_post_burst_amount())
+  end
+
+  def set_max_post_burst_amount(conn, params) do
+    RssSettings.set_max_post_burst_amount(params["max_post_burst_amount"])
+    send_resp(conn, :ok, "OK")
+  end
 end
