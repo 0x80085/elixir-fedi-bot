@@ -1,5 +1,5 @@
 defmodule Bot.Mastodon.Statistics.Frequency do
-  def calculate_toot_frequency() do
+  def average_of_toots_per_hour_last_24h() do
     case Bot.Mastodon.Auth.PersistCredentials.has_stored_credentials() do
       true ->
         toots = get_toots()
@@ -8,15 +8,12 @@ defmodule Bot.Mastodon.Statistics.Frequency do
         count =
           Enum.count(toots, fn toot ->
             toot_timestamp = Timex.parse!(toot["created_at"], "{ISO:Extended}")
-            # Count toots posted within the last 24 hours
-            Timex.diff(now, toot_timestamp, :seconds) < 86400
+            day_ago_in_s = 86400
+            Timex.diff(now, toot_timestamp, :seconds) < day_ago_in_s
           end)
 
         # Calculate average toots per hour
-        frequency = count / 24.0
-        IO.puts("Average toots per hour: #{frequency}")
-
-        frequency
+        count / 24.0
 
       _ ->
         "Link Mastodon account to use this feature."

@@ -48,6 +48,9 @@ To connect the bot to your fedi account just register and login, then follow the
 - [ ] fix bug w manual scrape if still there
 - [x] post page improve ui
 - [ ] post stats
+    - [x] avg posts per h today
+    - [x] post engagements today
+    - [ ] find mmore stats to show
 - [ ] Better post fail feedback on image topo big or other
 - [ ] also filter out the ones that are already posted before uploading img etc 
 

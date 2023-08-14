@@ -23,9 +23,19 @@
         <div
           class="border border-zinc-300 rounded-sm py-4 px-4 basis-1/2 mx-1 my-1"
         >
-          <p class="text-center"><.icon name="hero-clock" class="h-5 w-5" /></p>
-          <label class="text-zinc-500"> Average # of toots per hour </label>
+          <p class="text-center mb-2"><.icon name="hero-clock" class="h-5 w-5" /></p>
+          <label class="text-zinc-500">Average # of toots per hour </label>
           <pre id="frequency_stat" class="text-2xl text-center mt-2">...</pre>
+        </div>
+        <div
+          class="border border-zinc-300 rounded-sm py-4 px-4 basis-1/2 mx-1 my-1"
+        >
+          <p class="text-center mb-2"><.icon name="hero-bolt" class="h-5 w-5" /></p>
+          <label class="text-zinc-500">Total engagement last 24h</label>
+          <pre id="engagement_stat" class="text-2xl text-center mt-2">...</pre>
+          <p class="text-center">
+            <small  class="text-zinc-300">e.g favs, retoots, comments</small>
+          </p>
         </div>
       </div>
     </div>
@@ -40,10 +50,16 @@
 <script>
   console.log("Entered stats page ");
 
-  function get_max_post_burst_amount() {
+  function get_avg_posts_per_hour_last_24h() {
     fetch("api/stats/frequency")
       .then((res) => res.json())
       .then((it) => previewFrequency(it))
+      .catch((_) => {});
+  }
+  function get_toot_engagemnent_last_24h() {
+    fetch("api/stats/engagements")
+      .then((res) => res.json())
+      .then((it) => previewEngagement(it))
       .catch((_) => {});
   }
 
@@ -51,6 +67,11 @@
     console.log(value);
     frequency_stat.innerText = `~${value.toFixed(2).replace(".00", "")}`;
   }
+  function previewEngagement(value) {
+    console.log(value);
+    engagement_stat.innerText = `${value.toFixed(2).replace(".00", "")}`;
+  }
 
-  get_max_post_burst_amount();
+  get_avg_posts_per_hour_last_24h();
+  get_toot_engagemnent_last_24h();
 </script>
