@@ -17,12 +17,15 @@
       <p
         class="text-[2rem] mt-4 font-semibold leading-10 tracking-tighter mt-10 text-zinc-900"
       >
-        RSS
+        Statistics
       </p>
-      <div class="flex flex-col">
-        <div class="mt-10">
-          <p>Toot frequency</p>
-          <pre id="frequency_stat">Nothing to show yet...</pre>
+      <div class="flex flex-row mt-10">
+        <div
+          class="border border-zinc-300 rounded-sm py-4 px-4 basis-1/2 mx-1 my-1"
+        >
+          <p class="text-center"><.icon name="hero-clock" class="h-5 w-5" /></p>
+          <label class="text-zinc-500"> Average # of toots per hour </label>
+          <pre id="frequency_stat" class="text-2xl text-center mt-2">...</pre>
         </div>
       </div>
     </div>
@@ -46,7 +49,7 @@
 
   function previewFrequency(value) {
     console.log(value);
-    frequency_stat.innerText = value;
+    frequency_stat.innerText = `~${value.toFixed(2).replace(".00", "")}`;
   }
 
   get_max_post_burst_amount();
