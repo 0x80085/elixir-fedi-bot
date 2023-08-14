@@ -20,7 +20,7 @@ defmodule Bot.Mastodon.Auth.VerifyCredentials do
 
             case Jason.decode(result.body) do
               {:ok, body} ->
-                Logger.info(Map.get(body, "error"))
+                Logger.info(Map.get(body, "error", "verify_token succeeded"))
                 {:ok, result}
 
               {:error, reason} ->

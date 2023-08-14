@@ -1,10 +1,10 @@
 defmodule Bot.Mastodon.Auth.UserCredentials do
-
   use Agent
   require Logger
 
   @default_state %{
-    token: nil
+    token: nil,
+    account_id: nil
   }
 
   def start_link(_opts) do
@@ -20,9 +20,11 @@ defmodule Bot.Mastodon.Auth.UserCredentials do
           creds ->
             Logger.info("User token found, using from files")
             Logger.info("user_token: #{Map.get(creds, "user_token")}")
+            Logger.info("account_id: #{Map.get(creds, "account_id")}")
 
             %{
-              token: Map.get(creds, "user_token")
+              token: Map.get(creds, "user_token"),
+              account_id: Map.get(creds, "account_id")
             }
         end
       end,
@@ -38,9 +40,26 @@ defmodule Bot.Mastodon.Auth.UserCredentials do
   end
 
   def set_token(token) do
-    Agent.update(__MODULE__, fn _state ->
+    Agent.update(__MODULE__, fn state ->
       %{
-        token: token
+        token: token,
+        account_id: state.account_id
+      }
+    end)
+  end
+
+  @spec get_account_id :: String
+  def get_account_id() do
+    Agent.get(__MODULE__, fn state ->
+      state.account_id
+    end)
+  end
+
+  def set_account_id(account_id) do
+    Agent.update(__MODULE__, fn state ->
+      %{
+        token: state.token,
+        account_id: account_id
       }
     end)
   end
@@ -75,17 +94,25 @@ defmodule Bot.Mastodon.Auth.UserCredentials do
             user_token = "Bearer #{Map.get(body, "access_token")}"
             Logger.info("Got user token !!")
 
-            is_token_valid(user_token)
+            case verify_token(user_token) do
+              {:ok, account_data} ->
+                set_token(account_data.user_token)
+                set_account_id(account_data.account_id)
 
-            Bot.Mastodon.Auth.PersistCredentials.encode_and_persist(%{
-              client_id: client_id,
-              client_secret: client_secret,
-              app_token: token,
-              user_token: user_token,
-              fedi_url: Bot.Mastodon.Auth.ApplicationCredentials.get_fedi_url()
-            })
+                Bot.Mastodon.Auth.PersistCredentials.encode_and_persist(%{
+                  client_id: client_id,
+                  client_secret: client_secret,
+                  app_token: token,
+                  user_token: user_token,
+                  fedi_url: Bot.Mastodon.Auth.ApplicationCredentials.get_fedi_url(),
+                  account_id: account_data.account_id
+                })
 
-            {:ok, user_token}
+                {:ok, user_token}
+
+              {:error, reason} ->
+                {:error, reason}
+            end
 
           {:error, reason} ->
             {:error, reason}
@@ -96,16 +123,31 @@ defmodule Bot.Mastodon.Auth.UserCredentials do
     end
   end
 
-  def is_token_valid(user_token) do
+  defp verify_token(user_token) do
     fedi_url = Bot.Mastodon.Auth.ApplicationCredentials.get_fedi_url()
 
     case Bot.Mastodon.Auth.VerifyCredentials.verify_token(
            user_token,
            "#{fedi_url}/api/v1/accounts/verify_credentials"
          ) do
-      {:ok, _result} ->
-        set_token(user_token)
-        {:ok, user_token}
+      {:ok, result} ->
+        IO.inspect("RESULT VERIFY ::: ")
+        IO.inspect(result)
+
+        case Jason.decode(result.body) do
+          {:ok, decoded} ->
+            account_id = Map.get(decoded, "id")
+
+            IO.inspect("account_id ::: ")
+            IO.inspect(account_id)
+
+            account_data = %{account_id: account_id, user_token: user_token}
+
+            {:ok, account_data}
+
+          _ ->
+            {:error, "Could not verify account"}
+        end
 
       {:error, reason} ->
         {:error, reason}
