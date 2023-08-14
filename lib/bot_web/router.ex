@@ -27,6 +27,7 @@ defmodule BotWeb.Router do
     get "/", PageController, :home
     get "/rss", PageController, :rss
     get "/chatgpt", PageController, :chatgpt
+    get "/statistics", PageController, :statistics
   end
 
   # Other scopes may use custom stacks.
@@ -65,8 +66,11 @@ defmodule BotWeb.Router do
     get "/chatgpt/credentials", Api.ChatgptController, :get_has_credentials
     post "/chatgpt/credentials", Api.ChatgptController, :set_secret_key
     delete "/chatgpt/credentials", Api.ChatgptController, :delete_secret_key
-
     post "/chatgpt/chat", Api.ChatgptController, :chat
+
+    # Statistics
+    get "/stats/frequency", Api.StatisticsController, :get_frequency
+
 
     ## Util
     # Test RSS fetcher

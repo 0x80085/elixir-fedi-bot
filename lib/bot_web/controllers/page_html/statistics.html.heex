@@ -1,0 +1,53 @@
+<link phx-track-static rel="stylesheet" />
+<.flash_group flash={@flash} />
+<!-- CONTENT -->
+<div class="grid sm:grid-cols-1 md:grid-cols-2 main">
+  <div class="px-5 2xl:px-[10rem] py-[4rem] content-left">
+    <div class="flex header flex-col lg:flex-row">
+      <img class="flip-horizontally" src={~p"/images/logo.jpg"} alt="logo"
+      id="logo">
+
+      <h1
+        class="ml-0 mt-5 lg:mt-0 lg:ml-5 text-brand header-title text-sm font-semibold leading-6"
+      >
+        Fedi-bot Chan
+      </h1>
+    </div>
+    <div class="grid grid-cols-1">
+      <p
+        class="text-[2rem] mt-4 font-semibold leading-10 tracking-tighter mt-10 text-zinc-900"
+      >
+        RSS
+      </p>
+      <div class="flex flex-col">
+        <div class="mt-10">
+          <p>Toot frequency</p>
+          <pre id="frequency_stat">Nothing to show yet...</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- BANNER  -->
+  <div class="banner-right hidden sm:hidden md:block">
+    <img class="center-cropped-img" src={~p"/images/banner-right.png"}
+    alt="banner">
+  </div>
+</div>
+
+<script>
+  console.log("Entered stats page ");
+
+  function get_max_post_burst_amount() {
+    fetch("api/stats/frequency")
+      .then((res) => res.json())
+      .then((it) => previewFrequency(it))
+      .catch((_) => {});
+  }
+
+  function previewFrequency(value) {
+    console.log(value);
+    frequency_stat.innerText = value;
+  }
+
+  get_max_post_burst_amount();
+</script>

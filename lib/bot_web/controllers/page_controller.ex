@@ -1,6 +1,7 @@
 defmodule BotWeb.PageController do
   use BotWeb, :controller
 
+  @spec home(Plug.Conn.t(), any) :: Plug.Conn.t()
   def home(conn, _params) do
     # The home page is often custom made,
     # so skip the default app layout.
@@ -12,7 +13,13 @@ defmodule BotWeb.PageController do
     render(conn, :rss, layout: false)
   end
 
+  @spec chatgpt(Plug.Conn.t(), any) :: Plug.Conn.t()
   def chatgpt(conn, _params) do
     render(conn, :chatgpt, layout: false)
+  end
+
+  @spec statistics(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def statistics(conn, _params) do
+    render(conn, :statistics, layout: false)
   end
 end
