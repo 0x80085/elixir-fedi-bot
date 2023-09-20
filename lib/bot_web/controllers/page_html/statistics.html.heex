@@ -24,18 +24,28 @@
           class="border border-zinc-300 rounded-sm py-4 px-4 basis-1/2 mx-1 my-1"
         >
           <p class="text-center mb-2"><.icon name="hero-clock" class="h-5 w-5" /></p>
-          <label class="text-zinc-500">Average # of toots per hour </label>
+          <label class="text-zinc-500">Average # of toots<br>per hour </label>
           <pre id="frequency_stat" class="text-2xl text-center mt-2">...</pre>
         </div>
         <div
           class="border border-zinc-300 rounded-sm py-4 px-4 basis-1/2 mx-1 my-1"
         >
           <p class="text-center mb-2"><.icon name="hero-bolt" class="h-5 w-5" /></p>
-          <label class="text-zinc-500">Total engagement last 24h</label>
+          <label class="text-zinc-500">Total engagement<br>last 24h</label>
           <pre id="engagement_stat" class="text-2xl text-center mt-2">...</pre>
           <p class="text-center">
             <small  class="text-zinc-300">e.g favs, retoots, comments</small>
           </p>
+        </div>
+        <div
+          class="border border-zinc-300 rounded-sm py-4 px-4 basis-1/2 mx-1 my-1"
+        >
+          <p class="text-center mb-2"><.icon name="hero-user" class="h-5 w-5" /></p>
+          <label class="text-zinc-500">Followers<br>total amount</label>
+          <pre id="total_followers_stat" class="text-2xl text-center mt-2">...</pre>
+          <!-- <p class="text-center">
+            <small  class="text-zinc-300">e.g favs, retoots, comments</small>
+          </p> -->
         </div>
       </div>
     </div>
@@ -53,25 +63,36 @@
   function get_avg_posts_per_hour_last_24h() {
     fetch("api/stats/frequency")
       .then((res) => res.json())
-      .then((it) => previewFrequency(it))
+      .then(displayFrequency)
       .catch((_) => {});
   }
   function get_toot_engagemnent_last_24h() {
     fetch("api/stats/engagements")
       .then((res) => res.json())
-      .then((it) => previewEngagement(it))
+      .then(displayEngagement)
+      .catch((_) => {});
+  }
+  function get_total_followers() {
+    fetch("api/stats/total_followers")
+      .then((res) => res.json())
+      .then(displayTotalFollowers)
       .catch((_) => {});
   }
 
-  function previewFrequency(value) {
+  function displayFrequency(value) {
     console.log(value);
     frequency_stat.innerText = `~${value.toFixed(2).replace(".00", "")}`;
   }
-  function previewEngagement(value) {
+  function displayEngagement(value) {
     console.log(value);
     engagement_stat.innerText = `${value.toFixed(2).replace(".00", "")}`;
+  }
+  function displayTotalFollowers(value) {
+    console.log(value);
+    total_followers_stat.innerText = value;
   }
 
   get_avg_posts_per_hour_last_24h();
   get_toot_engagemnent_last_24h();
+  get_total_followers();
 </script>

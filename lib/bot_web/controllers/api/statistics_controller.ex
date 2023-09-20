@@ -8,4 +8,8 @@ defmodule BotWeb.Api.StatisticsController do
   def get_engagements(conn, _params) do
     json(conn, Bot.Mastodon.Statistics.Engagements.total_engagements_last_24h())
   end
+
+  def get_total_followers(conn, _params) do
+    json(conn, Bot.Mastodon.Statistics.Followers.total_followers())
+  end
 end

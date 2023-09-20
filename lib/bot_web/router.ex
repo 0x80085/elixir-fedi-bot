@@ -71,6 +71,7 @@ defmodule BotWeb.Router do
     # Statistics
     get "/stats/frequency", Api.StatisticsController, :get_frequency
     get "/stats/engagements", Api.StatisticsController, :get_engagements
+    get "/stats/total_followers", Api.StatisticsController, :get_total_followers
 
 
     ## Util
