@@ -4,10 +4,10 @@
 <div class="grid sm:grid-cols-1 md:grid-cols-2 main">
   <div class="px-5 2xl:px-[10rem] py-[4rem] content-left">
     <div class="flex header flex-col lg:flex-row">
-      <img class="flip-horizontally" src={~p"/images/logo.jpg"} alt="logo"
+      <img class="rounded-md" id="fedi_avatar_url_img"  src={~p"/images/logo.jpg"} alt="logo"
       id="logo">
-
       <h1
+        id="fedi_account_name"
         class="ml-0 mt-5 lg:mt-0 lg:ml-5 text-brand header-title text-sm font-semibold leading-6"
       >
         Fedi-bot Chan
@@ -23,29 +23,52 @@
         <div
           class="border border-zinc-300 rounded-sm py-4 px-4 basis-1/2 mx-1 my-1"
         >
-          <p class="text-center mb-2"><.icon name="hero-clock" class="h-5 w-5" /></p>
-          <label class="text-zinc-500">Average # of toots<br>per hour </label>
+          <p class="text-center mb-2">
+            <.icon name="hero-clock" class="h-5 w-5" />
+          </p>
+          <label class="text-zinc-500">Average # of toots<br />per hour </label>
           <pre id="frequency_stat" class="text-2xl text-center mt-2">...</pre>
         </div>
         <div
           class="border border-zinc-300 rounded-sm py-4 px-4 basis-1/2 mx-1 my-1"
         >
-          <p class="text-center mb-2"><.icon name="hero-bolt" class="h-5 w-5" /></p>
-          <label class="text-zinc-500">Total engagement<br>last 24h</label>
+          <p class="text-center mb-2">
+            <.icon name="hero-bolt" class="h-5 w-5" />
+          </p>
+          <label class="text-zinc-500">Total engagement<br />last 24h</label>
           <pre id="engagement_stat" class="text-2xl text-center mt-2">...</pre>
           <p class="text-center">
-            <small  class="text-zinc-300">e.g favs, retoots, comments</small>
+            <small class="text-zinc-300">e.g favs, retoots, comments</small>
           </p>
         </div>
         <div
           class="border border-zinc-300 rounded-sm py-4 px-4 basis-1/2 mx-1 my-1"
         >
-          <p class="text-center mb-2"><.icon name="hero-user" class="h-5 w-5" /></p>
-          <label class="text-zinc-500">Followers<br>total amount</label>
+          <p class="text-center mb-2">
+            <.icon name="hero-user" class="h-5 w-5" />
+          </p>
+          <label class="text-zinc-500">Followers<br />total amount</label>
           <pre id="total_followers_stat" class="text-2xl text-center mt-2">...</pre>
-          <!-- <p class="text-center">
-            <small  class="text-zinc-300">e.g favs, retoots, comments</small>
-          </p> -->
+        </div>
+      </div>
+      <div class="flex flex-row mt-10">
+        <div
+          class="border border-zinc-300 rounded-sm py-4 px-4 basis-1/2 mx-1 my-1"
+        >
+          <p class="text-center mb-2">
+            <.icon name="hero-chat-bubble-bottom-center" class="h-5 w-5" />
+          </p>
+          <label class="text-zinc-500">Post count<br />total amount</label>
+          <pre id="post_count_stat" class="text-2xl text-center mt-2">...</pre>
+        </div>
+        <div
+          class="border border-zinc-300 rounded-sm py-4 px-4 basis-1/2 mx-1 my-1"
+        >
+          <p class="text-center mb-2">
+            <.icon name="hero-calendar-days" class="h-5 w-5" />
+          </p>
+          <label class="text-zinc-500">Account age<br />in days</label>
+          <pre id="account_age_in_days_stat" class="text-2xl text-center mt-2">...</pre>
         </div>
       </div>
     </div>
@@ -58,8 +81,6 @@
 </div>
 
 <script>
-  console.log("Entered stats page ");
-
   function get_avg_posts_per_hour_last_24h() {
     fetch("api/stats/frequency")
       .then((res) => res.json())
@@ -72,27 +93,29 @@
       .then(displayEngagement)
       .catch((_) => {});
   }
-  function get_total_followers() {
-    fetch("api/stats/total_followers")
+  function get_account_info() {
+    fetch("api/stats/account_info")
       .then((res) => res.json())
-      .then(displayTotalFollowers)
+      .then(displayAccountInfo)
       .catch((_) => {});
   }
 
   function displayFrequency(value) {
-    console.log(value);
     frequency_stat.innerText = `~${value.toFixed(2).replace(".00", "")}`;
   }
   function displayEngagement(value) {
-    console.log(value);
     engagement_stat.innerText = `${value.toFixed(2).replace(".00", "")}`;
   }
-  function displayTotalFollowers(value) {
-    console.log(value);
-    total_followers_stat.innerText = value;
+  function displayAccountInfo(value) {
+    fedi_account_name.innerText = value.username;
+    fedi_avatar_url_img.src = value.avatar_url;
+
+    post_count_stat.innerText = value.post_count;
+    account_age_in_days_stat.innerText = value.account_age_in_days;
+    total_followers_stat.innerText = value.total_followers;
   }
 
   get_avg_posts_per_hour_last_24h();
   get_toot_engagemnent_last_24h();
-  get_total_followers();
+  get_account_info();
 </script>
