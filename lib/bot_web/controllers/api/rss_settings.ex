@@ -63,8 +63,8 @@ defmodule BotWeb.Api.RssSettings do
     end
   end
 
-  defp get_scrape_max_age_setting do
-    query = from(u in Bot.Settings, select: u, where: u.key == "max")
+  defp get_scrape_max_age_setting() do
+    query = from(u in Bot.Settings, select: u, where: u.key == "rss_scrape_max_age_in_s")
 
     results = Bot.Repo.all(query)
 
