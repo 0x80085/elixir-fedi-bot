@@ -1,5 +1,7 @@
 # Fedi Bot
 
+Make sure you have created a PostgreSQL DB with credentials found in `config/dev.exs`.
+
 To start your Bot / Phoenix server:
 
   * Run `mix setup` to install and setup dependencies
@@ -7,7 +9,9 @@ To start your Bot / Phoenix server:
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
-To connect the bot to your fedi account just register and login, then follow the instructions on http://localhost:4000
+To connect the bot to your any Mastodon account
+- register and login
+- then follow the instructions on http://localhost:4000
 
 # Todo 
 
