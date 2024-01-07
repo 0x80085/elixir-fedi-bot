@@ -3,7 +3,7 @@ defmodule Bot.Events do
 
   @max_entries 50
 
-  defstruct exception_message: nil, date_time_occurred: nil, severity: nil
+  defstruct message: nil, date_time_occurred: nil, severity: nil
 
   # Start the Agent with an empty list as its initial state
   def start_link(_opts) do
@@ -11,10 +11,10 @@ defmodule Bot.Events do
   end
 
   # Create a new event structure
-  def new_event(exception_message, date_time_occurred, severity) do
+  def new_event(message, severity) do
     %__MODULE__{
-      exception_message: exception_message,
-      date_time_occurred: date_time_occurred,
+      message: message,
+      date_time_occurred: DateTime.utc_now(),
       severity: severity
     }
   end
@@ -40,9 +40,10 @@ defmodule Bot.Events do
         %{
           "severity" => it.severity,
           "date_time_occurred" => it.date_time_occurred,
-          "exception_message" => it.exception_message
+          "message" => it.message
         }
       end)
+      |> Enum.sort(&DateTime.compare(&1["date_time_occurred"], &2["date_time_occurred"]) == :gt)
     end)
   end
 end

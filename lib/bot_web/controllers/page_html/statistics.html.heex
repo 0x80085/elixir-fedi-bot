@@ -77,6 +77,12 @@
   >
     Event logs
   </p>
+    <p
+    class="text-[1rem] mt-2 leading-10 text-zinc-900"
+  >
+    Keeps last 50 log entries
+  </p>
+
     <div id="event_log" class="mt-10">
       Events logs will show up here...
     </div>
@@ -130,13 +136,13 @@
   }
   function displayEventsLogs(value) {
    const row = (it) => `
-   <div style="border-radius: 1rem; background-color: #ededed; padding:1rem; ">
-    <span>${it.severity === 'Warning' || it.severity === 'error' ? '⚠️' : '📘'}</span>
+   <div style="border-radius: 1rem; background-color: #ededed; padding:1rem;" class="mb-3">
+    <span title="${it.severity}">${it.severity !== 'Info' ? '⚠️' : '📘'}</span>
     <code>${new Date(it.date_time_occurred).toLocaleString()}</code>
     <hr class="m-1">
-    <code>${it.exception_message}</code> <br>
+    <code>${it.message}</code> <br>
   </div>`
-   const html= value.map(row);
+   const html= value.map(row).join('');
    event_log.innerHTML = html;
    new HTMLDivElement().innerHTML
   }
