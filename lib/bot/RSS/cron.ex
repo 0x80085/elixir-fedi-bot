@@ -121,6 +121,7 @@ defmodule Bot.RSS.Cron do
   end
 
   defp fetch_and_post_rss(state) do
+    Bot.Events.add_event(Bot.Events.new_event("Starting RSS scraper", "Info"))
     Logger.info("Index = #{state.url_index + 1}")
     persisted_urls = get_enabled_urls()
     Logger.info("Size = #{length(persisted_urls)}")
@@ -140,12 +141,14 @@ defmodule Bot.RSS.Cron do
         Enum.take(newest_entries, max_post_burst_amount)
         |> post_to_fedi_with_delay()
 
+        Bot.Events.add_event(Bot.Events.new_event("OK - CRON RSS Job completed for #{current_rss_url}", "Info"))
+
       {:error, reason} ->
         Logger.error("CRON RSS failed")
         Logger.error(reason)
-        msg = "CRON RSS failed for #{current_rss_url}, reason;\n\r#{reason}"
-        event = Bot.Events.new_event(msg, DateTime.utc_now(), "Warning")
-        Bot.Events.add_event(event)
+        msg = "CRON RSS failed for #{current_rss_url} \r\nReason:\n\r#{reason}"
+
+        Bot.Events.add_event(Bot.Events.new_event(msg, "Warning"))
     end
   end
 

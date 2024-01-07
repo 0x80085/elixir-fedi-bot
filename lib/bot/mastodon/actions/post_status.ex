@@ -156,6 +156,7 @@ defmodule Bot.Mastodon.Actions.PostStatus do
           FoundUrlArchive.add_entry_id(id)
         end
 
+        Bot.Events.add_event(Bot.Events.new_event("Printed toot! (dry run is on)", "Info"))
         {:ok, "status printed"}
 
       false ->
@@ -189,7 +190,7 @@ defmodule Bot.Mastodon.Actions.PostStatus do
                     IO.inspect(body)
 
                     msg = "OK Posted new RSS toot"
-                    event = Bot.Events.new_event(msg, DateTime.utc_now(), "Info")
+                    event = Bot.Events.new_event(msg, "Info")
                     Bot.Events.add_event(event)
 
                     {:ok, "Toot posted!"}
@@ -205,10 +206,9 @@ defmodule Bot.Mastodon.Actions.PostStatus do
             end
 
           {:error, reason} ->
-            msg =
-              "Something went wrong posting a RSS toot:\r\n #{reason}"
+            msg = "Something went wrong posting a RSS toot:\r\n #{reason}"
 
-            event = Bot.Events.new_event(msg, DateTime.utc_now(), "Error")
+            event = Bot.Events.new_event(msg, "Error")
             Bot.Events.add_event(event)
 
             {:error, reason}

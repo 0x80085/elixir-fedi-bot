@@ -6,17 +6,43 @@ defmodule Bot.RSS.RssFetcher do
 
   @spec get_entries(binary) :: {:error, any} | {:ok, list}
   def get_entries(rss_url) do
-    Logger.info("get_entries for #{rss_url}")
+    msg = "Checking #{rss_url}"
+    Logger.info(msg)
+    Bot.Events.add_event(Bot.Events.new_event(msg, "Info"))
+
     response = HTTPoison.get(rss_url, [{"Accept-Encoding:", "utf-8"}])
 
     case response do
-      {:ok, %HTTPoison.Response{body: body}} ->
-        Logger.info("OK #{rss_url} parsing results")
-        parse_response(body)
+      {:ok, %HTTPoison.Response{status_code: 200, body: body, headers: headers}} ->
+        content_type =
+          headers
+          |> Enum.find(fn {key, _value} -> String.downcase(key) == "content-type" end)
+          |> Tuple.to_list()
+          |> Enum.at(1)
 
-      {:error, %HTTPoison.Error{reason: reason}} ->
-        Logger.error("FAIL for #{rss_url}")
-        {:error, reason}
+        IO.inspect("content_type")
+        IO.inspect(content_type)
+
+        if String.contains?(String.downcase(content_type), "application/rss+xml") ||
+             String.contains?(String.downcase(content_type), "text/xml") do
+          Logger.info("OK #{rss_url} parsing results")
+          parse_response(body)
+        else
+          msg = "The response from #{rss_url} is not XML or doesn't conform to the RSS standard"
+          Logger.warn(msg)
+          {:error, msg}
+        end
+
+      {:ok, %HTTPoison.Response{status_code: status_code, body: _body}} ->
+        msg =
+          "The request to #{rss_url} was successful, but the response body is empty or the received status code (which is #{status_code}) is not 200"
+
+        Logger.warn(msg)
+        {:error, msg}
+
+      {:error, reason} ->
+        Logger.error("Error fetching #{rss_url}: #{inspect(reason)}")
+        {:error, "Error fetching #{rss_url}: #{inspect(reason)}"}
     end
   end
 
@@ -77,14 +103,14 @@ defmodule Bot.RSS.RssFetcher do
     result =
       try do
         FeederEx.parse(data)
-      rescue
-        _ -> {:error, "Can't parse RSS (possible non-RSS data)"}
+      catch
+        _ ->
+          {:error, "Can't parse RSS (possible non-RSS data)"}
       end
 
     case result do
       {:ok, feed, _} -> {:ok, feed}
-      {:error, reason} -> {:error, reason}
-      {:fatal_error, reason} -> {:error, reason}
+      {_, _} -> {:error, "Can't parse RSS (possible non-RSS data) #{data}"}
     end
   end
 
