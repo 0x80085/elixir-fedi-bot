@@ -26,12 +26,9 @@ defmodule Bot.Mastodon.Statistics.Frequency do
     fedi_url = Bot.Mastodon.Auth.ApplicationCredentials.get_fedi_url()
 
     headers = [{"Authorization", "Bearer #{token}"}]
-    IO.inspect("#{fedi_url}/api/v1/accounts/#{account_id}/statuses")
 
     case HTTPoison.get("#{fedi_url}/api/v1/accounts/#{account_id}/statuses", headers) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
-        IO.inspect("body !!!!")
-        IO.inspect(body)
         Jason.decode!(body)
 
       {:ok, %HTTPoison.Response{status_code: code}} ->
