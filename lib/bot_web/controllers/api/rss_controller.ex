@@ -99,15 +99,6 @@ defmodule BotWeb.Api.RssController do
   end
 
   def get_events(conn, _params) do
-    events =
-      Enum.map(Bot.Events.get_events(), fn it ->
-        %{
-          "severity" => it.severity,
-          "date_time_occurred" => it.date_time_occurred,
-          "exception_message" => it.exception_message
-        }
-      end)
-
-    json(conn, events)
+    json(conn, Bot.Events.get_events())
   end
 end

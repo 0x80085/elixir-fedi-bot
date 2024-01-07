@@ -35,6 +35,14 @@ defmodule Bot.Events do
 
   # Retrieve the current list of events
   def get_events() do
-    Agent.get(__MODULE__, fn events -> events end)
+    Agent.get(__MODULE__, fn events ->
+      Enum.map(events, fn it ->
+        %{
+          "severity" => it.severity,
+          "date_time_occurred" => it.date_time_occurred,
+          "exception_message" => it.exception_message
+        }
+      end)
+    end)
   end
 end
