@@ -97,4 +97,17 @@ defmodule BotWeb.Api.RssController do
     RssSettings.set_max_post_burst_amount(params["max_post_burst_amount"])
     send_resp(conn, :ok, "OK")
   end
+
+  def get_events(conn, _params) do
+    events =
+      Enum.map(Bot.Events.get_events(), fn it ->
+        %{
+          "severity" => it.severity,
+          "date_time_occurred" => it.date_time_occurred,
+          "exception_message" => it.exception_message
+        }
+      end)
+
+    json(conn, events)
+  end
 end

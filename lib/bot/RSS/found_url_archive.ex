@@ -8,8 +8,6 @@ defmodule Bot.RSS.FoundUrlArchive do
   def start_link(_opts) do
     Agent.start_link(
       fn ->
-        # Todo .get_from_file()
-
         @default_state
       end,
       name: __MODULE__

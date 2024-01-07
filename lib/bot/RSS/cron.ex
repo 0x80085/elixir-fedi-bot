@@ -93,7 +93,7 @@ defmodule Bot.RSS.Cron do
       end
 
     %{
-      url_index: incremented_url_index,
+      url_index: incremented_url_index
     }
   end
 
@@ -128,7 +128,6 @@ defmodule Bot.RSS.Cron do
     current_rss_url = Enum.at(persisted_urls, state.url_index).url
     Logger.info("current_rss_url = #{current_rss_url}")
 
-
     case RssFetcher.get_entries(current_rss_url) do
       {:ok, results} ->
         newest_entries = RssFetcher.filter_by_newest(results)
@@ -138,13 +137,15 @@ defmodule Bot.RSS.Cron do
         max_post_burst_amount = RssSettings.get_max_post_burst_amount()
         Logger.info("Taking first #{max_post_burst_amount} results")
 
-
         Enum.take(newest_entries, max_post_burst_amount)
         |> post_to_fedi_with_delay()
 
       {:error, reason} ->
         Logger.error("CRON RSS failed")
         Logger.error(reason)
+        msg = "CRON RSS failed for #{current_rss_url}, reason;\n\r#{reason}"
+        event = Bot.Events.new_event(msg, DateTime.utc_now(), "Warning")
+        Bot.Events.add_event(event)
     end
   end
 
