@@ -187,6 +187,11 @@ defmodule Bot.Mastodon.Actions.PostStatus do
                   {:ok, body} ->
                     # todo verify 200 ok
                     IO.inspect(body)
+
+                    msg = "OK Posted new RSS toot"
+                    event = Bot.Events.new_event(msg, DateTime.utc_now(), "Info")
+                    Bot.Events.add_event(event)
+
                     {:ok, "Toot posted!"}
 
                   {:error, reason} ->
@@ -200,6 +205,12 @@ defmodule Bot.Mastodon.Actions.PostStatus do
             end
 
           {:error, reason} ->
+            msg =
+              "Something went wrong posting a RSS toot:\r\n #{reason}"
+
+            event = Bot.Events.new_event(msg, DateTime.utc_now(), "Error")
+            Bot.Events.add_event(event)
+
             {:error, reason}
         end
     end
