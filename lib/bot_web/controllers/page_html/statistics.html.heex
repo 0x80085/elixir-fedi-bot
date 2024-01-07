@@ -72,6 +72,14 @@
         </div>
       </div>
     </div>
+    <p
+    class="text-[2rem] mt-4 font-semibold leading-10 tracking-tighter mt-10 text-zinc-900"
+  >
+    Event logs
+  </p>
+    <div id="event_log" class="mt-10">
+      Events logs will show up here...
+    </div>
   </div>
   <!-- BANNER  -->
   <div class="banner-right hidden sm:hidden md:block">
@@ -99,6 +107,12 @@
       .then(displayAccountInfo)
       .catch((_) => {});
   }
+  function get_events_logs() {
+    fetch("api/rss/events")
+      .then((res) => res.json())
+      .then(displayEventsLogs)
+      .catch((_) => {});
+  }
 
   function displayFrequency(value) {
     frequency_stat.innerText = `~${value.toFixed(2).replace(".00", "")}`;
@@ -114,8 +128,21 @@
     account_age_in_days_stat.innerText = value.account_age_in_days;
     total_followers_stat.innerText = value.total_followers;
   }
+  function displayEventsLogs(value) {
+   const row = (it) => `
+   <div style="border-radius: 1rem; background-color: #ededed; padding:1rem; ">
+    <span>${it.severity === 'Warning' || it.severity === 'error' ? '⚠️' : '📘'}</span>
+    <code>${new Date(it.date_time_occurred).toLocaleString()}</code>
+    <hr class="m-1">
+    <code>${it.exception_message}</code> <br>
+  </div>`
+   const html= value.map(row);
+   event_log.innerHTML = html;
+   new HTMLDivElement().innerHTML
+  }
 
   get_avg_posts_per_hour_last_24h();
   get_toot_engagemnent_last_24h();
   get_account_info();
+  get_events_logs();
 </script>
