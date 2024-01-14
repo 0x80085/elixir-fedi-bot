@@ -301,7 +301,9 @@
 
   function post_message(event) {
     var pressedEnter = event.keyCode == 13 && !event.shiftKey;
-    if (pressedEnter && msg_input.value && msg_input.value.trim()) {
+    var pressedPostButton = event === null;
+    
+    if ((pressedEnter || pressedPostButton) && msg_input.value && msg_input.value.trim()) {
       if (!confirm("Ready to post?")) {
         return;
       }
