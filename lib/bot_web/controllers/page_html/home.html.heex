@@ -300,8 +300,13 @@
   }
 
   function post_message(event) {
-    var pressedEnter = event.keyCode == 13 && !event.shiftKey;
-    if (pressedEnter && msg_input.value && msg_input.value.trim()) {
+
+    var fromButtonPress = event === null || event === undefined;
+    var pressedEnter = event?.keyCode == 13 && !event?.shiftKey;
+    var canPost = fromButtonPress || pressedEnter;
+
+    if (canPost && msg_input.value && msg_input.value.trim()) {
+
       if (!confirm("Ready to post?")) {
         return;
       }
@@ -309,6 +314,7 @@
 
       var url = new URL("api/post", window.location.origin);
       url.searchParams.append("text", msg_input.value);
+
       if (img_url_input.value) {
         url.searchParams.append("media_url", img_url_input.value);
       }
@@ -321,13 +327,11 @@
           }
           return res;
         })
-        // .then(res => res.json())
-        // .then(console.log)
         .then((_) => alert("success!"))
         .then((_) => (msg_input.value = ""))
         .then((_) => (img_url_input.value = ""))
         .catch((e) => {
-          alert("Failed to post 🤷‍♀️");
+          alert(`Failed to post 🤷‍♀️ \n Error: ${e.message || 'Unkown error'}`);
           console.log(e);
         })
         .finally((_) => (loading.hidden = true));

@@ -5,12 +5,10 @@ defmodule Bot.Events do
 
   defstruct message: nil, date_time_occurred: nil, severity: nil
 
-  # Start the Agent with an empty list as its initial state
   def start_link(_opts) do
     Agent.start_link(fn -> [] end, name: __MODULE__)
   end
 
-  # Create a new event structure
   def new_event(message, severity) do
     %__MODULE__{
       message: message,
@@ -19,7 +17,6 @@ defmodule Bot.Events do
     }
   end
 
-  # Add a new event to the managed list, keeping the list within @max_entries limit
   def add_event(event) when is_map(event) do
     Agent.update(__MODULE__, fn events ->
       updated_events =
@@ -33,7 +30,6 @@ defmodule Bot.Events do
     end)
   end
 
-  # Retrieve the current list of events
   def get_events() do
     Agent.get(__MODULE__, fn events ->
       Enum.map(events, fn it ->
