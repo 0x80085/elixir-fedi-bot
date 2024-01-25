@@ -183,9 +183,11 @@
     for="checkboxIsEnabled-${index}">
     <code>${url}</code>
   </label>`;
-
-    const li_content = (is_enabled, url, index) =>
-      `${checkbox(is_enabled, url, index)} ${save_btn(url)}`;
+  const hashtagsInput = (hashtags) =>`
+    <input type="text" value="${hashtags}">
+  `
+    const li_content = (is_enabled, url, index, hashtags) =>
+      `${checkbox(is_enabled, url, index)} ${save_btn(url)} ${hashtagsInput(hashtags)}`;
 
     const list_item = (content) =>
       `<li class="w-full  py-4 text-neutral-500 ">${content}</li>`;
@@ -196,7 +198,7 @@
       .then((res) => {
         const list = res.reduce((prev, current, index) => {
           const li = list_item(
-            li_content(current.is_enabled, current.url, index)
+            li_content(current.is_enabled, current.url, index, current.hashtags)
           );
           return prev + li;
         }, "");

@@ -6,6 +6,7 @@ defmodule Bot.RssRepo do
   schema "rss_urls" do
     field :is_enabled, :boolean, default: false
     field :url, :string
+    field :hashtags, :string
 
     timestamps()
   end

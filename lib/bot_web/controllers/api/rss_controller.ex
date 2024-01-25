@@ -14,7 +14,8 @@ defmodule BotWeb.Api.RssController do
       Enum.map(results, fn it ->
         %{
           "url" => it.url,
-          "is_enabled" => it.is_enabled
+          "is_enabled" => it.is_enabled,
+          "hashtags" => it.hashtags
         }
       end)
 
