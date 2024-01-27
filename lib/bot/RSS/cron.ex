@@ -126,7 +126,11 @@ defmodule Bot.RSS.Cron do
     persisted_urls = get_enabled_urls()
     Logger.info("Size = #{length(persisted_urls)}")
 
-    current_rss_url = Enum.at(persisted_urls, state.url_index).url
+    current_rss_target = Enum.at(persisted_urls, state.url_index);
+
+    current_rss_hashtags = current_rss_target.hashtags
+    current_rss_url = current_rss_target.url
+
     Logger.info("current_rss_url = #{current_rss_url}")
 
     case RssFetcher.get_entries(current_rss_url) do
@@ -139,7 +143,7 @@ defmodule Bot.RSS.Cron do
         Logger.info("Taking first #{max_post_burst_amount} results")
 
         Enum.take(newest_entries, max_post_burst_amount)
-        |> post_to_fedi_with_delay()
+        |> post_to_fedi_with_delay(current_rss_hashtags)
 
         Bot.Events.add_event(Bot.Events.new_event("OK - CRON RSS Job completed for #{current_rss_url}", "Info"))
 
@@ -152,7 +156,7 @@ defmodule Bot.RSS.Cron do
     end
   end
 
-  defp post_to_fedi_with_delay(entries) do
+  defp post_to_fedi_with_delay(entries, hashtags) do
     Enum.each(entries, fn it ->
       random_time_in_ms = Enum.random(1000..5000)
 
@@ -162,7 +166,7 @@ defmodule Bot.RSS.Cron do
       token = Mastodon.Auth.UserCredentials.get_token()
 
       Mastodon.Actions.PostStatus.post(
-        %{text: it.title, media: it.media, id: it.id},
+        %{text: it.title, media: it.media, id: it.id, hashtags: hashtags},
         token
       )
     end)

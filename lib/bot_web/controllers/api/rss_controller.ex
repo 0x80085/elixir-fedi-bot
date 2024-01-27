@@ -10,6 +10,10 @@ defmodule BotWeb.Api.RssController do
 
     results = Bot.Repo.all(query)
 
+    sort_asc = fn map1, map2 ->
+      map1["url"] < map2["url"]
+    end
+
     urls =
       Enum.map(results, fn it ->
         %{
@@ -18,6 +22,7 @@ defmodule BotWeb.Api.RssController do
           "hashtags" => it.hashtags
         }
       end)
+      |> Enum.sort(sort_asc)
 
     json(conn, urls)
   end
@@ -30,18 +35,20 @@ defmodule BotWeb.Api.RssController do
     send_resp(conn, :created, "OK")
   end
 
-  def set_is_enabled(conn, params) do
+  def patch_rss_url(conn, params) do
     target_url = params["url"]
-    is_enabled_state = params["is_enabled"]
+    is_enabled = params["is_enabled"]
+    hashtags = params["hashtags"]
 
     IO.inspect(target_url)
-    IO.inspect(is_enabled_state)
+    IO.inspect(is_enabled)
+    IO.inspect(hashtags)
 
     huh = from(p in Bot.RssRepo, where: p.url == ^target_url)
     IO.inspect(huh)
 
     huh
-    |> Bot.Repo.update_all(set: [is_enabled: is_enabled_state])
+    |> Bot.Repo.update_all(set: [is_enabled: is_enabled, hashtags: hashtags])
 
     send_resp(conn, :no_content, "")
   end

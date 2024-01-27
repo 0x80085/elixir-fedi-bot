@@ -53,7 +53,8 @@
               />
               <label
                 for="scrape_interval_input"
-                class="absolute right-[5rem] top-[1rem] text-zinc-500">milliseconds</label>
+                class="absolute right-[5rem] top-[1rem] text-zinc-500"
+                >milliseconds</label>
             </div>
             <p class="text-zinc-500 ml-4 text-center mt-4 text-sm">
               Time in milliseconds between RSS URL scrapes. <br />
@@ -84,7 +85,7 @@
             </div>
             <p class="text-zinc-500 ml-4 text-center mt-4 text-sm">
               RSS item publish date cannot be older than
-              <span id="max_age_in_seconds">?</span> second(s)
+              <span id="max_age_in_minutes">?</span> minutes(s)
             </p>
             <button
               class="bg-brand/5 text-brand rounded-full px-4 py-4 font-medium leading-6 w-full mt-4"
@@ -95,7 +96,8 @@
           </div>
           <hr class="my-10" />
           <div class="flex flex-col justify-center items-center">
-            <label for="max_post_burst_amount_input">Max post burst amount</label>
+            <label for="max_post_burst_amount_input"
+              >Max post burst amount</label>
             <div class="relative w-full mt-4">
               <input
                 class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 w-full"
@@ -109,8 +111,8 @@
                 >post(s)</label>
             </div>
             <p class="text-zinc-500 ml-4 text-center mt-4 text-sm">
-              Every URL scrape process can generate maximum
-              <span id="max_post_burst_amount">?</span> post(s) at a time.
+              Publish last  
+              <span id="max_post_burst_amount">?</span> RSS post(s) from a RSS feed.
             </p>
             <button
               class="bg-brand/5 text-brand rounded-full px-4 py-4 font-medium leading-6 w-full mt-4"
@@ -163,7 +165,9 @@
   var urls_list = document.getElementById("urls_list");
   var url_input = document.getElementById("url_input");
   var is_dry_run_input = document.getElementById("is_dry_run_input");
-  var max_post_burst_amount_input = document.getElementById("max_post_burst_amount_input");
+  var max_post_burst_amount_input = document.getElementById(
+    "max_post_burst_amount_input"
+  );
   var scrape_interval_input = document.getElementById("scrape_interval_input");
   var scrape_interval_in_minutes = document.getElementById(
     "scrape_interval_in_minutes"
@@ -172,25 +176,28 @@
 
   function get_urls() {
     const save_btn = (url) =>
-      `<button class="inline-block ml-4 px-4 py-4  bg-brand/5 text-brand rounded-full" onclick="update_rss_url(this)" x-url-value="${url}">Save</button>`;
-    const checkbox = (is_enabled, url, index) => `<input
-    type="checkbox"
-    class="relative float-left -ml-[1.5rem] mr-[6px] mt-[0.15rem] h-[1.125rem] w-[1.125rem] appearance-none rounded-[0.25rem] border-[0.125rem] border-solid border-neutral-300 outline-none before:pointer-events-none before:absolute before:h-[0.875rem] before:w-[0.875rem] before:scale-0 before:rounded-full before:bg-transparent before:opacity-0 before:shadow-[0px_0px_0px_13px_transparent] before:content-[''] checked:border-primary checked:bg-primary checked:before:opacity-[0.16] checked:after:absolute checked:after:-mt-px checked:after:ml-[0.25rem] checked:after:block checked:after:h-[0.8125rem] checked:after:w-[0.375rem] checked:after:rotate-45 checked:after:border-[0.125rem] checked:after:border-l-0 checked:after:border-t-0 checked:after:border-solid checked:after:border-white checked:after:bg-transparent checked:after:content-[''] hover:cursor-pointer hover:before:opacity-[0.04] hover:before:shadow-[0px_0px_0px_13px_rgba(0,0,0,0.6)] focus:shadow-none focus:transition-[border-color_0.2s] focus:before:scale-100 focus:before:opacity-[0.12] focus:before:shadow-[0px_0px_0px_13px_rgba(0,0,0,0.6)] focus:before:transition-[box-shadow_0.2s,transform_0.2s] focus:after:absolute focus:after:z-[1] focus:after:block focus:after:h-[0.875rem] focus:after:w-[0.875rem] focus:after:rounded-[0.125rem] focus:after:content-[''] checked:focus:before:scale-100 checked:focus:before:shadow-[0px_0px_0px_13px_#3b71ca] checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s] checked:focus:after:-mt-px checked:focus:after:ml-[0.25rem] checked:focus:after:h-[0.8125rem] checked:focus:after:w-[0.375rem] checked:focus:after:rotate-45 checked:focus:after:rounded-none checked:focus:after:border-[0.125rem] checked:focus:after:border-l-0 checked:focus:after:border-t-0 checked:focus:after:border-solid checked:focus:after:border-white checked:focus:after:bg-transparent dark:border-neutral-600 dark:checked:border-primary dark:checked:bg-primary dark:focus:before:shadow-[0px_0px_0px_13px_rgba(255,255,255,0.4)] dark:checked:focus:before:shadow-[0px_0px_0px_13px_#3b71ca]"
-    ${is_enabled ? "checked" : ""}
-    id="checkboxIsEnabled-${index}"/>
-  <label
-    class="inline-block pl-[0.15rem] hover:cursor-pointer"
-    for="checkboxIsEnabled-${index}">
-    <code>${url}</code>
-  </label>`;
-  const hashtagsInput = (hashtags) =>`
-    <input type="text" value="${hashtags}">
-  `
+      `<button class="flex-auto inline-block ml-4 px-4 py-4  bg-brand/5 text-brand rounded-full" onclick="update_rss_url(this)" x-url-value="${url}">Save</button>`;
+    const checkbox = (is_enabled, url, index) => `
+<input
+  type="checkbox"
+  class=""
+  ${is_enabled ? "checked" : ""}/>
+<pre class="my-2 p-4 overflow-scroll">${url}</pre>`;
+
+    const hashtagsInput = (hashtags) => `
+    <input type="text" value="${
+      hashtags || ""
+    }" placeholder="Enter hashtags comma seperated">
+  `;
     const li_content = (is_enabled, url, index, hashtags) =>
-      `${checkbox(is_enabled, url, index)} ${save_btn(url)} ${hashtagsInput(hashtags)}`;
+      `${checkbox(is_enabled, url, index)} ${hashtagsInput(
+        hashtags
+      )} ${save_btn(url)}`;
 
     const list_item = (content) =>
-      `<li class="w-full  py-4 text-neutral-500 ">${content}</li>`;
+      `<li class="flex flex-col w-full py-4 text-neutral-500 overflow-clip ">
+        ${content}
+      </li>`;
 
     loading.hidden = false;
     fetch("/api/rss/urls")
@@ -231,10 +238,12 @@
   function update_rss_url(event) {
     var url = event.attributes["x-url-value"].value;
     var is_enabled = Boolean(event.parentNode.children[0].checked);
+    var newHashtags = event.parentNode.children[2].value;
 
     var api_url = new URL("api/rss/urls", window.location.origin);
     api_url.searchParams.append("url", url);
     api_url.searchParams.append("is_enabled", is_enabled);
+    api_url.searchParams.append("hashtags", newHashtags);
 
     loading_spinner.hidden = false;
 
@@ -367,8 +376,14 @@
       return;
     }
 
-    var api_url = new URL("api/rss/settings/max_post_burst_amount", window.location.origin);
-    api_url.searchParams.append("max_post_burst_amount", max_post_burst_amount_input.value);
+    var api_url = new URL(
+      "api/rss/settings/max_post_burst_amount",
+      window.location.origin
+    );
+    api_url.searchParams.append(
+      "max_post_burst_amount",
+      max_post_burst_amount_input.value
+    );
     loading_spinner.hidden = false;
 
     fetch(api_url, { method: "PUT" })
@@ -385,8 +400,14 @@
     scrape_interval_in_minutes.innerText = preview;
   }
 
-  function previewMaxAgeInSeconds() {
-    max_age_in_seconds.innerText = max_age_input.value;
+    function previewMaxAgeInSeconds() {
+      function secondsToMinutes(d) {
+      d = Number(d);
+      var m = Math.floor(d / 60);
+      return m;
+    }
+
+    max_age_in_minutes.innerText = secondsToMinutes(max_age_input.value || 0);
   }
   function previewMaxPostBurst() {
     max_post_burst_amount.innerText = max_post_burst_amount_input.value;

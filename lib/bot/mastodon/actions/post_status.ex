@@ -41,6 +41,18 @@ defmodule Bot.Mastodon.Actions.PostStatus do
           data.id
       end
 
+    hashtagsFormatted =
+      case data.hashtags do
+        nil ->
+          ""
+
+        _ ->
+          String.split(data.hashtags, ",")
+          |> Enum.map(fn it -> String.trim(it) end)
+          |> Enum.map(fn it -> "##{it}" end)
+          |> Enum.join(" ")
+      end
+
     case data.id do
       "" ->
         "🤖 💬 \"#{data.text}\""
@@ -48,7 +60,10 @@ defmodule Bot.Mastodon.Actions.PostStatus do
       _ ->
         "🤖 💬 \"#{data.text}\"
 
-    Source: #{content_link}"
+    Source: #{content_link}
+
+    #{hashtagsFormatted}
+    "
     end
   end
 
@@ -56,9 +71,6 @@ defmodule Bot.Mastodon.Actions.PostStatus do
     regex = ~r/yt:video:(.+)/
 
     match = Regex.run(regex, id)
-
-    IO.inspect(match)
-    IO.inspect(id)
 
     case match do
       nil ->
@@ -97,7 +109,6 @@ defmodule Bot.Mastodon.Actions.PostStatus do
             {:ok, media_id}
           end
         else
-          IO.inspect(data)
           Logger.info("Uploading media to fedi... is dry run? #{is_dry_run}")
 
           if !is_dry_run do
@@ -141,8 +152,7 @@ defmodule Bot.Mastodon.Actions.PostStatus do
           }
       end
 
-    Logger.info("About to toot:")
-    IO.inspect(form_data)
+    Logger.info("Encoding toot...")
 
     request_body = Plug.Conn.Query.encode(form_data)
 
@@ -160,6 +170,8 @@ defmodule Bot.Mastodon.Actions.PostStatus do
         {:ok, "status printed"}
 
       false ->
+        Logger.info("Posting Toot...")
+
         reponse =
           HTTPoison.post(
             "#{ApplicationCredentials.get_fedi_url()}/api/v1/statuses",
@@ -169,8 +181,7 @@ defmodule Bot.Mastodon.Actions.PostStatus do
 
         case reponse do
           {:ok, result} ->
-            Logger.info("Posting Toot...")
-            IO.inspect(result)
+            Logger.info("Response status:")
             IO.inspect(result.status_code)
             decoded = Jason.decode(result.body)
 
@@ -178,16 +189,14 @@ defmodule Bot.Mastodon.Actions.PostStatus do
               200 ->
                 Logger.info("Toot posted!")
 
-                Logger.info("Archiving ID")
+                Logger.info("Archiving ID...")
 
                 if id != "" do
                   FoundUrlArchive.add_entry_id(id)
                 end
 
                 case decoded do
-                  {:ok, body} ->
-                    # todo verify 200 ok
-                    IO.inspect(body)
+                  {:ok, _body} ->
 
                     msg = "OK Posted new RSS toot"
                     event = Bot.Events.new_event(msg, "Info")
