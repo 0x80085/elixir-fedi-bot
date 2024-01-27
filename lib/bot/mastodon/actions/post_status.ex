@@ -77,7 +77,7 @@ defmodule Bot.Mastodon.Actions.PostStatus do
         ""
 
       _ ->
-        yt_url = "https://yewtu.be/watch?v="
+        yt_url = "https://www.youtube.com/watch?v="
         yt_video_id = List.last(match)
         "#{yt_url}#{yt_video_id}"
     end
