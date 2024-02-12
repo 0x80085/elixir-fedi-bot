@@ -37,25 +37,25 @@ To connect the bot to your any Mastodon account
   - [x] Dry run mode
   - [x] Scrape interval in ms
   - [x] Max post burst count
-  - [ ] Fedi account creds
+  - [x] Fedi account creds
   - [ ] Track/save posts to prevent dupes
   - [ ] Toot formatting template (the 🤖💬 "your text here \n Source:# ")
 - [x] Use Logger.info instead of IO.* for logging important messages
 - [ ] add/remove hashtags to certain posts from certain rss feeds
 - [ ] ~~file upload limit backend 2Mb~~ instead show error somewhere when upload img failed
-- [ ] error handling rss fetcher or w/e causes it to sometimes crash
-- [ ] remove chatgpt impl
-- [ ] rss scrape log per url
+- [x] error handling rss fetcher or w/e causes it to sometimes crash
+- [x] remove chatgpt impl
+- [x] rss scrape log per url
 - [x] better rss page ui
-- [ ] privategpt?
-- [ ] mastodon account info display like username
-- [ ] fix bug w manual scrape if still there
+- [ ] ~~privategpt?~~
+- [x] mastodon account info display like username
+- [ ] ~~fix bug w manual scrape if still there~~
 - [x] post page improve ui
-- [ ] post stats
+- [x] post stats
     - [x] avg posts per h today
     - [x] post engagements today
-    - [ ] find mmore stats to show
-- [ ] Better post fail feedback on image topo big or other
+- [ ] find more stats to show
+- [ ] Better post fail feedback when posting from bot page (ex. img upload fails sometimes bc too big) 
 - [ ] also filter out the ones that are already posted before uploading img etc 
 
 ## Deploy

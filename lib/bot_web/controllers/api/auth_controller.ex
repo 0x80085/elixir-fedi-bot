@@ -58,6 +58,10 @@ defmodule BotWeb.Api.AuthController do
     Bot.Mastodon.Auth.ApplicationCredentials.set_client_id(nil)
     Bot.Mastodon.Auth.ApplicationCredentials.set_client_secret(nil)
     Bot.Mastodon.Auth.ApplicationCredentials.set_fedi_url(nil)
+
+    Bot.Mastodon.Auth.UserCredentials.set_account_id(nil)
+    Bot.Mastodon.Auth.UserCredentials.set_token(nil)
+
     Bot.Mastodon.Auth.PersistCredentials.delete_all()
 
     send_resp(conn, :no_content, "")
