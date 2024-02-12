@@ -92,12 +92,20 @@ defmodule Bot.Mastodon.Auth.UserCredentials do
         case decoded do
           {:ok, body} ->
             user_token = "Bearer #{Map.get(body, "access_token")}"
-            Logger.info("Got user token !!")
+            Logger.info("Got user token, verifying it..")
 
-            case verify_token(user_token) do
+            url = "#{fedi_url}/api/v1/accounts/verify_credentials"
+
+            case Bot.Mastodon.Auth.VerifyCredentialsV2.verify_token(user_token, url) do
               {:ok, account_data} ->
-                set_token(account_data.user_token)
-                set_account_id(account_data.account_id)
+
+                account_id = Map.get(account_data, "id")
+
+                IO.inspect("account_id ::: ")
+                IO.inspect(account_id)
+
+                set_token(user_token)
+                set_account_id(account_id)
 
                 Bot.Mastodon.Auth.PersistCredentials.encode_and_persist(%{
                   client_id: client_id,
@@ -105,7 +113,7 @@ defmodule Bot.Mastodon.Auth.UserCredentials do
                   app_token: token,
                   user_token: user_token,
                   fedi_url: Bot.Mastodon.Auth.ApplicationCredentials.get_fedi_url(),
-                  account_id: account_data.account_id
+                  account_id: account_id
                 })
 
                 {:ok, user_token}
@@ -116,37 +124,6 @@ defmodule Bot.Mastodon.Auth.UserCredentials do
 
           {:error, reason} ->
             {:error, reason}
-        end
-
-      {:error, reason} ->
-        {:error, reason}
-    end
-  end
-
-  defp verify_token(user_token) do
-    fedi_url = Bot.Mastodon.Auth.ApplicationCredentials.get_fedi_url()
-
-    case Bot.Mastodon.Auth.VerifyCredentials.verify_token(
-           user_token,
-           "#{fedi_url}/api/v1/accounts/verify_credentials"
-         ) do
-      {:ok, result} ->
-        IO.inspect("RESULT VERIFY ::: ")
-        IO.inspect(result)
-
-        case Jason.decode(result.body) do
-          {:ok, decoded} ->
-            account_id = Map.get(decoded, "id")
-
-            IO.inspect("account_id ::: ")
-            IO.inspect(account_id)
-
-            account_data = %{account_id: account_id, user_token: user_token}
-
-            {:ok, account_data}
-
-          _ ->
-            {:error, "Could not verify account"}
         end
 
       {:error, reason} ->

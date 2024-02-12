@@ -201,9 +201,9 @@ defmodule Bot.Mastodon.Auth.ApplicationCredentials do
     case Jason.decode(client.token.access_token) do
       {:ok, result} ->
         token = "Bearer #{Map.get(result, "access_token")}"
-        Logger.info("Got oauth TOKEN!")
+        Logger.info("Got OAuth client token! Verifying...")
 
-        Bot.Mastodon.Auth.VerifyCredentials.verify_token(
+        Bot.Mastodon.Auth.VerifyCredentialsV2.verify_token(
           token,
           "#{fedi_url}/api/v1/apps/verify_credentials"
         )
