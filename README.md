@@ -51,12 +51,12 @@ To connect the bot to your any Mastodon account
 - [x] mastodon account info display like username
 - [ ] ~~fix bug w manual scrape if still there~~
 - [x] post page improve ui
+- [x] also filter out the ones that are already posted before uploading img etc 
 - [x] post stats
     - [x] avg posts per h today
     - [x] post engagements today
 - [ ] find more stats to show
 - [ ] Better post fail feedback when posting from bot page (ex. img upload fails sometimes bc too big) 
-- [ ] also filter out the ones that are already posted before uploading img etc 
 
 ## Deploy
 

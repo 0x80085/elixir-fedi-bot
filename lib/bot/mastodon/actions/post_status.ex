@@ -13,7 +13,7 @@ defmodule Bot.Mastodon.Actions.PostStatus do
       true ->
         Logger.info("Was already posted!")
 
-        {:ok, "status printed"}
+        {:ok, "already posted"}
 
       false ->
         toot_text = format_toot(data)
