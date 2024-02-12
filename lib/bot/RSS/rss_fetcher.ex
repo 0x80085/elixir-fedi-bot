@@ -1,4 +1,5 @@
 defmodule Bot.RSS.RssFetcher do
+  alias Bot.RSS.FoundUrlArchive
   use Timex
   use Ecto.Schema
   import Ecto.Query
@@ -96,6 +97,7 @@ defmodule Bot.RSS.RssFetcher do
         do: DateTime.diff(now, parsed_time, :second) < max_age_in_s,
         else: false
     end)
+    |> Enum.filter(fn it -> !FoundUrlArchive.exists(it.id) end)
   end
 
   @spec try_parse_rss(binary) :: {:ok, FeederEx.Feed} | {:error, String.t()}
