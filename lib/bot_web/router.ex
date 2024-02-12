@@ -26,7 +26,6 @@ defmodule BotWeb.Router do
 
     get "/", PageController, :home
     get "/rss", PageController, :rss
-    get "/chatgpt", PageController, :chatgpt
     get "/statistics", PageController, :statistics
   end
 
@@ -62,12 +61,6 @@ defmodule BotWeb.Router do
     get "/rss/settings/max_post_burst_amount", Api.RssController, :get_max_post_burst_amount
     put "/rss/settings/max_post_burst_amount", Api.RssController, :set_max_post_burst_amount
     get "/rss/events", Api.RssController, :get_events
-
-    # Chatgpt
-    get "/chatgpt/credentials", Api.ChatgptController, :get_has_credentials
-    post "/chatgpt/credentials", Api.ChatgptController, :set_secret_key
-    delete "/chatgpt/credentials", Api.ChatgptController, :delete_secret_key
-    post "/chatgpt/chat", Api.ChatgptController, :chat
 
     # Statistics
     get "/stats/frequency", Api.StatisticsController, :get_frequency
