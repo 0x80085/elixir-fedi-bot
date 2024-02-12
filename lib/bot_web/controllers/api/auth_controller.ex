@@ -4,7 +4,7 @@ defmodule BotWeb.Api.AuthController do
 
   def has_credentials(conn, _params) do
     try do
-      json(conn, %{has_credentials: Bot.Mastodon.Auth.PersistCredentials.has_stored_credentials()})
+      json(conn, %{has_credentials: Enum.count(Bot.Mastodon.Auth.PersistCredentials.get_all()) > 0})
     catch
       _ ->
         json(conn, %{has_credentials: false})
@@ -58,7 +58,7 @@ defmodule BotWeb.Api.AuthController do
     Bot.Mastodon.Auth.ApplicationCredentials.set_client_id(nil)
     Bot.Mastodon.Auth.ApplicationCredentials.set_client_secret(nil)
     Bot.Mastodon.Auth.ApplicationCredentials.set_fedi_url(nil)
-    Bot.Mastodon.Auth.PersistCredentials.clear_stored_credentials()
+    Bot.Mastodon.Auth.PersistCredentials.delete_all()
 
     send_resp(conn, :no_content, "")
   end

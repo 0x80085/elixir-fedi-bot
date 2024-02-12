@@ -13,7 +13,7 @@ defmodule Bot.Mastodon.Auth.ApplicationCredentials do
   def start_link(_opts) do
     Agent.start_link(
       fn ->
-        creds = Bot.Mastodon.Auth.PersistCredentials.get_from_file()
+        creds =  Enum.at(Bot.Mastodon.Auth.PersistCredentials.get_all(), 0)
 
         case creds do
           nil ->

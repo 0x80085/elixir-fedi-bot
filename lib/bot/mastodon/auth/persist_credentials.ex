@@ -1,39 +1,36 @@
 defmodule Bot.Mastodon.Auth.PersistCredentials do
-  @file_path "credentials.json"
+  import Ecto.Query, warn: false
+  alias Bot.Repo
   require Logger
 
-  def get_from_file() do
-    case File.read(@file_path) do
-      {:ok, contents} ->
-        case Jason.decode(contents) do
-          {:ok, creds} ->
-            creds
-
-          {:error, reason} ->
-            Logger.error("failed to read credentials")
-            Logger.error(reason)
-            nil
-        end
-
-      {:error, :enoent} ->
-        Logger.warn("File #{@file_path} not found")
-        nil
-    end
+  def get_all do
+    from(c in Bot.BotCredentialsRepo, select: c)
+    |> Repo.all()
   end
 
-  def has_stored_credentials do
-    File.exists?(@file_path)
+  def get_by_id(id) do
+    Repo.get_by(Bot.BotCredentialsRepo, account_id: id)
   end
 
-  def clear_stored_credentials do
-    File.rm(@file_path)
+  def insert(attrs) do
+    %Bot.BotCredentialsRepo{}
+    |> Bot.BotCredentialsRepo.changeset(attrs)
+    |> Bot.Repo.insert()
   end
 
-  def encode_and_persist(credentials) do
-    encoded = Jason.encode!(credentials)
-    prettified = Jason.Formatter.pretty_print(encoded)
+  def update_by_id(id, attrs) do
+    get_by_id(id)
+    |> Bot.BotCredentialsRepo.changeset(attrs)
+    |> Bot.Repo.update()
+  end
 
-    file = File.open!(@file_path, [:write])
-    IO.write(file, prettified)
+  def delete_by_id(id) do
+    get_by_id(id)
+    |> Bot.Repo.delete()
+  end
+
+  def delete_all() do
+    from(c in Bot.BotCredentialsRepo, select: c)
+    |> Bot.Repo.delete_all()
   end
 end

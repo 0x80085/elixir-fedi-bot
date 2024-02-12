@@ -26,7 +26,7 @@ defmodule Bot.RSS.Cron do
   @impl true
   def handle_info(:work, state) do
     # Do the work you desire here
-    has_credentials = Bot.Mastodon.Auth.PersistCredentials.has_stored_credentials()
+    has_credentials = Enum.count(Bot.Mastodon.Auth.PersistCredentials.get_all()) > 0
 
     case has_credentials do
       true ->
@@ -47,7 +47,7 @@ defmodule Bot.RSS.Cron do
 
   @impl true
   def handle_call(:start_manually, _from, state) do
-    has_credentials = Bot.Mastodon.Auth.PersistCredentials.has_stored_credentials()
+    has_credentials = Enum.count(Bot.Mastodon.Auth.PersistCredentials.get_all()) > 0
 
     case has_credentials do
       true ->
@@ -126,7 +126,7 @@ defmodule Bot.RSS.Cron do
     persisted_urls = get_enabled_urls()
     Logger.info("Size = #{length(persisted_urls)}")
 
-    current_rss_target = Enum.at(persisted_urls, state.url_index);
+    current_rss_target = Enum.at(persisted_urls, state.url_index)
 
     current_rss_hashtags = current_rss_target.hashtags
     current_rss_url = current_rss_target.url
@@ -145,7 +145,9 @@ defmodule Bot.RSS.Cron do
         Enum.take(newest_entries, max_post_burst_amount)
         |> post_to_fedi_with_delay(current_rss_hashtags)
 
-        Bot.Events.add_event(Bot.Events.new_event("OK - CRON RSS Job completed for #{current_rss_url}", "Info"))
+        Bot.Events.add_event(
+          Bot.Events.new_event("OK - CRON RSS Job completed for #{current_rss_url}", "Info")
+        )
 
       {:error, reason} ->
         Logger.error("CRON RSS failed")

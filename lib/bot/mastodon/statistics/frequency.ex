@@ -1,6 +1,6 @@
 defmodule Bot.Mastodon.Statistics.Frequency do
   def average_of_toots_per_hour_last_24h() do
-    case Bot.Mastodon.Auth.PersistCredentials.has_stored_credentials() do
+    case Enum.count(Bot.Mastodon.Auth.PersistCredentials.get_all()) > 0 do
       true ->
         toots = get_toots()
         now = Timex.now()

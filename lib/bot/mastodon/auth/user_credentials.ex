@@ -10,7 +10,7 @@ defmodule Bot.Mastodon.Auth.UserCredentials do
   def start_link(_opts) do
     Agent.start_link(
       fn ->
-        creds = Bot.Mastodon.Auth.PersistCredentials.get_from_file()
+        creds = Enum.at(Bot.Mastodon.Auth.PersistCredentials.get_all(), 0)
 
         case creds do
           nil ->
@@ -107,7 +107,7 @@ defmodule Bot.Mastodon.Auth.UserCredentials do
                 set_token(user_token)
                 set_account_id(account_id)
 
-                Bot.Mastodon.Auth.PersistCredentials.encode_and_persist(%{
+                Bot.Mastodon.Auth.PersistCredentials.insert(%{
                   client_id: client_id,
                   client_secret: client_secret,
                   app_token: token,
