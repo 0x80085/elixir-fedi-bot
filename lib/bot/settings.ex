@@ -17,7 +17,7 @@ defmodule Bot.Settings do
   end
 
   def is_supported_setting_key(key) do
-    # todo add to above changeset func
+    # TODO add to above changeset func
     case key in [
            "is_dry_run",
            "max_post_burst_amount",
