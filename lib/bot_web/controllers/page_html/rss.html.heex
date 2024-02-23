@@ -43,7 +43,7 @@
           </div>
           <hr class="my-10" />
           <div class="flex flex-col justify-center items-center">
-            <label for="scrape_interval_input">Scrape Interval </label>
+            <label for="scrape_interval_input" class="text-zinc-400 font-semibold">Scrape Interval </label>
             <div class="relative w-full mt-4">
               <input
                 class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 w-full"
@@ -70,7 +70,7 @@
           </div>
           <hr class="my-10" />
           <div class="flex flex-col justify-center items-center">
-            <label for="max_age_input">Max age news item </label>
+            <label for="max_age_input" class="text-zinc-400 font-semibold">Max age news item </label>
             <div class="relative w-full mt-4">
               <input
                 class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 w-full"
@@ -96,7 +96,7 @@
           </div>
           <hr class="my-10" />
           <div class="flex flex-col justify-center items-center">
-            <label for="max_post_burst_amount_input"
+            <label for="max_post_burst_amount_input" class="text-zinc-400 font-semibold"
               >Max post burst amount</label>
             <div class="relative w-full mt-4">
               <input
@@ -128,7 +128,7 @@
             >
               Watched URLs
             </p>
-            <div class="mt-4 ml-4">
+            <div class="mt-4">
               <ul class="w-full" id="urls_list">
                 <li class="w-full py-4 text-neutral-500">Loading list...</li>
               </ul>
@@ -139,16 +139,27 @@
           <input
             placeholder="Enter new RSS url here... "
             onkeydown="add_url(event)"
-            class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 w-full lg:w-auto"
+            class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 w-full border-solid border-2 border-zinc-300"
             id="url_input"
           />
+          <button
+            class="bg-brand/5 text-brand rounded-full px-4 py-4 my-4 font-medium leading-6 w-full"
+            onclick="add_url()"
+          >
+            Add new RSS URL
+          </button>
         </div>
         <hr class="mt-10" />
+        <p class="text-zinc-500 ml-4 text-center mt-4 text-sm">
+          This button triggers the initiation of a new job specifically tailored for a single RSS URL.
+          The selection of the URL depends on its order in the scraping queue.
+          Details regarding the next scheduled URL will be accessible in an upcoming release.  
+        </p>
         <button
           class="bg-brand/5 text-brand rounded-full px-4 py-4 font-medium leading-6 mt-10"
           onclick="start_job()"
         >
-          <.icon name="hero-task-solid" /> Start RSS posting job
+          <.icon name="hero-task-solid" /> Initiate RSS fetch and post job
         </button>
       </div>
     </div>
@@ -176,26 +187,31 @@
 
   function get_urls() {
     const save_btn = (url) =>
-      `<button class="flex-auto inline-block ml-4 px-4 py-4  bg-brand/5 text-brand rounded-full" onclick="update_rss_url(this)" x-url-value="${url}">Save</button>`;
+      `<button class="flex-auto inline-block px-4 py-4  bg-brand/5 text-brand rounded-full" onclick="update_rss_url(this)" x-url-value="${url}">Save</button>`;
     const checkbox = (is_enabled, url, index) => `
-<input
-  type="checkbox"
-  class=""
-  ${is_enabled ? "checked" : ""}/>
-<pre class="my-2 p-4 overflow-scroll">${url}</pre>`;
+    <div class="flex items-center">
+      <input
+        type="checkbox"
+        class="rounded-2xl ml-1 w-6 h-6"
+        ${is_enabled ? "checked" : ""}/>
+      <pre title="${url}" class="ml-2 my-2 px-4 py-2 bg-zinc-100 rounded-2xl w-full">${url}</pre>
+    </div>
+`;
 
     const hashtagsInput = (hashtags) => `
     <input type="text" value="${
       hashtags || ""
-    }" placeholder="Enter hashtags comma seperated">
+    }" placeholder="Enter hashtags comma seperated, without #" class= "rounded-2xl mb-2 border-solid border-3 border-zinc-300">
   `;
     const li_content = (is_enabled, url, index, hashtags) =>
-      `${checkbox(is_enabled, url, index)} ${hashtagsInput(
-        hashtags
-      )} ${save_btn(url)}`;
+      `
+      ${checkbox(is_enabled, url, index)}
+      ${hashtagsInput(hashtags)}
+      ${save_btn(url)}
+      `;
 
     const list_item = (content) =>
-      `<li class="flex flex-col w-full py-4 text-neutral-500 overflow-clip ">
+      `<li class="flex flex-col w-full py-4 overflow-clip ">
         ${content}
       </li>`;
 
@@ -219,28 +235,30 @@
   }
 
   function add_url(event) {
-    var pressedEnter = event.keyCode == 13;
 
-    if (!pressedEnter) {
-      return;
+    var fromButtonPress = event === null || event === undefined;
+    var pressedEnter = event?.keyCode == 13 && !event?.shiftKey;
+    var canSubmit = fromButtonPress || pressedEnter;
+
+    if (canSubmit && url_input.value && url_input.value.trim()) {
+      const url = url_input.value.trim();
+      var api_url = new URL("api/rss/urls", window.location.origin);
+      api_url.searchParams.append("url", url);
+
+      fetch(api_url, { method: "POST" })
+        .then(() => url_input.value = "")
+        .then(() =>  showToast('New RSS URL target added!'))
+        .catch((e) => {
+          console.log(e);
+        })
+        .finally(get_urls);
     }
-    const url = url_input.value.trim();
-    var api_url = new URL("api/rss/urls", window.location.origin);
-    api_url.searchParams.append("url", url);
-
-    fetch(api_url, { method: "POST" })
-      .then((response) => response.json())
-      .then(console.debug)
-      .catch((e) => {
-        console.log(e);
-      })
-      .finally(get_urls);
   }
 
   function update_rss_url(event) {
     var url = event.attributes["x-url-value"].value;
-    var is_enabled = Boolean(event.parentNode.children[0].checked);
-    var newHashtags = event.parentNode.children[2].value;
+    var is_enabled = Boolean(event.parentNode.children[0].children[0].checked);
+    var newHashtags = event.parentNode.children[1].value;
 
     var api_url = new URL("api/rss/urls", window.location.origin);
     api_url.searchParams.append("url", url);
@@ -249,8 +267,11 @@
 
     loading_spinner.hidden = false;
 
+    console.log(api_url.searchParams);
+
     fetch(api_url, { method: "PATCH" })
       .then(get_urls)
+      .then(() =>  showToast('RSS URL target updated!'))
       .catch((e) => {
         console.log(e);
       })
@@ -268,6 +289,7 @@
     fetch(api_url, { method: "POST" })
       // .then((response) => response.json())
       .then(console.debug)
+      .then(() =>  showToast('Job started!'))
       .catch((e) => {
         console.log(e);
       })
@@ -297,6 +319,7 @@
 
     fetch(api_url, { method: "PUT" })
       .then(get_is_dry_run)
+      .then(() =>  showToast(`Dry run setting updated!`))
       .catch((e) => {
         console.log(e);
       })
@@ -330,6 +353,7 @@
 
     fetch(api_url, { method: "PUT" })
       .then(get_scrape_interval)
+      .then(() =>  showToast(`Scrape interval setting updated!`))
       .catch((e) => {
         console.log(e);
       })
@@ -357,6 +381,7 @@
 
     fetch(api_url, { method: "PUT" })
       .then(get_max_age)
+      .then(() =>  showToast(`Max age setting updated!`))
       .catch((e) => {
         console.log(e);
       })
@@ -390,6 +415,7 @@
 
     fetch(api_url, { method: "PUT" })
       .then(get_max_post_burst_amount)
+      .then(() =>  showToast(`Max post burst setting updated!`))
       .catch((e) => {
         console.log(e);
       })
