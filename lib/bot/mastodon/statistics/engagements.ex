@@ -4,7 +4,7 @@ defmodule Bot.Mastodon.Statistics.Engagements do
     now = Timex.now()
 
     engagements_today =
-      Enum.reduce(statuses, %{favs: 0, boosts: 0, replies: 0}, fn toot, counts ->
+      Enum.reduce(statuses, %{favs: 0, boosts: 0, replies: 0, mentions: 0}, fn toot, counts ->
         created_at = Timex.parse!(toot["created_at"], "{ISO:Extended}")
         is_24h_ago = Timex.diff(now, created_at, :seconds) < 86400
 
@@ -12,15 +12,17 @@ defmodule Bot.Mastodon.Statistics.Engagements do
           %{
             favs: counts.favs + toot["favourites_count"],
             boosts: counts.boosts + toot["reblogs_count"],
-            replies: counts.replies + toot["replies_count"]
+            replies: counts.replies + toot["replies_count"],
+            mentions: counts.mentions
           }
+
         else
           counts
         end
       end)
 
     total_engagements_today =
-      engagements_today.favs + engagements_today.boosts + engagements_today.replies
+      engagements_today.favs + engagements_today.boosts + engagements_today.replies + engagements_today.mentions
 
     IO.puts("Total engagements today: #{total_engagements_today}")
 
