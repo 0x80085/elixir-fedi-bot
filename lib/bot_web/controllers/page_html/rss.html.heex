@@ -203,7 +203,9 @@
     fetch("/api/rss/urls")
       .then((response) => response.json())
       .then((res) => {
-        const list = res.reduce((prev, current, index) => {
+        const list = res
+        .sort((a, b) => a.url.localeCompare(b.url)) // sort alphabetically
+        .reduce((prev, current, index) => {
           const li = list_item(
             li_content(current.is_enabled, current.url, index, current.hashtags)
           );
