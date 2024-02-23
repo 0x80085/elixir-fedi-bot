@@ -13,7 +13,7 @@ defmodule Bot.Mastodon.Auth.ApplicationCredentials do
   def start_link(_opts) do
     Agent.start_link(
       fn ->
-        creds =  Enum.at(Bot.Mastodon.Auth.PersistCredentials.get_all(), 0)
+        creds = Enum.at(Bot.Mastodon.Auth.PersistCredentials.get_all(), 0)
 
         case creds do
           nil ->
@@ -21,15 +21,15 @@ defmodule Bot.Mastodon.Auth.ApplicationCredentials do
             @default_state
 
           creds ->
-            Logger.info("Fedi creds found, using from files")
-            Logger.info("fedi instance url: #{Map.get(creds, "fedi_url")}")
-            Logger.info("app token: #{Map.get(creds, "app_token")}")
+            Logger.info("Fedi creds found, using from DB")
+            Logger.info("fedi instance url: #{creds.fedi_url}")
+            Logger.info("app token: #{creds.app_token}")
 
             %{
-              client_id: Map.get(creds, "client_id"),
-              client_secret: Map.get(creds, "client_secret"),
-              token: Map.get(creds, "app_token"),
-              fedi_url: Map.get(creds, "fedi_url"),
+              client_id: creds.client_id,
+              client_secret: creds.client_secret,
+              token: creds.app_token,
+              fedi_url: creds.fedi_url,
               client: nil
             }
         end
