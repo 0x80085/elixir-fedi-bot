@@ -19,12 +19,12 @@ defmodule Bot.Mastodon.Auth.UserCredentials do
 
           creds ->
             Logger.info("User token found, using from files")
-            Logger.info("user_token: #{Map.get(creds, "user_token")}")
-            Logger.info("account_id: #{Map.get(creds, "account_id")}")
+            Logger.info("user_token: #{creds.user_token}")
+            Logger.info("account_id: #{creds.account_id}")
 
             %{
-              token: Map.get(creds, "user_token"),
-              account_id: Map.get(creds, "account_id")
+              token: creds.user_token,
+              account_id: creds.account_id
             }
         end
       end,
@@ -98,7 +98,6 @@ defmodule Bot.Mastodon.Auth.UserCredentials do
 
             case Bot.Mastodon.Auth.VerifyCredentialsV2.verify_token(user_token, url) do
               {:ok, account_data} ->
-
                 account_id = Map.get(account_data, "id")
 
                 IO.inspect("account_id ::: ")
