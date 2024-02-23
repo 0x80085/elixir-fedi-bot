@@ -249,6 +249,7 @@
 
           connect_link.href = auth_url;
         })
+        .then(() =>  showToast(`Setup started!`))
         .catch((e) => {
           alert(
             "Check the URL, possibly not a fedi instance or cannot run bot through it."
@@ -295,6 +296,7 @@
         .then(console.log)
         .then((_) => (success_and_post.hidden = false))
         .then((_) => (msg_input.value = ""))
+        .then(() =>  showToast(`Account connected!`))
         .finally((_) => (loading.hidden = true));
     }
   }
@@ -330,6 +332,7 @@
         .then((_) => alert("success!"))
         .then((_) => (msg_input.value = ""))
         .then((_) => (img_url_input.value = ""))
+        .then(() =>  showToast(`Toot posted!`))
         .catch((e) => {
           alert(`Failed to post 🤷‍♀️ \n Error: ${e.message || 'Unkown error'}`);
           console.log(e);
