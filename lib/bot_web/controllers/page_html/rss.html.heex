@@ -287,7 +287,6 @@
     loading_spinner.hidden = false;
 
     fetch(api_url, { method: "POST" })
-      // .then((response) => response.json())
       .then(console.debug)
       .then(() =>  showToast('Job started!'))
       .catch((e) => {

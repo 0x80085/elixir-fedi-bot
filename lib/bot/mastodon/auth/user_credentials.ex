@@ -18,7 +18,7 @@ defmodule Bot.Mastodon.Auth.UserCredentials do
             @default_state
 
           creds ->
-            Logger.info("User token found, using from files")
+            Logger.info("User token found, using from DB")
             Logger.info("user_token: #{creds.user_token}")
             Logger.info("account_id: #{creds.account_id}")
 
