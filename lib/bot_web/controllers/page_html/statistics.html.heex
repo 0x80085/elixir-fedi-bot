@@ -127,7 +127,7 @@
     engagement_stat.innerText = `${value.toFixed(2).replace(".00", "")}`;
   }
   function displayAccountInfo(value) {
-    fedi_account_name.innerText = value.username;
+    fedi_account_name.innerText = '@'+value.username;
     fedi_avatar_url_img.src = value.avatar_url;
 
     post_count_stat.innerText = value.post_count;
