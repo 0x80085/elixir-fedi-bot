@@ -1,51 +1,10 @@
 defmodule Bot.Mastodon.Auth.ApplicationCredentials do
-  use Agent
   require Logger
-
-  @default_state %{
-    client_id: nil,
-    client_secret: nil,
-    token: nil,
-    fedi_url: nil,
-    client: nil
-  }
-
-  def start_link(_opts) do
-    Agent.start_link(
-      fn ->
-        creds = Enum.at(Bot.Mastodon.Auth.PersistCredentials.get_all(), 0)
-
-        case creds do
-          nil ->
-            Logger.warn("Fedi creds not found")
-            @default_state
-
-          creds ->
-            Logger.info("Fedi creds found, using from DB")
-            Logger.info("fedi instance url: #{creds.fedi_url}")
-            Logger.info("app token: #{creds.app_token}")
-
-            %{
-              client_id: creds.client_id,
-              client_secret: creds.client_secret,
-              token: creds.app_token,
-              fedi_url: creds.fedi_url,
-              client: nil
-            }
-        end
-      end,
-      name: __MODULE__
-    )
-  end
 
   def setup_credentials(fedi_url) do
     case get_client_connect_info(fedi_url) do
       {:ok, info} ->
         client_info = create_client(info, fedi_url)
-        IO.inspect("should save cres here ####")
-        IO.inspect(info)
-        IO.inspect(client_info.client_id)
-        IO.inspect(client_info.token)
 
         Bot.Mastodon.Auth.PersistCredentials.insert(%{
           client_id: client_info.client_id,

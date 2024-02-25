@@ -25,7 +25,6 @@ defmodule Bot.Application do
       Bot.RSS.Cron,
 
       # Agents aka data stores
-      Bot.Mastodon.Auth.ApplicationCredentials,
       Bot.RSS.FoundUrlArchive,
       Bot.Events,
     ]
