@@ -4,7 +4,9 @@ defmodule BotWeb.Api.AuthController do
 
   def has_credentials(conn, _params) do
     try do
-      json(conn, %{has_credentials: Enum.count(Bot.Mastodon.Auth.PersistCredentials.get_all()) > 0})
+      json(conn, %{
+        has_credentials: Enum.count(Bot.Mastodon.Auth.PersistCredentials.get_all()) > 0
+      })
     catch
       _ ->
         json(conn, %{has_credentials: false})
@@ -25,16 +27,16 @@ defmodule BotWeb.Api.AuthController do
     end
   end
 
+  @spec connect_user(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def connect_user(conn, params) do
     user_code = Map.get(params, "user_code")
-    Logger.info("user_code")
-    Logger.info(user_code)
 
+    credentials = Bot.Mastodon.Auth.PersistCredentials.get_credentials()
     response =
       Bot.Mastodon.Auth.UserCredentials.authorize_bot_to_user(
-        Bot.Mastodon.Auth.ApplicationCredentials.get_client_id(),
-        Bot.Mastodon.Auth.ApplicationCredentials.get_client_secret(),
-        Bot.Mastodon.Auth.ApplicationCredentials.get_token(),
+        credentials.client_id,
+        credentials.client_secret,
+        credentials.app_token,
         user_code
       )
 
@@ -49,16 +51,12 @@ defmodule BotWeb.Api.AuthController do
 
   @spec get_token(Plug.Conn.t(), any) :: Plug.Conn.t()
   def get_token(conn, _params) do
-    token = Bot.Mastodon.Auth.ApplicationCredentials.get_token()
+    credentials = Bot.Mastodon.Auth.PersistCredentials.get_credentials()
+    token = credentials.user_token
     json(conn, token)
   end
 
   def delete_app_credentials(conn, _params) do
-    Bot.Mastodon.Auth.ApplicationCredentials.set_token(nil)
-    Bot.Mastodon.Auth.ApplicationCredentials.set_client_id(nil)
-    Bot.Mastodon.Auth.ApplicationCredentials.set_client_secret(nil)
-    Bot.Mastodon.Auth.ApplicationCredentials.set_fedi_url(nil)
-
     Bot.Mastodon.Auth.UserCredentials.set_account_id(nil)
     Bot.Mastodon.Auth.UserCredentials.set_token(nil)
 

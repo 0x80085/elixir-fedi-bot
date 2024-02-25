@@ -12,10 +12,19 @@ defmodule Bot.Mastodon.Auth.PersistCredentials do
     Repo.get_by(Bot.BotCredentialsRepo, account_id: id)
   end
 
+  def get_credentials() do
+    Enum.at(get_all(), 0)
+  end
+
   def insert(attrs) do
     %Bot.BotCredentialsRepo{}
     |> Bot.BotCredentialsRepo.changeset(attrs)
-    |> Bot.Repo.insert()
+    |> Bot.Repo.insert!()
+  end
+
+  def complete_bot_registration(attrs) do
+    delete_all()
+    insert(attrs)
   end
 
   def update_by_id(id, attrs) do

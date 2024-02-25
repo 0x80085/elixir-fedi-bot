@@ -10,7 +10,7 @@ defmodule BotWeb.Api.ActionsController do
           media: Map.get(params, "media_url"),
           id: ""
         },
-        Bot.Mastodon.Auth.UserCredentials.get_token()
+        Bot.Mastodon.Auth.PersistCredentials.get_credentials().user_token
       )
 
     case action do

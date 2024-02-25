@@ -1,6 +1,4 @@
 defmodule Bot.Mastodon.Actions.PostStatus do
-  alias Bot.Mastodon.Auth.ApplicationCredentials
-  alias Bot.Mastodon.Auth.UserCredentials
   alias Bot.Mastodon.Actions.UploadImage
   alias Bot.RSS.FoundUrlArchive
   require Logger
@@ -94,8 +92,10 @@ defmodule Bot.Mastodon.Actions.PostStatus do
           Logger.info("Uploading media to fedi... is dry run? #{is_dry_run}")
 
           if !is_dry_run do
-            token = UserCredentials.get_token()
-            fedi_url = ApplicationCredentials.get_fedi_url()
+            credentials = Bot.Mastodon.Auth.PersistCredentials.get_credentials()
+            token = credentials.user_token
+            fedi_url = credentials.fedi_url
+
             upload_url = "#{fedi_url}/api/v2/media"
 
             {:ok, media_id} = UploadImage.upload_image(Enum.at(data.media, 0), upload_url, token)
@@ -112,8 +112,10 @@ defmodule Bot.Mastodon.Actions.PostStatus do
           Logger.info("Uploading media to fedi... is dry run? #{is_dry_run}")
 
           if !is_dry_run do
-            token = UserCredentials.get_token()
-            fedi_url = ApplicationCredentials.get_fedi_url()
+            credentials = Bot.Mastodon.Auth.PersistCredentials.get_credentials()
+            token = credentials.user_token
+            fedi_url = credentials.fedi_url
+
             upload_url = "#{fedi_url}/api/v2/media"
 
             case UploadImage.upload_image(data.media, upload_url, token) do
@@ -172,9 +174,12 @@ defmodule Bot.Mastodon.Actions.PostStatus do
       false ->
         Logger.info("Posting Toot...")
 
+        credentials = Bot.Mastodon.Auth.PersistCredentials.get_credentials()
+        fedi_url = credentials.fedi_url
+
         reponse =
           HTTPoison.post(
-            "#{ApplicationCredentials.get_fedi_url()}/api/v1/statuses",
+            "#{fedi_url}/api/v1/statuses",
             request_body,
             headers
           )
@@ -197,7 +202,6 @@ defmodule Bot.Mastodon.Actions.PostStatus do
 
                 case decoded do
                   {:ok, _body} ->
-
                     msg = "OK Posted new RSS toot"
                     event = Bot.Events.new_event(msg, "Info")
                     Bot.Events.add_event(event)

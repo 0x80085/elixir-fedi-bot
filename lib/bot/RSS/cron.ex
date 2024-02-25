@@ -165,7 +165,8 @@ defmodule Bot.RSS.Cron do
       Logger.info("Posting new entry with a delay of #{random_time_in_ms}ms")
       :timer.sleep(random_time_in_ms)
 
-      token = Mastodon.Auth.UserCredentials.get_token()
+      credentials = Bot.Mastodon.Auth.PersistCredentials.get_credentials()
+      token = credentials.user_token
 
       Mastodon.Actions.PostStatus.post(
         %{text: it.title, media: it.media, id: it.id, hashtags: hashtags},

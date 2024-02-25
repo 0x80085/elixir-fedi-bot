@@ -21,9 +21,10 @@ defmodule Bot.Mastodon.Statistics.Frequency do
   end
 
   defp get_toots() do
-    token = Bot.Mastodon.Auth.UserCredentials.get_token()
-    account_id = Bot.Mastodon.Auth.UserCredentials.get_account_id()
-    fedi_url = Bot.Mastodon.Auth.ApplicationCredentials.get_fedi_url()
+    credentials = Bot.Mastodon.Auth.PersistCredentials.get_credentials()
+    token = credentials.user_token
+    account_id = credentials.account_id
+    fedi_url = credentials.fedi_url
 
     headers = [{"Authorization", "Bearer #{token}"}]
 

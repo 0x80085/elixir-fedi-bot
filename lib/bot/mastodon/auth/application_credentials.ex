@@ -38,91 +38,23 @@ defmodule Bot.Mastodon.Auth.ApplicationCredentials do
     )
   end
 
-  @spec get_token :: String
-  def get_token() do
-    Agent.get(__MODULE__, fn state ->
-      state.token
-    end)
-  end
-
-  @spec get_client_id :: String
-  def get_client_id() do
-    Agent.get(__MODULE__, fn state ->
-      state.client_id
-    end)
-  end
-
-  @spec get_client_secret :: String
-  def get_client_secret() do
-    Agent.get(__MODULE__, fn state ->
-      state.client_secret
-    end)
-  end
-
-  @spec get_fedi_url :: String
-  def get_fedi_url() do
-    Agent.get(__MODULE__, fn state ->
-      state.fedi_url
-    end)
-  end
-
-  def set_token(token) do
-    Agent.update(__MODULE__, fn state ->
-      %{
-        token: token,
-        client_id: state.client_id,
-        client_secret: state.client_secret,
-        fedi_url: state.fedi_url,
-        client: state.client
-      }
-    end)
-  end
-
-  def set_client_id(client_id) do
-    Agent.update(__MODULE__, fn state ->
-      %{
-        client_id: client_id,
-        token: state.token,
-        client_secret: state.client_secret,
-        fedi_url: state.fedi_url,
-        client: state.client
-      }
-    end)
-  end
-
-  def set_client_secret(client_secret) do
-    Agent.update(__MODULE__, fn state ->
-      %{
-        client_secret: client_secret,
-        client_id: state.client_id,
-        token: state.token,
-        fedi_url: state.fedi_url,
-        client: state.client
-      }
-    end)
-  end
-
-  def set_fedi_url(fedi_url) do
-    Agent.update(__MODULE__, fn state ->
-      %{
-        client_secret: state.client_secret,
-        client_id: state.client_id,
-        token: state.token,
-        fedi_url: fedi_url,
-        client: state.client
-      }
-    end)
-  end
-
   def setup_credentials(fedi_url) do
     case get_client_connect_info(fedi_url) do
       {:ok, info} ->
         client_info = create_client(info, fedi_url)
+        IO.inspect("should save cres here ####")
+        IO.inspect(info)
+        IO.inspect(client_info.client_id)
+        IO.inspect(client_info.token)
 
-        set_client_id(client_info.client_id)
-        set_client_secret(info.client_secret)
-        set_token(client_info.token)
-        set_fedi_url(fedi_url)
+        Bot.Mastodon.Auth.PersistCredentials.insert(%{
+          client_id: client_info.client_id,
+          client_secret: info.client_secret,
+          app_token: client_info.token,
+          user_token: "",
+          fedi_url: fedi_url,
+          account_id: ""
+        })
 
         {:ok,
          %{

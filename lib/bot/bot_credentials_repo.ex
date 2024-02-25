@@ -25,12 +25,10 @@ defmodule Bot.BotCredentialsRepo do
     creds
     |> cast(attrs, [:account_id, :app_token, :client_id, :client_secret, :fedi_url, :user_token])
     |> validate_required([
-      :account_id,
       :app_token,
       :client_id,
       :client_secret,
       :fedi_url,
-      :user_token
     ])
   end
 

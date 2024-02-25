@@ -32,13 +32,6 @@ defmodule Bot.Mastodon.Auth.UserCredentials do
     )
   end
 
-  @spec get_token :: String
-  def get_token() do
-    Agent.get(__MODULE__, fn state ->
-      state.token
-    end)
-  end
-
   def set_token(token) do
     Agent.update(__MODULE__, fn state ->
       %{
@@ -65,7 +58,9 @@ defmodule Bot.Mastodon.Auth.UserCredentials do
   end
 
   def authorize_bot_to_user(client_id, client_secret, token, user_code) do
-    fedi_url = Bot.Mastodon.Auth.ApplicationCredentials.get_fedi_url()
+    credentials = Bot.Mastodon.Auth.PersistCredentials.get_credentials()
+    fedi_url = credentials.fedi_url
+
     url = "#{fedi_url}/oauth/token"
 
     headers = [
@@ -100,18 +95,18 @@ defmodule Bot.Mastodon.Auth.UserCredentials do
               {:ok, account_data} ->
                 account_id = Map.get(account_data, "id")
 
-                IO.inspect("account_id ::: ")
-                IO.inspect(account_id)
-
                 set_token(user_token)
                 set_account_id(account_id)
 
-                Bot.Mastodon.Auth.PersistCredentials.insert(%{
+                credentials = Bot.Mastodon.Auth.PersistCredentials.get_credentials()
+                fedi_url = credentials.fedi_url
+
+                Bot.Mastodon.Auth.PersistCredentials.complete_bot_registration(%{
                   client_id: client_id,
                   client_secret: client_secret,
                   app_token: token,
                   user_token: user_token,
-                  fedi_url: Bot.Mastodon.Auth.ApplicationCredentials.get_fedi_url(),
+                  fedi_url: fedi_url,
                   account_id: account_id
                 })
 
