@@ -38,8 +38,7 @@ defmodule BotWeb.Router do
     get "/has_credentials", Api.AuthController, :has_credentials
 
     # bot reset
-    delete  "/app/credentials", Api.AuthController, :delete_app_credentials
-    delete  "/bot/credentials", Api.AuthController, :delete_bot_credentials
+    delete "/bot/credentials", Api.AuthController, :delete_bot_credentials
 
     # Post status or toot
     post "/post", Api.ActionsController, :post_status

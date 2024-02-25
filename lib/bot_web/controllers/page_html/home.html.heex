@@ -343,29 +343,21 @@
 
   function clearBotCredentials() {
     var bot_cred_url = new URL("api/bot/credentials", window.location.origin);
-    var app_cred_url = new URL("api/app/credentials", window.location.origin);
 
     new Promise((resolve) => resolve())
       .then(
         confirm("Sure you want to clear the bot credentials?") &&
-          fetch(app_cred_url, { method: "DELETE" })
+          fetch(bot_cred_url, { method: "DELETE" })
             .then((res) => {
-              console.log();
+              console.log(res);
               if (res.status !== 204) {
                 throw new Error(`Status ${res.status}`);
               }
             })
-            .then((res) => res.json())
             .then(console.log)
-            .then((_) => console.log("Cleared bot creds"))
-            .then(
-              confirm("Also clear Fedi App credentials?") &&
-                fetch(app_cred_url, { method: "DELETE" })
-                  .then((res) => res.json())
-                  .then(console.log)
-            )
+            .then((_) => window.location.reload())
+            .catch(console.error)
       )
-      .then((_) => window.location.reload())
 
       .catch((e) => {
         console.log("Something went wrong");

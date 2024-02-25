@@ -1,61 +1,5 @@
 defmodule Bot.Mastodon.Auth.UserCredentials do
-  use Agent
   require Logger
-
-  @default_state %{
-    token: nil,
-    account_id: nil
-  }
-
-  def start_link(_opts) do
-    Agent.start_link(
-      fn ->
-        creds = Enum.at(Bot.Mastodon.Auth.PersistCredentials.get_all(), 0)
-
-        case creds do
-          nil ->
-            Logger.warn("No user token found")
-            @default_state
-
-          creds ->
-            Logger.info("User token found, using from DB")
-            Logger.info("user_token: #{creds.user_token}")
-            Logger.info("account_id: #{creds.account_id}")
-
-            %{
-              token: creds.user_token,
-              account_id: creds.account_id
-            }
-        end
-      end,
-      name: __MODULE__
-    )
-  end
-
-  def set_token(token) do
-    Agent.update(__MODULE__, fn state ->
-      %{
-        token: token,
-        account_id: state.account_id
-      }
-    end)
-  end
-
-  @spec get_account_id :: String
-  def get_account_id() do
-    Agent.get(__MODULE__, fn state ->
-      state.account_id
-    end)
-  end
-
-  def set_account_id(account_id) do
-    Agent.update(__MODULE__, fn state ->
-      %{
-        token: state.token,
-        account_id: account_id
-      }
-    end)
-  end
 
   def authorize_bot_to_user(client_id, client_secret, token, user_code) do
     credentials = Bot.Mastodon.Auth.PersistCredentials.get_credentials()
@@ -94,9 +38,6 @@ defmodule Bot.Mastodon.Auth.UserCredentials do
             case Bot.Mastodon.Auth.VerifyCredentialsV2.verify_token(user_token, url) do
               {:ok, account_data} ->
                 account_id = Map.get(account_data, "id")
-
-                set_token(user_token)
-                set_account_id(account_id)
 
                 credentials = Bot.Mastodon.Auth.PersistCredentials.get_credentials()
                 fedi_url = credentials.fedi_url

@@ -56,17 +56,8 @@ defmodule BotWeb.Api.AuthController do
     json(conn, token)
   end
 
-  def delete_app_credentials(conn, _params) do
-    Bot.Mastodon.Auth.UserCredentials.set_account_id(nil)
-    Bot.Mastodon.Auth.UserCredentials.set_token(nil)
-
-    Bot.Mastodon.Auth.PersistCredentials.delete_all()
-
-    send_resp(conn, :no_content, "")
-  end
-
   def delete_bot_credentials(conn, _params) do
-    Bot.Mastodon.Auth.UserCredentials.set_token(nil)
+    Bot.Mastodon.Auth.PersistCredentials.delete_all()
 
     send_resp(conn, :no_content, "")
   end
