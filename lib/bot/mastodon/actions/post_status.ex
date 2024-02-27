@@ -39,17 +39,10 @@ defmodule Bot.Mastodon.Actions.PostStatus do
           data.id
       end
 
-    hashtagsFormatted =
-      case data.hashtags do
-        nil ->
-          ""
+    hashtags_formatted = format_hashtags(data.hashtags)
 
-        _ ->
-          String.split(data.hashtags, ",")
-          |> Enum.map(fn it -> String.trim(it) end)
-          |> Enum.map(fn it -> "##{it}" end)
-          |> Enum.join(" ")
-      end
+    IO.inspect('hashtags_formatted ########')
+    IO.inspect(hashtags_formatted)
 
     case data.id do
       "" ->
@@ -60,7 +53,7 @@ defmodule Bot.Mastodon.Actions.PostStatus do
 
     Source: #{content_link}
 
-    #{hashtagsFormatted}
+    #{hashtags_formatted}
     "
     end
   end
@@ -78,6 +71,37 @@ defmodule Bot.Mastodon.Actions.PostStatus do
         yt_url = "https://www.youtube.com/watch?v="
         yt_video_id = List.last(match)
         "#{yt_url}#{yt_video_id}"
+    end
+  end
+
+  defp format_hashtags(hashtags_as_string) do
+    hashtags_normalized =
+      case hashtags_as_string do
+        value when is_binary(value) ->
+          case String.length(String.trim(value)) >= 1 do
+            true ->
+              value
+
+            false ->
+              ""
+          end
+
+        value when is_nil(value) ->
+          ""
+
+        _ ->
+          ""
+      end
+
+    case String.trim(hashtags_normalized) do
+      "" ->
+        ""
+
+      _ ->
+        String.split(hashtags_normalized, ",")
+        |> Enum.map(fn it -> String.trim(it) end)
+        |> Enum.map(fn it -> "##{it}" end)
+        |> Enum.join(" ")
     end
   end
 
