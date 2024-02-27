@@ -41,9 +41,6 @@ defmodule Bot.Mastodon.Actions.PostStatus do
 
     hashtags_formatted = format_hashtags(data.hashtags)
 
-    IO.inspect('hashtags_formatted ########')
-    IO.inspect(hashtags_formatted)
-
     case data.id do
       "" ->
         "🤖 💬 \"#{data.text}\""
