@@ -11,10 +11,13 @@ defmodule Bot.Mastodon.Statistics.AccountInfo do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         {:ok, account_data} = Jason.decode(body)
 
+        IO.inspect(account_data)
+
         username = account_data["username"]
         follower_count = account_data["followers_count"]
         post_count = account_data["statuses_count"]
         avatar_url = account_data["avatar_static"]
+        account_link = account_data["url"]
 
         account_age_in_days = get_days_ago(account_data["created_at"])
 
@@ -23,7 +26,8 @@ defmodule Bot.Mastodon.Statistics.AccountInfo do
           avatar_url: avatar_url,
           account_age_in_days: account_age_in_days,
           total_followers: follower_count,
-          post_count: post_count
+          post_count: post_count,
+          account_link: account_link
         }
 
       {:ok, %HTTPoison.Response{status_code: code}} ->
