@@ -20,10 +20,10 @@
       </p>
       <div class="flex flex-col">
         <div class="mt-10">
-          <span id="loading" hidden>
-            <.icon name="hero-cog-solid mt-10 text-[5rem] animate-spin" />
-          </span>
-          <div class="flex flex-row justify-center items-center">
+          <div id="loading" class="w-full flex flex-row justify-center items-center">
+            <.icon name="hero-arrow-path-solid" class="mt-10 h-6 w-6 animate-spin" />
+          </div>
+          <div class="flex flex-row justify-center items-center" id="dry_run_form">
             <input
               class="group relative rounded-2xl px-6 py-4 text-sm font-semibold leading-6 text-zinc-900 lg:w-auto mr-5"
               type="checkbox"
@@ -265,9 +265,7 @@
     api_url.searchParams.append("is_enabled", is_enabled);
     api_url.searchParams.append("hashtags", newHashtags);
 
-    loading_spinner.hidden = false;
-
-    console.log(api_url.searchParams);
+    loading_spinner.style.display = 'flex';
 
     fetch(api_url, { method: "PATCH" })
       .then(get_urls)
@@ -284,7 +282,7 @@
     }
 
     var api_url = new URL("api/rss/job", window.location.origin);
-    loading_spinner.hidden = false;
+    loading_spinner.style.display = 'flex';
 
     fetch(api_url, { method: "POST" })
       .then(console.debug)
@@ -296,25 +294,30 @@
   }
 
   function get_is_dry_run() {
-    loading.hidden = false;
+    loading_spinner.style.display = 'flex';
     fetch("api/rss/settings/is_dry_run")
       .then((res) => res.json())
       .then((res) => (is_dry_run_input.checked = res))
       .catch((_) => {})
-      .finally((_) => (loading.hidden = true));
+      .finally((_) => {
+        loading_spinner.style.display = 'none';
+        dry_run_form.style.display = 'flex';
+      });
   }
 
   function set_is_dry_run() {
     if (!confirm("Sure to change dry run mode?")) {
       return;
     }
+    
+    loading_spinner.style.display = 'flex';
+    dry_run_form.style.display = 'none';
 
     var api_url = new URL(
       "api/rss/settings/is_dry_run",
       window.location.origin
     );
     api_url.searchParams.append("is_dry_run", is_dry_run_input.checked);
-    loading_spinner.hidden = false;
 
     fetch(api_url, { method: "PUT" })
       .then(get_is_dry_run)
@@ -322,17 +325,14 @@
       .catch((e) => {
         console.log(e);
       })
-      .finally((loading_spinner.hidden = true));
   }
 
   function get_scrape_interval() {
-    loading.hidden = false;
     fetch("api/rss/settings/scrape_interval")
       .then((res) => res.json())
       .then((res) => (scrape_interval_input.value = res))
       .then(previewIntervalInMinutes)
       .catch((_) => {})
-      .finally((_) => (loading.hidden = true));
   }
 
   function set_scrape_interval() {
@@ -348,7 +348,6 @@
       "rss_scrape_interval_in_ms",
       scrape_interval_input.value
     );
-    loading_spinner.hidden = false;
 
     fetch(api_url, { method: "PUT" })
       .then(get_scrape_interval)
@@ -356,17 +355,14 @@
       .catch((e) => {
         console.log(e);
       })
-      .finally((loading_spinner.hidden = true));
   }
 
   function get_max_age() {
-    loading.hidden = false;
     fetch("api/rss/settings/max_age")
       .then((res) => res.json())
       .then((res) => (max_age_input.value = res))
       .then(previewMaxAgeInSeconds)
       .catch((_) => {})
-      .finally((_) => (loading.hidden = true));
   }
 
   function set_max_age() {
@@ -376,7 +372,6 @@
 
     var api_url = new URL("api/rss/settings/max_age", window.location.origin);
     api_url.searchParams.append("rss_scrape_max_age_in_s", max_age_input.value);
-    loading_spinner.hidden = false;
 
     fetch(api_url, { method: "PUT" })
       .then(get_max_age)
@@ -384,17 +379,14 @@
       .catch((e) => {
         console.log(e);
       })
-      .finally((loading_spinner.hidden = true));
   }
 
   function get_max_post_burst_amount() {
-    loading.hidden = false;
     fetch("api/rss/settings/max_post_burst_amount")
       .then((res) => res.json())
       .then((res) => (max_post_burst_amount_input.value = res))
       .then(previewMaxPostBurst)
       .catch((_) => {})
-      .finally((_) => (loading.hidden = true));
   }
 
   function set_max_post_burst_amount() {
@@ -410,7 +402,6 @@
       "max_post_burst_amount",
       max_post_burst_amount_input.value
     );
-    loading_spinner.hidden = false;
 
     fetch(api_url, { method: "PUT" })
       .then(get_max_post_burst_amount)
@@ -418,7 +409,6 @@
       .catch((e) => {
         console.log(e);
       })
-      .finally((loading_spinner.hidden = true));
   }
 
   function previewIntervalInMinutes() {
@@ -444,7 +434,8 @@
   scrape_interval_input.addEventListener("input", previewIntervalInMinutes);
   max_post_burst_amount_input.addEventListener("input", previewMaxPostBurst);
 
-  loading_spinner.hidden = false;
+  loading_spinner.style.display = 'flex';
+  dry_run_form.style.display = 'none';
   get_urls();
   get_scrape_interval();
   get_max_age();
