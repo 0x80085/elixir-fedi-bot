@@ -6,6 +6,7 @@ defmodule BotWeb.Api.ActionsController do
     action =
       Bot.Mastodon.Actions.PostStatus.post(
         %{
+          hashtags: "",
           text: Map.get(params, "text"),
           media: Map.get(params, "media_url"),
           id: ""
