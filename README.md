@@ -41,7 +41,7 @@ To connect the bot to your any Mastodon account
   - [x] Fedi account creds
   - [ ] Toot formatting template (the 🤖💬 "your text here \n Source:# ")
   - [ ] ~~Track/save posts to prevent dupes~~ unneeded imo, causes max 1 or 2 doubles per restart (rare) on current im memory strategy
-- [ ] add/remove hashtags to certain posts from certain rss feeds
+- [x] add/remove hashtags to certain posts from certain rss feeds
 - [ ] ~~file upload limit backend 2Mb~~ instead show error somewhere when upload img failed
 - [x] error handling rss fetcher or w/e causes it to sometimes crash
 - [x] remove chatgpt impl
