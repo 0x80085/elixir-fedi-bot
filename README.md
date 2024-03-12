@@ -57,6 +57,7 @@ To connect the bot to your any Mastodon account
     - [x] post engagements today
 - [ ] allow multiple bots per fedichan instance 
 - [ ] make monitizable by subcsription model
+- [ ] allow deleting rss source
 - [ ] find more stats to show
 - [ ] Better post fail feedback when posting from bot page (ex. img upload fails sometimes bc too big) 
 
