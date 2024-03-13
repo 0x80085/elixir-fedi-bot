@@ -17,7 +17,6 @@ To connect the bot to your any Mastodon account
 
 - [x] Persist tokens gotten from fedi
 - [x] Post text + image
-- ~~Refresh token if expired (cant ? at least not user token w/o interaction from user)~~
 - [x] Login protect dev/dashboard 
 - [x] Login protect connect fedi account page
 - [x] Enter fedi url to connect to 
@@ -31,7 +30,8 @@ To connect the bot to your any Mastodon account
 - [x] Block registration after 1 user signed up (becomes admin this way)
 - [x] Make deploy/publish ready if needed (scripts etc.?)
 - [x] Use Logger.info instead of IO.* for logging important messages
-- [ ] Enter fedi url from pleroma or soapbox or misskey or other popular fediware (needs more code, wont be just oauth I think...)   
+- [x] Enter fedi url from pleroma or soapbox  or other popular fediware
+        ~~(needs more code, wont be just oauth I think...)~~ Just wroks it seems!  
 - [ ] ~~Grab video from nitter/twitter and add to twoot~~
 - [ ] Manage + put in DB: 
   - [x] RSS URLs
@@ -47,19 +47,18 @@ To connect the bot to your any Mastodon account
 - [x] remove chatgpt impl
 - [x] rss scrape log per url
 - [x] better rss page ui
-- [ ] ~~privategpt?~~
 - [x] mastodon account info display like username
-- [ ] ~~fix bug w manual scrape if still there~~
 - [x] post page improve ui
 - [x] also filter out the ones that are already posted before uploading img etc 
 - [x] post stats
     - [x] avg posts per h today
     - [x] post engagements today
-- [ ] allow multiple bots per fedichan instance 
-- [ ] make monitizable by subcsription model
 - [ ] allow deleting rss source
+- [ ] test page for rss source to see if it'll error or not
+- [ ] allow multiple bots per fedichan instance 
 - [ ] find more stats to show
 - [ ] Better post fail feedback when posting from bot page (ex. img upload fails sometimes bc too big) 
+- [ ] Enter fedi url from misskey
 
 ## Deploy
 

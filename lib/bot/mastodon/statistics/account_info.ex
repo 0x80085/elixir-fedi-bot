@@ -11,8 +11,6 @@ defmodule Bot.Mastodon.Statistics.AccountInfo do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         {:ok, account_data} = Jason.decode(body)
 
-        IO.inspect(account_data)
-
         username = account_data["username"]
         follower_count = account_data["followers_count"]
         post_count = account_data["statuses_count"]

@@ -5,7 +5,6 @@ defmodule Bot.Mastodon.Actions.UploadImage do
     Logger.info("Loading image from URL: #{media_url}")
 
     mime_type = MIME.from_path(media_url)
-    IO.inspect(mime_type)
     Logger.info("Detected MIME type: #{mime_type}")
 
     case HTTPoison.get(media_url) do
@@ -27,9 +26,7 @@ defmodule Bot.Mastodon.Actions.UploadImage do
         case post_upload_response do
           {:ok, %{body: body, status_code: status_code}} ->
             decoded = Jason.decode!(body)
-            IO.inspect(decoded)
-            Logger.info("status code img upload#{status_code}")
-            IO.inspect(Map.get(decoded, "id", nil))
+            Logger.info("status code img upload #{status_code}")
 
             case status_code do
               x when x in 200..299 ->

@@ -1,5 +1,6 @@
 defmodule BotWeb.Api.ActionsController do
   use BotWeb, :controller
+  require Logger
 
   @spec post_status(Plug.Conn.t(), map) :: Plug.Conn.t()
   def post_status(conn, params) do
@@ -19,6 +20,7 @@ defmodule BotWeb.Api.ActionsController do
         json(conn, "status posted ")
 
       {:error, reason} ->
+        Logger.error("Error post_status!")
         IO.inspect(reason)
         send_resp(conn, :internal_server_error, Jason.encode!(%{message: reason}))
     end

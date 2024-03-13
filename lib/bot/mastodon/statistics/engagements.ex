@@ -24,8 +24,6 @@ defmodule Bot.Mastodon.Statistics.Engagements do
     total_engagements_today =
       engagements_today.favs + engagements_today.boosts + engagements_today.replies + engagements_today.mentions
 
-    IO.puts("Total engagements today: #{total_engagements_today}")
-
     total_engagements_today
   end
 

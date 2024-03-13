@@ -137,7 +137,6 @@ defmodule Bot.RSS.Cron do
       {:ok, results} ->
         newest_entries = RssFetcher.filter_by_newest(results)
         Logger.info("Got #{length(newest_entries)} results")
-        IO.inspect(newest_entries)
 
         max_post_burst_amount = RssSettings.get_max_post_burst_amount()
         Logger.info("Taking first #{max_post_burst_amount} results")

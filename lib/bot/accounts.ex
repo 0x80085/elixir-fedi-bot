@@ -76,7 +76,6 @@ defmodule Bot.Accounts do
   """
   def register_user(attrs) do
     count = Repo.aggregate(User, :count)
-    IO.inspect(count)
 
     case count do
       0 ->
@@ -87,7 +86,6 @@ defmodule Bot.Accounts do
       _ ->
         {:conflict, User.registration_changeset(%User{}, attrs), "Admin already exists"}
     end
-
   end
 
   @doc """

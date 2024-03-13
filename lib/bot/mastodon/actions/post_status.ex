@@ -109,7 +109,6 @@ defmodule Bot.Mastodon.Actions.PostStatus do
 
       _ ->
         if is_list(data.media) && length(data.media) > 0 do
-          IO.inspect(data)
           Logger.info("Uploading media to fedi... is dry run? #{is_dry_run}")
 
           if !is_dry_run do
@@ -123,9 +122,6 @@ defmodule Bot.Mastodon.Actions.PostStatus do
             Logger.info("Uploaded media #{media_id} to fedi...")
             # allow procesing of image
             :timer.sleep(4_000)
-
-            Logger.info("media_id")
-            IO.inspect(media_id)
 
             {:ok, media_id}
           end

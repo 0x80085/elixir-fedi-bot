@@ -21,8 +21,7 @@ defmodule Bot.RSS.RssFetcher do
           |> Tuple.to_list()
           |> Enum.at(1)
 
-        IO.inspect("content_type")
-        IO.inspect(content_type)
+          Logger.info("Found #{content_type} at #{rss_url}")
 
         if String.contains?(String.downcase(content_type), "application/rss+xml") ||
              String.contains?(String.downcase(content_type), "text/xml") do

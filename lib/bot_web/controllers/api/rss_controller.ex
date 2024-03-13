@@ -40,14 +40,7 @@ defmodule BotWeb.Api.RssController do
     is_enabled = params["is_enabled"]
     hashtags = params["hashtags"]
 
-    IO.inspect(target_url)
-    IO.inspect(is_enabled)
-    IO.inspect(hashtags)
-
-    huh = from(p in Bot.RssRepo, where: p.url == ^target_url)
-    IO.inspect(huh)
-
-    huh
+    from(p in Bot.RssRepo, where: p.url == ^target_url)
     |> Bot.Repo.update_all(set: [is_enabled: is_enabled, hashtags: hashtags])
 
     send_resp(conn, :no_content, "")
