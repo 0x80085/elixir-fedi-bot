@@ -70,37 +70,3 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
   * Forum: https://elixirforum.com/c/phoenix-forum
   * Source: https://github.com/phoenixframework/phoenix
 
-
-## Some RSS URLs
-
-    LiveChart.me aka anime news stuff
-    Feed of anime episodes that have aired in the last 24 hours
-    "https://www.livechart.me/feeds/episodes",
-
-    Feed of the latest anime headlines curated by the LiveChart.me team
-    "https://www.livechart.me/feeds/headlines",
-
-    youtube channels feeds
-    IRLM2
-    "https://www.youtube.com/feeds/videos.xml?channel_id=UC3oh3hI5xteovwFRAwG0qwQ",
-    CensoredGaming
-    "https://www.youtube.com/feeds/videos.xml?channel_id=UCFItIX8SIs4zqhJCHpbeV1A",
-
-    cybersec news
-    "https://feeds.feedburner.com/TheHackersNews",
-    "https://krebsonsecurity.com/feed", ⚠️ errors
-    "https://www.bleepingcomputer.com/feed",
-    "https://www.darkreading.com/rss.xml",
-    "https://www.upguard.com/breaches/rss.xml",
-    "https://www.databreaches.net/feed/",
-    "https://threatpost.com/feed"
-
-    Twitter rss
-    censoredgaming
-    "https://nitter.snopyta.org/censoredgaming_/rss",
-    some vr chat club
-    "https://nitter.snopyta.org/MONDAY_RELIEF/rss",
-    some japan night club mogra
-    "https://nitter.snopyta.org/MOGRAstaff/rss"
-
-
