@@ -1,4 +1,5 @@
 defmodule BotWeb.Api.RssController do
+  alias Bot.RSS.RssFetcher
   alias BotWeb.Api.RssSettings
   use BotWeb, :controller
   use Ecto.Schema
@@ -28,11 +29,18 @@ defmodule BotWeb.Api.RssController do
   end
 
   def add_url(conn, params) do
-    entry = %Bot.RssRepo{is_enabled: true, url: params["url"]}
+    input = String.trim(params["url"])
 
-    Bot.Repo.insert(entry)
+    case is_rss_url(input) do
+      true ->
+        entry = %Bot.RssRepo{is_enabled: true, url: input}
 
-    send_resp(conn, :created, "OK")
+        Bot.Repo.insert(entry)
+        send_resp(conn, :created, "OK")
+
+      _ ->
+        send_resp(conn, :bad_request, "Provide a RSS feed, e.g. not a redirect to a RSS feed. Check bot logs for more info.")
+    end
   end
 
   def patch_rss_url(conn, params) do
@@ -101,5 +109,23 @@ defmodule BotWeb.Api.RssController do
 
   def get_events(conn, _params) do
     json(conn, Bot.Events.get_events())
+  end
+
+  defp is_rss_url(url) do
+    case URI.parse(url) do
+      %URI{scheme: scheme} when is_binary(scheme) ->
+        rss_result = RssFetcher.get_entries(url)
+
+        case rss_result do
+          {:ok, _} ->
+            true
+
+          _ ->
+            false
+        end
+
+      _ ->
+        false
+    end
   end
 end
