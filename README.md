@@ -1,4 +1,4 @@
-# Fedi Bot
+# Fediverse Bot
 
 Make sure you have created a PostgreSQL DB with credentials found in `config/dev.exs`.
 
@@ -12,6 +12,30 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 To connect the bot to your any Mastodon account
 - register and login
 - then follow the instructions on http://localhost:4000
+
+# Features 
+
+- Scrapes RSS feeds and posts
+- Control your bot from the browser
+- Mastodon & Pleroma support
+- Manually post toot + image
+  - Preview toot before posting (does not contain full featuresof a regular toot) 
+- 1 bot per fedibotchan process/DB
+- Multiple RSS feed support
+- Bot statistics
+  - avg % of amount of toots per hour 
+  - amount of favs, retoots, comments last 24 hours 
+  - follower count
+  - account age
+  - total toot count
+  - total toot count
+- Real time visual log of RSS scrape results
+- Configurable RSS scrape job settings
+  - max_post_burst max # toots per URL scrape job (e.g. if max_post_burst is 5 and there are 7 new posts for example.com/rss, it wil post the 5 most recent ones)
+  - Scrape job interval in (scrape every x minutes)
+  - Max age of RSS item (e.g. can't be posted more than x minites ago)
+  - Dry run mode: prints toots to terminal output instead of posting
+- 
 
 # Todo 
 
@@ -58,6 +82,14 @@ To connect the bot to your any Mastodon account
 - [ ] Better post fail feedback when posting from bot page (ex. img upload fails sometimes bc too big) 
 - [ ] Enter fedi auth key from misskey
 - [ ] show next up RSS scrape URL in RSS 'start scrape job' section 
+
+## Package for deploy
+
+Use the ´./publish.sh´ script to ZIP the project suited for sending to your server.  
+
+## Migrate DB
+
+Use the ´./migrate.sh´ script to update the DB in case there are pending database model updates for your local instance. 
 
 ## Deploy
 
