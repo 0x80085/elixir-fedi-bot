@@ -59,6 +59,7 @@ To connect the bot to your any Mastodon account
 - [ ] find more stats to show
 - [ ] Better post fail feedback when posting from bot page (ex. img upload fails sometimes bc too big) 
 - [ ] Enter fedi url from misskey
+- [ ] show next up RSS scrape URL in RSS 'start scrape job' section 
 
 ## Deploy
 
