@@ -249,9 +249,15 @@
       api_url.searchParams.append("url", url);
 
       fetch(api_url, { method: "POST" })
-        .then(() => url_input.value = "")
+        .then((res) => {
+          if (!res.status.toString().startsWith("2")) {
+            throw new Error("Failed")
+          }
+          url_input.value = ""
+        })
         .then(() =>  showToast('New RSS URL target added!'))
         .catch((e) => {
+          showToast(e.message)
           console.log(e);
         })
         .finally(get_urls);

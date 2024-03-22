@@ -21,15 +21,23 @@ defmodule Bot.RSS.RssFetcher do
           |> Tuple.to_list()
           |> Enum.at(1)
 
-          Logger.info("Found #{content_type} at #{rss_url}")
+        Logger.info("Found #{content_type} at #{rss_url}")
 
-        if String.contains?(String.downcase(content_type), "application/rss+xml") ||
-             String.contains?(String.downcase(content_type), "text/xml") do
+        supported_types = ["application/rss+xml", "application/xml", "text/xml"]
+
+        is_supported =
+          Enum.any?(supported_types, fn type ->
+            String.contains?(String.downcase(content_type), type)
+          end)
+
+
+        if is_supported do
           Logger.info("OK #{rss_url} parsing results")
           parse_response(body)
         else
           msg = "The response from #{rss_url} is not XML or doesn't conform to the RSS standard"
           Logger.warn(msg)
+          Logger.warn("Detected: #{content_type}")
           {:error, msg}
         end
 
