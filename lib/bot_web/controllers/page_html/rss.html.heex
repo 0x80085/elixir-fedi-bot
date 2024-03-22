@@ -268,7 +268,7 @@
     api_url.searchParams.append("is_enabled", is_enabled);
     api_url.searchParams.append("hashtags", newHashtags);
 
-    loading_spinner.style.display = 'flex';
+    event.innerText ='Updating...'
 
     fetch(api_url, { method: "PATCH" })
       .then(get_urls)
@@ -276,6 +276,7 @@
       .catch((e) => {
         console.log(e);
       })
+      .finally((    event.innerText ='Save'));
   }
 
   function delete_rss_url(event) {
