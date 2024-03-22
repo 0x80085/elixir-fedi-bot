@@ -50,12 +50,13 @@ To connect the bot to your any Mastodon account
 - [x] post stats
     - [x] avg posts per h today
     - [x] post engagements today
-- [ ] allow deleting rss source
+- [x] allow deleting rss source
 - [ ] test page for rss source to see if it'll error or not
+  - Now on add RSS it will check before being added but to be tested 
 - [ ] allow multiple bots per fedichan instance 
 - [ ] find more stats to show
 - [ ] Better post fail feedback when posting from bot page (ex. img upload fails sometimes bc too big) 
-- [ ] Enter fedi url from misskey
+- [ ] Enter fedi auth key from misskey
 - [ ] show next up RSS scrape URL in RSS 'start scrape job' section 
 
 ## Deploy
