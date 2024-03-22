@@ -39,7 +39,11 @@ defmodule BotWeb.Api.RssController do
         send_resp(conn, :created, "OK")
 
       _ ->
-        send_resp(conn, :bad_request, "Provide a RSS feed, e.g. not a redirect to a RSS feed. Check bot logs for more info.")
+        send_resp(
+          conn,
+          :bad_request,
+          "Provide a RSS feed, e.g. not a redirect to a RSS feed. Check bot logs for more info."
+        )
     end
   end
 
@@ -50,6 +54,15 @@ defmodule BotWeb.Api.RssController do
 
     from(p in Bot.RssRepo, where: p.url == ^target_url)
     |> Bot.Repo.update_all(set: [is_enabled: is_enabled, hashtags: hashtags])
+
+    send_resp(conn, :no_content, "")
+  end
+
+  def delete_rss_url(conn, params) do
+    target_url = params["url"]
+
+    Bot.Repo.get_by(Bot.RssRepo, url: target_url)
+    |> Bot.Repo.delete()
 
     send_resp(conn, :no_content, "")
   end

@@ -49,6 +49,7 @@ defmodule BotWeb.Router do
     get "/rss/urls", Api.RssController, :get_rss_urls
     post "/rss/urls", Api.RssController, :add_url
     patch "/rss/urls", Api.RssController, :patch_rss_url
+    delete "/rss/urls", Api.RssController, :delete_rss_url
     post "/rss/job", Api.RssController, :trigger_fetch_job_and_print
     put "/rss/settings/is_dry_run", Api.RssController, :set_is_dry_run
     get "/rss/settings/is_dry_run", Api.RssController, :get_is_dry_run

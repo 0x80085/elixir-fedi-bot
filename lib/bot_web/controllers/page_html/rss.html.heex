@@ -188,13 +188,15 @@
   function get_urls() {
     const save_btn = (url) =>
       `<button class="flex-auto inline-block px-4 py-4  bg-brand/5 text-brand rounded-full" onclick="update_rss_url(this)" x-url-value="${url}">Save</button>`;
+    const delete_btn = (url) =>
+      `<button class="flex-auto inline-block px-4 py-4 text-zinc-500 rounded-full" onclick="delete_rss_url(this)" x-url-value="${url}">Delete</button>`;
     const checkbox = (is_enabled, url, index) => `
     <div class="flex items-center">
       <input
         type="checkbox"
         class="rounded-2xl ml-1 w-6 h-6"
         ${is_enabled ? "checked" : ""}/>
-      <pre title="${url}" class="ml-2 my-2 px-4 py-2 bg-zinc-100 rounded-2xl w-full">${url}</pre>
+      <pre title="${url}" class="ml-2 my-2 px-4 py-2 bg-zinc-100 rounded-2xl w-full hover:overflow-x-scroll">${url}</pre>
     </div>
 `;
 
@@ -208,6 +210,7 @@
       ${checkbox(is_enabled, url, index)}
       ${hashtagsInput(hashtags)}
       ${save_btn(url)}
+      ${delete_btn(url)}
       `;
 
     const list_item = (content) =>
@@ -273,7 +276,29 @@
       .catch((e) => {
         console.log(e);
       })
-      .finally((loading_spinner.hidden = true));
+  }
+
+  function delete_rss_url(event) {
+    var url = event.attributes["x-url-value"].value;
+
+    if (!confirm(`Are you sure you want to delete ${url}?\n\rThis action cannot be undone.`)) {
+      return;
+    }
+
+    var api_url = new URL("api/rss/urls", window.location.origin);
+    api_url.searchParams.append("url", url);
+
+    event.innerText ='Saving...'
+
+    fetch(api_url, { method: "DELETE" })
+      .then(get_urls)
+      .then(() =>  showToast(`${url} deleted!`))
+      .catch((e) => {
+        event.innerText ='Delete'
+
+        console.log(e);
+      })
+      .finally(_ => event.innerText ='Delete')
   }
 
   function start_job() {
