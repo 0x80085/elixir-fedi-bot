@@ -8,6 +8,8 @@ defmodule Bot.Mastodon.Statistics.Engagements do
         created_at = Timex.parse!(toot["created_at"], "{ISO:Extended}")
         is_24h_ago = Timex.diff(now, created_at, :seconds) < 86400
 
+        # Todo : this is unreliable when posts fetched are not the ones interacted with in 24h
+
         if is_24h_ago do
           %{
             favs: counts.favs + toot["favourites_count"],
@@ -37,7 +39,9 @@ defmodule Bot.Mastodon.Statistics.Engagements do
 
     case HTTPoison.get("#{fedi_url}/api/v1/accounts/#{account_id}/statuses", headers) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
+        IO.inspect(Jason.decode!(body))
         Jason.decode!(body)
+
 
       {:ok, %HTTPoison.Response{status_code: code}} ->
         IO.puts("Request failed with status code #{code}")
