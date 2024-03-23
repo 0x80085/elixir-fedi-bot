@@ -75,14 +75,16 @@ To connect the bot to your any Mastodon account
     - [x] avg posts per h today
     - [x] post engagements today
 - [x] allow deleting rss source
-- [ ] test page for rss source to see if it'll error or not
-  - Now on add RSS it will check before being added but to be tested 
+- [x] test page for rss source to see if it'll error or not
 - [ ] allow multiple bots per fedichan instance 
 - [ ] find more stats to show
 - [ ] Better post fail feedback when posting from bot page (ex. img upload fails sometimes bc too big) 
 - [ ] Enter fedi auth key from misskey
 - [ ] show next up RSS scrape URL in RSS 'start scrape job' section 
-
+  - implementing this surfaced a problem, the corn state cannot be accessed, need to use seperate agent to save the state probs
+- [ ] Stats engagements is not reliable when thep posts fetched are not the ones interacted with
+    - Base on other things like notfications? if possible
+    
 ## Package for deploy
 
 Use the ´./publish.sh´ script to ZIP the project suited for sending to your server.  
