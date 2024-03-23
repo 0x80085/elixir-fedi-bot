@@ -1,7 +1,7 @@
 <link phx-track-static rel="stylesheet" />
 <.flash_group flash={@flash} />
 <div class="grid sm:grid-cols-1 md:grid-cols-2 main">
-  <div class="content-left px-5">
+  <div class="content-left px-5 pb-5">
     <div class="flex items-center justify-between border-b border-zinc-100 py-3 text-sm">
       <div class="flex items-center gap-4">
         <a href="/">
@@ -190,7 +190,7 @@
     const save_btn = (url) =>
       `<button class="flex-auto inline-block px-4 py-4  bg-brand/5 text-brand rounded-full" onclick="update_rss_url(this)" x-url-value="${url}">Save</button>`;
     const delete_btn = (url) =>
-      `<button class="flex-auto inline-block px-4 py-4 text-zinc-500 rounded-full" onclick="delete_rss_url(this)" x-url-value="${url}">Delete</button>`;
+      `<button class="flex-auto inline-block px-4 py-4 text-red-600 rounded-full" onclick="delete_rss_url(this)" x-url-value="${url}"><span class="hero-trash h-4 w-4 mt-[-0.3rem]"></span> Delete</button>`;
     const checkbox = (is_enabled, url, index) => `
     <div class="flex items-center">
       <input
