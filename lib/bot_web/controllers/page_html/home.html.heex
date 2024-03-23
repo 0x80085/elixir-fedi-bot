@@ -2,14 +2,13 @@
 
 <.flash_group flash={@flash} />
 
-<div class="mt-10 loading-blocking" id="loading" hidden>
-  <div id="loading" class="w-full flex flex-row justify-center items-center">
-    <.icon name="hero-arrow-path-solid" class="h-6 w-6 animate-spin" />
-  </div>
-</div>
-
 <div class="grid sm:grid-cols-1 md:grid-cols-2 main">
-  <div class="py-[4rem] content-left">  
+  <div class="py-[4rem] content-left relative"> 
+    <div class="loading-blocking" id="loading" hidden>
+      <div id="loading" class="w-full flex flex-row justify-center items-center">
+        <.icon name="hero-arrow-path-solid" class="h-6 w-6 animate-spin" />
+      </div>
+    </div> 
     <div class="flex header flex-col lg:flex-row lg:px-[10rem]">
       <img class="rounded-md" id="fedi_avatar_url_img"  src={~p"/images/logo.jpg"} alt="logo">
       <div
@@ -168,6 +167,8 @@
 
   var setup_cta = document.getElementById("setup_cta");
   setup_cta.style.display = "none";
+
+  clear_bot_creds_btn.hidden = true;
 
   var loading = document.getElementById("loading");
   var connect_link = document.getElementById("url_here");
