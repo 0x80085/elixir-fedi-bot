@@ -60,6 +60,7 @@ defmodule BotWeb.Router do
     get "/rss/settings/max_post_burst_amount", Api.RssController, :get_max_post_burst_amount
     put "/rss/settings/max_post_burst_amount", Api.RssController, :set_max_post_burst_amount
     get "/rss/events", Api.RssController, :get_events
+    get "/rss/next_up", Api.RssController, :get_next_up_rss_url
 
     # Statistics
     get "/stats/frequency", Api.StatisticsController, :get_frequency

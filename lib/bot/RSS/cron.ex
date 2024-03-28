@@ -3,17 +3,14 @@ defmodule Bot.RSS.Cron do
   use Ecto.Schema
   import Ecto.Query
   require Logger
+  alias Bot.RSS.CronState
   alias BotWeb.Api.RssSettings
   alias Bot.RSS.RssFetcher
   alias Bot.Mastodon
 
-  @state %{
-    url_index: 0
-  }
-
   def start_link(_opts) do
     Logger.info("Started CRON GenServer")
-    GenServer.start_link(__MODULE__, @state, name: __MODULE__)
+    GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
   end
 
   @impl true
@@ -24,14 +21,14 @@ defmodule Bot.RSS.Cron do
   end
 
   @impl true
-  def handle_info(:work, state) do
+  def handle_info(:work, _state) do
     # Do the work you desire here
     has_credentials = Enum.count(Bot.Mastodon.Auth.PersistCredentials.get_all()) > 0
 
     case has_credentials do
       true ->
         Logger.info("Credentials found, starting RSS scraping ...")
-        fetch_and_post_rss(state)
+        fetch_and_post_rss()
 
       _ ->
         Logger.warn("No credentials found, scraping will not be started")
@@ -40,30 +37,28 @@ defmodule Bot.RSS.Cron do
     # Reschedule once more
     schedule_work()
 
-    new_state_incremented_index = update_state(state)
+    CronState.update_state()
 
-    {:noreply, new_state_incremented_index}
+    {:noreply, %{}}
   end
 
   @impl true
-  def handle_call(:start_manually, _from, state) do
+  def handle_call(:start_manually, _from, _state) do
     has_credentials = Enum.count(Bot.Mastodon.Auth.PersistCredentials.get_all()) > 0
 
     case has_credentials do
       true ->
         Logger.info("Credentials found, starting RSS scraping ...")
 
-        fetch_and_post_rss(%{
-          url_index: state.url_index
-        })
+        fetch_and_post_rss()
 
       _ ->
         Logger.warn("No credentials found, scraping will not be started")
     end
 
-    new_state_incremented_index = update_state(state)
+    CronState.update_state()
 
-    {:reply, :ok, new_state_incremented_index}
+    {:reply, :ok, %{}}
   end
 
   def start_manually() do
@@ -78,23 +73,6 @@ defmodule Bot.RSS.Cron do
       )
 
     Bot.Repo.all(query)
-  end
-
-  defp update_state(state) do
-    max_index = length(get_enabled_urls()) - 1
-
-    incremented_url_index =
-      case state.url_index == max_index do
-        true ->
-          0
-
-        _ ->
-          state.url_index + 1
-      end
-
-    %{
-      url_index: incremented_url_index
-    }
   end
 
   defp schedule_work() do
@@ -120,13 +98,14 @@ defmodule Bot.RSS.Cron do
     Process.send_after(self(), :work, interval)
   end
 
-  defp fetch_and_post_rss(state) do
+  defp fetch_and_post_rss() do
+    current_url_index = CronState.get_current_index()
     Bot.Events.add_event(Bot.Events.new_event("Starting RSS scraper", "Info"))
-    Logger.info("Index = #{state.url_index + 1}")
+    Logger.info("Index = #{current_url_index + 1}")
     persisted_urls = get_enabled_urls()
     Logger.info("Size = #{length(persisted_urls)}")
 
-    current_rss_target = Enum.at(persisted_urls, state.url_index)
+    current_rss_target = Enum.at(persisted_urls, current_url_index)
 
     current_rss_hashtags = current_rss_target.hashtags
     current_rss_url = current_rss_target.url

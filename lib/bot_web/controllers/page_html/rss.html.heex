@@ -127,7 +127,7 @@
             <p
               class="text-[1.5rem] font-semibold leading-10 tracking-tighter text-zinc-900"
             >
-              Watched URLs
+              Watched URLs <span id="enabled_rss_urls_count" class="text-sm font-normal leading-6 tracking-tighter text-zinc-400"></span>
             </p>
             <div class="mt-4">
               <ul class="w-full" id="urls_list">
@@ -151,10 +151,13 @@
           </button>
         </div>
         <hr class="mt-10" />
-        <p class="text-zinc-500 ml-4 text-center mt-4 text-sm">
+        <p class="text-zinc-500 text-center mt-4 text-sm">
           This button triggers the initiation of a new job specifically tailored for a single RSS URL.
-          The selection of the URL depends on its order in the scraping queue.
-          Details regarding the next scheduled URL will be accessible in an upcoming release.  
+          The selection of the URL depends on its order in the scraping queue. <br>
+          The URL next in line is:
+        </p>
+        <p class="text-zinc-600 font-semibold text-center mt-2 text-sm underline">
+          <span id="next_up_rss_url"> <.icon name="hero-arrow-path-solid" class="mt-10 h-6 w-6 animate-spin" /></span>
         </p>
         <button
           class="bg-brand/5 text-brand rounded-full px-4 py-4 font-medium leading-6 mt-10"
@@ -231,7 +234,11 @@
           );
           return prev + li;
         }, "");
+
         urls_list.innerHTML = list;
+        const enabled_url_count = res.filter(it => it.is_enabled).length;
+        const total_url_count = res.filter(it => it.is_enabled).length;
+        enabled_rss_urls_count.innerText = `(active: ${enabled_url_count}/${total_url_count})`;
       })
       .then((_) => (rss_urls.hidden = false))
       .catch((_) => {})
@@ -422,6 +429,21 @@
       .catch((_) => {})
   }
 
+  function get_next_up_rss_url_scrape_job() {
+    fetch("api/rss/next_up")
+      .then((res) => res.json())
+      .then((res) => (max_post_burst_amount_input.value = res))
+      .then(previewNextUpRssUrl)
+      .catch((_) => {})
+  }
+  function get_max_post_burst_amount() {
+    fetch("api/rss/settings/max_post_burst_amount")
+      .then((res) => res.json())
+      .then((res) => (max_post_burst_amount_input.value = res))
+      .then(previewMaxPostBurst)
+      .catch((_) => {})
+  }
+
   function set_max_post_burst_amount() {
     if (!confirm("Sure to change scrape max post burst amount?")) {
       return;
@@ -462,6 +484,9 @@
   function previewMaxPostBurst() {
     max_post_burst_amount.innerText = max_post_burst_amount_input.value;
   }
+  function previewNextUpRssUrl(value) {
+    next_up_rss_url.innerText = value;
+  }
 
   max_age_input.addEventListener("input", previewMaxAgeInSeconds);
   scrape_interval_input.addEventListener("input", previewIntervalInMinutes);
@@ -474,4 +499,6 @@
   get_max_age();
   get_is_dry_run();
   get_max_post_burst_amount();
+  get_next_up_rss_url_scrape_job();
+
 </script>

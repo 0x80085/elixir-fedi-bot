@@ -1,4 +1,5 @@
 defmodule BotWeb.Api.RssController do
+  alias Bot.RSS.CronState
   alias Bot.RSS.RssFetcher
   alias BotWeb.Api.RssSettings
   use BotWeb, :controller
@@ -122,6 +123,10 @@ defmodule BotWeb.Api.RssController do
 
   def get_events(conn, _params) do
     json(conn, Bot.Events.get_events())
+  end
+
+  def get_next_up_rss_url(conn, _params) do
+    json(conn, CronState.get_next_up_rss_url())
   end
 
   defp is_rss_url(url) do

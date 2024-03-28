@@ -26,6 +26,7 @@ defmodule Bot.Application do
 
       # Agents aka data stores
       Bot.RSS.FoundUrlArchive,
+      Bot.RSS.CronState,
       Bot.Events,
     ]
 
