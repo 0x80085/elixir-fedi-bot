@@ -185,7 +185,7 @@ defmodule Bot.Mastodon.Actions.PostStatus do
           FoundUrlArchive.add_entry_id(id)
         end
 
-        Bot.Events.add_event(Bot.Events.new_event("Printed toot! (dry run is on)", "Info"))
+        Bot.Events.add_event(Bot.Events.new_event("Printed toot to debug output in terminal! (dry run is on)", "Info"))
         {:ok, "status printed"}
 
       false ->
@@ -226,17 +226,24 @@ defmodule Bot.Mastodon.Actions.PostStatus do
                     {:ok, "Toot posted!"}
 
                   {:error, reason} ->
+                    msg = "WARN Could not post toot.\r\n #{reason}"
+                    event = Bot.Events.new_event(msg, "Warning")
+                    Bot.Events.add_event(event)
                     {:error, reason}
                 end
 
               _ ->
-                Logger.info("Error in posting")
+                msg = "WARN Could not post toot. Status code from POST /api/v1/statuses #{result.status_code}"
+                event = Bot.Events.new_event(msg, "Warning")
+                Bot.Events.add_event(event)
+                Logger.warn("Error in posting")
                 IO.inspect(decoded)
                 {:error, result.status_code}
             end
 
           {:error, reason} ->
             msg = "Something went wrong posting a RSS toot:\r\n #{reason}"
+            Logger.warn("Error in posting\r\n #{reason}")
 
             event = Bot.Events.new_event(msg, "Error")
             Bot.Events.add_event(event)

@@ -6,7 +6,9 @@ defmodule Bot.Events do
   defstruct message: nil, date_time_occurred: nil, severity: nil
 
   def start_link(_opts) do
-    Agent.start_link(fn -> [] end, name: __MODULE__)
+    Agent.start_link(fn -> [
+      new_event("OK Bot started", "Info")
+    ] end, name: __MODULE__)
   end
 
   def new_event(message, severity) do

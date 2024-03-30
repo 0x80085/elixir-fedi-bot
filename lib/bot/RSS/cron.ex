@@ -49,7 +49,7 @@ defmodule Bot.RSS.Cron do
     case has_credentials do
       true ->
         Logger.info("Credentials found, starting RSS scraping ...")
-
+        Bot.Events.add_event(Bot.Events.new_event("Starting on-demand RSS fetch job...", "Info"))
         fetch_and_post_rss()
 
       _ ->
@@ -100,7 +100,6 @@ defmodule Bot.RSS.Cron do
 
   defp fetch_and_post_rss() do
     current_url_index = CronState.get_current_index()
-    Bot.Events.add_event(Bot.Events.new_event("Starting RSS scraper", "Info"))
     Logger.info("Index = #{current_url_index + 1}")
     persisted_urls = get_enabled_urls()
     Logger.info("Size = #{length(persisted_urls)}")
@@ -110,6 +109,7 @@ defmodule Bot.RSS.Cron do
     current_rss_hashtags = current_rss_target.hashtags
     current_rss_url = current_rss_target.url
 
+    Bot.Events.add_event(Bot.Events.new_event("Starting RSS scraper for #{current_rss_url}", "Info"))
     Logger.info("current_rss_url = #{current_rss_url}")
 
     case RssFetcher.get_entries(current_rss_url) do
@@ -124,13 +124,13 @@ defmodule Bot.RSS.Cron do
         |> post_to_fedi_with_delay(current_rss_hashtags)
 
         Bot.Events.add_event(
-          Bot.Events.new_event("OK - CRON RSS Job completed for #{current_rss_url}", "Info")
+          Bot.Events.new_event("OK - RSS fetch completed for #{current_rss_url}", "Info")
         )
 
       {:error, reason} ->
-        Logger.error("CRON RSS failed")
+        Logger.error("RSS fetch failed")
         Logger.error(reason)
-        msg = "CRON RSS failed for #{current_rss_url} \r\nReason:\n\r#{reason}"
+        msg = "Warning RSS fetch failed for #{current_rss_url} \r\nReason:\n\r#{reason}"
 
         Bot.Events.add_event(Bot.Events.new_event(msg, "Warning"))
     end
