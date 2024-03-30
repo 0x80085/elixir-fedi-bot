@@ -56,6 +56,10 @@ defmodule BotWeb.Api.RssController do
     from(p in Bot.RssRepo, where: p.url == ^target_url)
     |> Bot.Repo.update_all(set: [is_enabled: is_enabled, hashtags: hashtags])
 
+    if !is_enabled do
+      Bot.RSS.CronState.cap_url_index_on_enabled_urls_size()
+    end
+
     send_resp(conn, :no_content, "")
   end
 
@@ -65,14 +69,17 @@ defmodule BotWeb.Api.RssController do
     Bot.Repo.get_by(Bot.RssRepo, url: target_url)
     |> Bot.Repo.delete()
 
+    Bot.RSS.CronState.cap_url_index_on_enabled_urls_size()
+
     send_resp(conn, :no_content, "")
   end
 
   def trigger_fetch_job_and_print(conn, _params) do
     {:ok, supervisor} = Task.Supervisor.start_link()
 
+    Bot.Events.add_event(Bot.Events.new_event("Trying to start RSS Job manually...", "Info"))
+    # Todo refactor posting logic out of the Cron Genserver as the calls are blocked while it has work scheduled
     Task.Supervisor.start_child(supervisor, fn ->
-      Logger.info("Bot.RSS.Cron.start_manually from RssController")
       Bot.RSS.Cron.start_manually()
     end)
 

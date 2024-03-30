@@ -1,4 +1,5 @@
 defmodule Bot.RSS.CronState do
+  require Logger
   use Agent
   use Ecto.Schema
 
@@ -26,28 +27,74 @@ defmodule Bot.RSS.CronState do
   def get_next_up_rss_url() do
     Agent.get(__MODULE__, fn state ->
       persisted_urls = get_enabled_urls()
-      Enum.at(persisted_urls, state.url_index).url
+
+      cond do
+        length(persisted_urls) > 0 ->
+          Enum.at(persisted_urls, state.url_index).url
+
+        true ->
+          "No URLs found"
+      end
     end)
   end
 
   def update_state() do
     Agent.update(__MODULE__, fn state ->
-      max_index = length(get_enabled_urls()) - 1
+      urls = get_enabled_urls()
+
+      max_index = length(urls) - 1
 
       incremented_url_index =
-        case state.url_index == max_index do
+        case state.url_index >= max_index do
           true ->
-            0
+            max_index
 
           _ ->
             state.url_index + 1
         end
 
-      IO.inspect("updated cron state index:")
-      IO.inspect(incremented_url_index)
+      Logger.info("Updated cron state index: #{incremented_url_index}")
+
+      if length(urls) > 0 do
+        next_up = Enum.at(urls, incremented_url_index)
+
+        Bot.Events.add_event(
+          Bot.Events.new_event("Updated next up RSS target: #{next_up.url}", "Info")
+        )
+      end
 
       %{
         url_index: incremented_url_index
+      }
+    end)
+  end
+
+  def cap_url_index_on_enabled_urls_size() do
+    Agent.update(__MODULE__, fn state ->
+      urls = get_enabled_urls()
+      max_index = length(urls) - 1
+
+      capped_url_index =
+        case state.url_index >= max_index do
+          true ->
+            Logger.info("Capped cron state index: #{max_index}")
+
+            if length(urls) > 0 do
+              next_up = Enum.at(urls, max_index)
+
+              Bot.Events.add_event(
+                Bot.Events.new_event("Updated next up RSS target: #{next_up.url}", "Info")
+              )
+            end
+
+            max_index
+
+          _ ->
+            state.url_index
+        end
+
+      %{
+        url_index: capped_url_index
       }
     end)
   end
