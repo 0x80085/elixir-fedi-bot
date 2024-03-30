@@ -138,7 +138,7 @@ defmodule Bot.RSS.Cron do
 
   defp post_to_fedi_with_delay(entries, hashtags) do
     Enum.each(entries, fn it ->
-      random_time_in_ms = Enum.random(1000..5000)
+      random_time_in_ms = Enum.random(3000..9000)
 
       Logger.info("Posting new entry with a delay of #{random_time_in_ms}ms")
       :timer.sleep(random_time_in_ms)
