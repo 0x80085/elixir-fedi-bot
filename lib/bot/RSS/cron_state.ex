@@ -47,7 +47,7 @@ defmodule Bot.RSS.CronState do
       incremented_url_index =
         case state.url_index >= max_index do
           true ->
-            max_index
+            0
 
           _ ->
             state.url_index + 1

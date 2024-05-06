@@ -9,7 +9,7 @@
         <.icon name="hero-arrow-path-solid" class="h-6 w-6 animate-spin" />
       </div>
     </div> 
-    <div class="flex header flex-col lg:flex-row lg:px-[10rem]">
+    <div class="flex header flex-col lg:flex-row lg:px-[10rem]" id="fedi_account_info">
       <img class="rounded-md" id="fedi_avatar_url_img"  src={~p"/images/logo.jpg"} alt="logo">
       <div
         id="fedi_account_name"
@@ -191,9 +191,11 @@
           clear_bot_creds_btn.hidden = false;
           
           success_and_post.hidden = false;
+          fedi_account_info.hidden = false;
         } else {
           clear_bot_creds_btn.hidden = true;
           setup_cta.style.display = "grid";
+          fedi_account_info.hidden = true;
         }
       })
       .catch((_) => {
